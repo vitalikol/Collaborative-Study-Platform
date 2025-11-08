@@ -22,10 +22,21 @@ public class Membership {
     private Group group;
 
     @NotEmpty(message = "Role must not be empty")
+    @Column(name = "role")
     private String role;
 
-    @NotEmpty(message = "Joining time must not be empty")
+    @Column(name = "joined_at")
     private LocalDateTime joinedAt;
+
+    public Membership() {}
+
+    public Membership(int membershipId, User user, Group group, String role, LocalDateTime joinedAt) {
+        this.membershipId = membershipId;
+        this.user = user;
+        this.group = group;
+        this.role = role;
+        this.joinedAt = joinedAt;
+    }
 
     public int getMembershipId() {
         return membershipId;
