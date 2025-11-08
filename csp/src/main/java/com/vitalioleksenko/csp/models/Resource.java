@@ -38,6 +38,19 @@ public class Resource {
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
 
+    public Resource() {
+    }
+
+    public Resource(int resourceId, Group group, User user, String title, String type, String pathOrUrl, LocalDateTime uploadedAt) {
+        this.resourceId = resourceId;
+        this.group = group;
+        this.user = user;
+        this.title = title;
+        this.type = type;
+        this.pathOrUrl = pathOrUrl;
+        this.uploadedAt = uploadedAt;
+    }
+
     public int getResourceId() {
         return resourceId;
     }
