@@ -1,4 +1,4 @@
-package PACKAGE_NAME;
+package com.vitalioleksenko.csp.util;
 
 public class BadUserException extends RuntimeException {
   public BadUserException(String message) {

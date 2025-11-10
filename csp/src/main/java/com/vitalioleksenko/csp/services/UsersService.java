@@ -5,6 +5,7 @@ import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,10 @@ public class UsersService {
         return usersRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    public User findByEmail(String email){
+        return usersRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("Invalid username"));
+    }
+
     public void edit(User updatedUser,int id){
         User user = usersRepository.findById(id).orElseThrow(UserNotFoundException::new);
         modelMapper.map(updatedUser, user);
@@ -44,6 +49,7 @@ public class UsersService {
     public void remove(int id){
         usersRepository.deleteById(id);
     }
+
 
 
 }
