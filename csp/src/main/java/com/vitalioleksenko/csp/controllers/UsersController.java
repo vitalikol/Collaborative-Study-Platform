@@ -1,6 +1,6 @@
 package com.vitalioleksenko.csp.controllers;
 
-import PACKAGE_NAME.BadUserException;
+import com.vitalioleksenko.csp.util.BadUserException;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.ErrorResponse;
@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class UsersController {
     private final UsersService usersService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsersController(UsersService usersService) {
+    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder) {
         this.usersService = usersService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("")
@@ -31,6 +34,9 @@ public class UsersController {
         if(bindingResult.hasErrors()){
             throw new BadUserException(errorMsgBuilder(bindingResult));
         }
+        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
+        user.setPasswordHash(passwordHash);
+
         usersService.save(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
