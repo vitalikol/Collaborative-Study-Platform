@@ -4,9 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 public class CheckUniqueValueValidator implements ConstraintValidator<UniqueValue, String> {
-
     @Autowired
     private EntityManager entityManager;
 

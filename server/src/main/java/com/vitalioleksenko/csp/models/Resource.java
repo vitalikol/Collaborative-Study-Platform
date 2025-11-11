@@ -3,11 +3,17 @@ package com.vitalioleksenko.csp.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Resources")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Resource {
     @Id
     @Column(name = "resource_id")
@@ -37,73 +43,4 @@ public class Resource {
 
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
-
-    public Resource() {
-    }
-
-    public Resource(int resourceId, Group group, User user, String title, String type, String pathOrUrl, LocalDateTime uploadedAt) {
-        this.resourceId = resourceId;
-        this.group = group;
-        this.user = user;
-        this.title = title;
-        this.type = type;
-        this.pathOrUrl = pathOrUrl;
-        this.uploadedAt = uploadedAt;
-    }
-
-    public int getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(int resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPathOrUrl() {
-        return pathOrUrl;
-    }
-
-    public void setPathOrUrl(String pathOrUrl) {
-        this.pathOrUrl = pathOrUrl;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
-
-    public void setUploadedAt(LocalDateTime uploadedAt) {
-        this.uploadedAt = uploadedAt;
-    }
 }
