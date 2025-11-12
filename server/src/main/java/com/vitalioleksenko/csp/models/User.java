@@ -46,7 +46,7 @@ public class User {
     @Column(name = "email")
     @NotEmpty(message = "Email must not be empty")
     @Email(message = "Email must be valid")
-    @UniqueValue(message = "Email must be unique", fieldName = "email", entityClass = User.class)
+    //@UniqueValue(message = "Email must be unique", fieldName = "email", entityClass = User.class)
     private String email;
 
     @Column(name = "password_hash")
