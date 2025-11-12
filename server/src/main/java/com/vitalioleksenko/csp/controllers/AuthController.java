@@ -1,6 +1,7 @@
 package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.AuthenticationRequest;
+import com.vitalioleksenko.csp.dto.UserDTO;
 import com.vitalioleksenko.csp.util.BadUserException;
 import com.vitalioleksenko.csp.dto.RegisterRequest;
 import com.vitalioleksenko.csp.models.User;
@@ -85,8 +86,9 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public Object me(Authentication authentication) {
-        return authentication != null ? authentication.getPrincipal() : "Anonymous";
+    public UserDTO me(Authentication authentication) {
+        //return authentication != null ? authentication.getPrincipal() : "Anonymous";
+        return convertToUserDTO(usersService.findByEmail(authentication.getName()));
     }
 
     @ExceptionHandler
@@ -118,5 +120,9 @@ public class AuthController {
                     .append(";");
         }
         return errorMsg.toString();
+    }
+
+    private UserDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
     }
 }

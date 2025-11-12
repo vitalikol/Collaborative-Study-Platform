@@ -1,11 +1,13 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.UserDTO;
 import com.vitalioleksenko.csp.util.BadUserException;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.ErrorResponse;
 import com.vitalioleksenko.csp.util.UserNotFoundException;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,13 @@ import java.util.List;
 public class UsersController {
     private final UsersService usersService;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder) {
+    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.usersService = usersService;
         this.passwordEncoder = passwordEncoder;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("")
@@ -97,5 +101,13 @@ public class UsersController {
                     .append(";");
         }
         return errorMsg.toString();
+    }
+
+    private User convertToUser(UserDTO userDTO) {
+        return modelMapper.map(userDTO, User.class);
+    }
+
+    private UserDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
     }
 }
