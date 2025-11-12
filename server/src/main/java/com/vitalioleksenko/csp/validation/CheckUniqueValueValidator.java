@@ -1,13 +1,15 @@
 package com.vitalioleksenko.csp.validation;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Component
 public class CheckUniqueValueValidator implements ConstraintValidator<UniqueValue, String> {
-    @Autowired
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     private String fieldName;
@@ -21,11 +23,21 @@ public class CheckUniqueValueValidator implements ConstraintValidator<UniqueValu
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        String queryStr = "SELECT COUNT(e) FROM " + entityClass.getSimpleName()
-                + " e WHERE e." + fieldName + " = :value";
-        Long count = entityManager.createQuery(queryStr, Long.class)
-                .setParameter("value", value)
-                .getSingleResult();
-        return count == 0;
+        if (value == null || value.trim().isEmpty()) {
+            return true;
+        }
+
+        try {
+            String queryStr = "SELECT COUNT(e) FROM " + entityClass.getSimpleName()
+                    + " e WHERE e." + fieldName + " = :value";
+
+            Long count = entityManager.createQuery(queryStr, Long.class)
+                    .setParameter("value", value.trim())
+                    .getSingleResult();
+
+            return count == 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
