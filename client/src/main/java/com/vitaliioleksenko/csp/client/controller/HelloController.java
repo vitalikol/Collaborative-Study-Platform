@@ -10,11 +10,11 @@ import java.io.IOException;
 
 public class HelloController {
     @FXML
-    public Label nameLabel;
+    private Label nameLabel;
     @FXML
-    public Label emailLabel;
+    private Label emailLabel;
     @FXML
-    public Label idLabel;
+    private Label idLabel;
 
     private final AuthService authService;
 

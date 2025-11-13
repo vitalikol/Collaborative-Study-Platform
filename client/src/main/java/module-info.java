@@ -3,13 +3,15 @@ module com.vitaliioleksenko.csp.client {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
-    requires com.fasterxml.jackson.databind;
-    requires annotations;
-    requires okhttp3.logging;
+    requires tools.jackson.databind;
     requires okhttp3;
-    requires java.net.http;
+    requires okio;
+    requires okhttp3.logging;
+    requires kotlin.stdlib;
 
-    opens com.vitaliioleksenko.csp.client.model to com.fasterxml.jackson.databind;
+
+
+    opens com.vitaliioleksenko.csp.client.model to tools.jackson.databind;
     opens com.vitaliioleksenko.csp.client to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller to javafx.fxml;
 

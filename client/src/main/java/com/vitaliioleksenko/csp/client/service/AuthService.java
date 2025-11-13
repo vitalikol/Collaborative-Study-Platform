@@ -1,11 +1,13 @@
 package com.vitaliioleksenko.csp.client.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.vitaliioleksenko.csp.client.model.LoginRequest;
 
+import com.vitaliioleksenko.csp.client.model.RegisterRequest;
 import com.vitaliioleksenko.csp.client.model.User;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -39,6 +41,28 @@ public class AuthService {
                 throw new IOException("Server error: " + response.code());
             }
 
+        }
+    }
+
+    public void register(RegisterRequest registerRequest) throws IOException{
+        String json = objectMapper.writeValueAsString(registerRequest);
+
+        RequestBody body = RequestBody.create(
+                json,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/register")
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.code() == 400) {
+                throw new IOException(response.message());
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
         }
     }
 
