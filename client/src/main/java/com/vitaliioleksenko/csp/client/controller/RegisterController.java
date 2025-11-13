@@ -3,6 +3,7 @@ package com.vitaliioleksenko.csp.client.controller;
 import com.vitaliioleksenko.csp.client.model.LoginRequest;
 import com.vitaliioleksenko.csp.client.model.RegisterRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
+import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,7 +43,7 @@ public class RegisterController {
     }
 
     @FXML
-    public void handleRegister(){
+    public void handleRegister() throws IOException {
         String name = nameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -60,6 +61,8 @@ public class RegisterController {
         RegisterRequest registerRequest = new RegisterRequest(name, email, password);
         if (register(registerRequest)) {
             errorLabel.setVisible(false);
+            authService.login(new LoginRequest(email, password));
+            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/hello.fxml");
         } else {
             showError("Wrong email or password");
         }
@@ -67,25 +70,7 @@ public class RegisterController {
 
     @FXML
     public void handleLogin(){
-        openLoginWindow();
-    }
-
-    private void openLoginWindow(){
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/login.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-
-            Stage courrentStage = (Stage)loginButton.getScene().getWindow();
-
-            Stage mainStage = new Stage();
-            mainStage.setTitle("Login");
-            mainStage.setScene(scene);
-
-            courrentStage.close();
-            mainStage.show();
-        } catch (IOException _){}
-            showError("Can't open login window");
+        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/main.fxml");
     }
 
     private void showError(String message) {

@@ -2,6 +2,7 @@ package com.vitaliioleksenko.csp.client.controller;
 
 import com.vitaliioleksenko.csp.client.model.LoginRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
+import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -52,7 +53,7 @@ public class LoginController {
 
         if (login(username, password)) {
             errorLabel.setVisible(false);
-            openMainWindow();
+            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/hello.fxml");
         } else {
             showError("Wrong email or password");
         }
@@ -60,12 +61,11 @@ public class LoginController {
 
     @FXML
     private void handleRegister() {
-        openRegisterWindow();
+        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/register.fxml");
     }
 
     private boolean login(String username, String password)  {
         LoginRequest credentials = new LoginRequest(username, password);
-
         try {
             authService.login(credentials);
             return true;
@@ -77,51 +77,5 @@ public class LoginController {
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
-    }
-
-    private void openMainWindow() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/hello.fxml"));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root, 800, 600);
-
-            Stage loginStage = (Stage) loginButton.getScene().getWindow();
-
-            Stage mainStage = new Stage();
-            mainStage.setTitle("Hello");
-            mainStage.setScene(scene);
-            mainStage.setMinWidth(800);
-            mainStage.setMinHeight(600);
-
-            loginStage.close();
-
-            mainStage.show();
-
-        } catch (IOException e) {
-            showError("Can't open main window");
-        }
-    }
-
-    private void openRegisterWindow() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/register.fxml"));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root);
-
-            Stage loginStage = (Stage) loginButton.getScene().getWindow();
-
-            Stage mainStage = new Stage();
-            mainStage.setTitle("Register");
-            mainStage.setScene(scene);
-
-            loginStage.close();
-
-            mainStage.show();
-
-        } catch (IOException e) {
-            showError("Can't open register window");
-        }
     }
 }
