@@ -27,9 +27,6 @@ public class LoginController {
     private Button loginButton;
 
     @FXML
-    private Button cancelButton;
-
-    @FXML
     private Label errorLabel;
 
     private final AuthService authService;
@@ -49,27 +46,24 @@ public class LoginController {
         String password = passwordField.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showError("Будь ласка, заповніть всі поля");
+            showError("Please fill all fields");
             return;
         }
 
-        if (authenticate(username, password)) {
+        if (login(username, password)) {
             errorLabel.setVisible(false);
-            showSuccess("Вхід успішний!");
             openMainWindow();
         } else {
-            showError("Невірний логін або пароль");
+            showError("Wrong email or password");
         }
     }
 
     @FXML
-    private void handleCancel() {
-        usernameField.clear();
-        passwordField.clear();
-        errorLabel.setVisible(false);
+    private void handleRegister() {
+        openRegisterWindow();
     }
 
-    private boolean authenticate(String username, String password)  {
+    private boolean login(String username, String password)  {
         LoginRequest credentials = new LoginRequest(username, password);
 
         try {
@@ -83,14 +77,6 @@ public class LoginController {
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
-    }
-
-    private void showSuccess(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Успіх");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private void openMainWindow() {
@@ -113,7 +99,29 @@ public class LoginController {
             mainStage.show();
 
         } catch (IOException e) {
-            showError("Помилка при завантаженні головного екрану");
+            showError("Can't open main window");
+        }
+    }
+
+    private void openRegisterWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/register.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+
+            Stage loginStage = (Stage) loginButton.getScene().getWindow();
+
+            Stage mainStage = new Stage();
+            mainStage.setTitle("Register");
+            mainStage.setScene(scene);
+
+            loginStage.close();
+
+            mainStage.show();
+
+        } catch (IOException e) {
+            showError("Can't open register window");
         }
     }
 }

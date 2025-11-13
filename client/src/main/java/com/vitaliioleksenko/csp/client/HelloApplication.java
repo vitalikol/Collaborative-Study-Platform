@@ -16,7 +16,7 @@ public class HelloApplication extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/login.fxml"));
         Parent root = loader.load();
 
-        primaryStage.setTitle("Система входу");
+        primaryStage.setTitle("Login");
         primaryStage.setScene(new Scene(root, 400, 300));
         primaryStage.setResizable(false);
         primaryStage.show();
