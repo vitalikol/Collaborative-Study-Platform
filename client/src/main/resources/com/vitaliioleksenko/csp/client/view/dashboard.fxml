@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitaliioleksenko.csp.client.controller.DashboardController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Colaborative Study Platform" textFill="#007BFF">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Label>
+
+                <HBox prefHeight="49.0" prefWidth="348.0" HBox.hgrow="ALWAYS" />
+
+                <MenuButton fx:id="userMenuButton" mnemonicParsing="false" text="Current user">
+                    <items>
+                        <MenuItem text="Profile" onAction="#handleProfile"/>
+                        <MenuItem text="Settings" onAction="#handleSettings"/>
+                        <MenuItem text="Log out" onAction="#handleLogOut"/>
+                    </items>
+                </MenuButton>
+            </children>
+            <padding>
+                <Insets left="20.0" right="20.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="160.0" spacing="10.0" style="-fx-background-color: #F4F4F8;" BorderPane.alignment="CENTER">
+            <children>
+                <Button maxWidth="Infinity" mnemonicParsing="false" text="My Team" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" text="Active Task's" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" text="Task's archive" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" text="Calendar" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" text="Log's" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </left>
+
+    <center>
+        <AnchorPane style="-fx-background-color: #EFEFF3;">
+            <children>
+                <ListView fx:id="taskListView" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            </children>
+        </AnchorPane>
+    </center>
+
+    <bottom>
+        <HBox prefHeight="30.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="29.0" prefWidth="123.0" text="Status: Online" textAlignment="CENTER">
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </Label>
+            </children>
+        </HBox>
+    </bottom>
+
+</BorderPane>

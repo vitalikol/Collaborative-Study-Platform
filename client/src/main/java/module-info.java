@@ -8,7 +8,8 @@ module com.vitaliioleksenko.csp.client {
     requires okio;
     requires okhttp3.logging;
     requires kotlin.stdlib;
-
+    requires lombok;
+    requires annotations;
 
 
     opens com.vitaliioleksenko.csp.client.model to tools.jackson.databind;
@@ -16,4 +17,5 @@ module com.vitaliioleksenko.csp.client {
     opens com.vitaliioleksenko.csp.client.controller to javafx.fxml;
 
     exports com.vitaliioleksenko.csp.client;
+    opens com.vitaliioleksenko.csp.client.util to tools.jackson.databind;
 }

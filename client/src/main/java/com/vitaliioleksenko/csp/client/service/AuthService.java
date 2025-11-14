@@ -1,18 +1,21 @@
 package com.vitaliioleksenko.csp.client.service;
 
 
-import com.vitaliioleksenko.csp.client.model.LoginRequest;
+import com.vitaliioleksenko.csp.client.util.LoginRequest;
 
-import com.vitaliioleksenko.csp.client.model.RegisterRequest;
+import com.vitaliioleksenko.csp.client.util.RegisterRequest;
 import com.vitaliioleksenko.csp.client.model.User;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
+import okio.BufferedSink;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
 public class AuthService {
-    private static final String BASE_URL = "http://localhost:8080/auth";
+    private static final String BASE_URL = "http://localhost:8080/api/auth";
     private final OkHttpClient client;
     private final ObjectMapper objectMapper;
 
@@ -66,6 +69,17 @@ public class AuthService {
         }
     }
 
+    public void logOut() throws IOException{
+        RequestBody body = RequestBody.create(null, new byte[]{});
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/logout")
+                .post(body)
+                .build();
+
+        client.newCall(request).execute();
+    }
+
     public User me() throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/me")
@@ -78,8 +92,7 @@ public class AuthService {
                 throw new IOException("Server error: " + response.code());
             }
             String json = response.body().string();
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(json, User.class);
+            return objectMapper.readValue(json, User.class);
         }
     }
 }
