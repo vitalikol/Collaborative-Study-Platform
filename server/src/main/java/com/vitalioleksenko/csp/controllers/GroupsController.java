@@ -1,7 +1,10 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.GroupDTO;
+import com.vitalioleksenko.csp.dto.TaskDTO;
 import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.models.Membership;
+import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.services.GroupsService;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.util.ErrorBuilder;
@@ -14,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/group")
@@ -41,13 +45,13 @@ public class GroupsController {
     }
 
     @GetMapping("")
-    public List<Group> readAll(){
-        return groupsService.findAll();
+    public List<GroupDTO> readAll(){
+        return groupsService.findAll().stream().map(this::convertToGroupDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Group readOne(@PathVariable("id") int id){
-        return groupsService.findById(id);
+    public GroupDTO readOne(@PathVariable("id") int id){
+        return convertToGroupDTO(groupsService.findById(id));
     }
 
     @PatchMapping("/{id}")
@@ -68,5 +72,14 @@ public class GroupsController {
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         groupsService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+
+    private Group convertToGroup(GroupDTO groupDTO) {
+        return modelMapper.map(groupDTO, Group.class);
+    }
+
+    private GroupDTO convertToGroupDTO(Group group) {
+        return modelMapper.map(group, GroupDTO.class);
     }
 }
