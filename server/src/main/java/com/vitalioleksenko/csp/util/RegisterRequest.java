@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.dto;
+package com.vitalioleksenko.csp.util;
 
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.validation.UniqueValue;

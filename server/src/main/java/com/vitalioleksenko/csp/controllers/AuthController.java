@@ -1,10 +1,10 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.AuthenticationRequest;
+import com.vitalioleksenko.csp.util.AuthenticationRequest;
 import com.vitalioleksenko.csp.dto.UserDTO;
 import com.vitalioleksenko.csp.security.CustomUserDetails;
 import com.vitalioleksenko.csp.util.BadRequestException;
-import com.vitalioleksenko.csp.dto.RegisterRequest;
+import com.vitalioleksenko.csp.util.RegisterRequest;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.ErrorResponse;
@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -86,14 +87,12 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> me(Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.ok(null);
+    public ResponseEntity<UserDTO> me(@AuthenticationPrincipal CustomUserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
-
-        return ResponseEntity.ok(usersService.findById(user.getId()));
+        UserDTO dto = convertToUserDTO(usersService.findById(user.getId()));
+        return ResponseEntity.ok(dto);
     }
 
     @ExceptionHandler

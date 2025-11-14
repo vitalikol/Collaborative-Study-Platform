@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.dto;
+package com.vitalioleksenko.csp.util;
 
 public class AuthenticationRequest {
     private String username;
