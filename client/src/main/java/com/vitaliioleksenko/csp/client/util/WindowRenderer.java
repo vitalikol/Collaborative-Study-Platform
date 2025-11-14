@@ -29,7 +29,7 @@ public class WindowRenderer {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            throw new RuntimeException("Can't open" + fxmlPath);
+            throw new RuntimeException("Can't open " + fxmlPath + ", because " + e.getMessage() + e.getLocalizedMessage());
         }
     }
 }

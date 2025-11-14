@@ -18,7 +18,6 @@ public class HelloApplication extends Application {
 
         primaryStage.setTitle("CSP");
         primaryStage.setScene(new Scene(root, 400, 300));
-        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

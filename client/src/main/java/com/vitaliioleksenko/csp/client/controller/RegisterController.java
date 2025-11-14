@@ -1,13 +1,10 @@
 package com.vitaliioleksenko.csp.client.controller;
 
-import com.vitaliioleksenko.csp.client.model.LoginRequest;
-import com.vitaliioleksenko.csp.client.model.RegisterRequest;
+import com.vitaliioleksenko.csp.client.util.LoginRequest;
+import com.vitaliioleksenko.csp.client.util.RegisterRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -62,7 +59,7 @@ public class RegisterController {
         if (register(registerRequest)) {
             errorLabel.setVisible(false);
             authService.login(new LoginRequest(email, password));
-            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/hello.fxml");
+            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
         } else {
             showError("Wrong email or password");
         }
@@ -70,7 +67,7 @@ public class RegisterController {
 
     @FXML
     public void handleLogin(){
-        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/main.fxml");
+        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/login.fxml");
     }
 
     private void showError(String message) {

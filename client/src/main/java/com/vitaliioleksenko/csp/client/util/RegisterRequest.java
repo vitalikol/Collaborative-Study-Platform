@@ -1,4 +1,4 @@
-package com.vitaliioleksenko.csp.client.model;
+package com.vitaliioleksenko.csp.client.util;
 
 public class RegisterRequest {
     private String name;

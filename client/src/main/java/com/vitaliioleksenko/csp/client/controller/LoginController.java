@@ -1,13 +1,9 @@
 package com.vitaliioleksenko.csp.client.controller;
 
-import com.vitaliioleksenko.csp.client.model.LoginRequest;
+import com.vitaliioleksenko.csp.client.util.LoginRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -53,7 +49,7 @@ public class LoginController {
 
         if (login(username, password)) {
             errorLabel.setVisible(false);
-            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/hello.fxml");
+            WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
         } else {
             showError("Wrong email or password");
         }
