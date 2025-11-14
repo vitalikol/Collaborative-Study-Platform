@@ -2,12 +2,12 @@ package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.AuthenticationRequest;
 import com.vitalioleksenko.csp.dto.UserDTO;
-import com.vitalioleksenko.csp.util.BadUserException;
+import com.vitalioleksenko.csp.security.CustomUserDetails;
+import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.dto.RegisterRequest;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.ErrorResponse;
-import com.vitalioleksenko.csp.util.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -64,7 +64,7 @@ public class AuthController {
     public ResponseEntity<HttpStatus> register(@RequestBody @Valid RegisterRequest request,
                                                BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
-            throw new BadUserException(errorMsgBuilder(bindingResult));
+            throw new BadRequestException(errorMsgBuilder(bindingResult));
         }
 
         User newUser = new User();
@@ -86,13 +86,18 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public UserDTO me(Authentication authentication) {
-        //return authentication != null ? authentication.getPrincipal() : "Anonymous";
-        return convertToUserDTO(usersService.findByEmail(authentication.getName()));
+    public ResponseEntity<User> me(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.ok(null);
+        }
+
+        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+
+        return ResponseEntity.ok(usersService.findById(user.getId()));
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(BadUserException e){
+    private ResponseEntity<ErrorResponse> handleException(BadRequestException e){
         ErrorResponse ErrorResponse = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
