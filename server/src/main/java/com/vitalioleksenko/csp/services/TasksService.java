@@ -35,6 +35,10 @@ public class TasksService {
         return tasksRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    public List<Task> findByUserId(int id){
+        return tasksRepository.findByUser_UserId(id);
+    }
+
     @Transactional
     public void edit(Task updatedTask, int id){
         Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);

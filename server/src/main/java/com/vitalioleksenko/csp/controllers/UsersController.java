@@ -16,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -47,13 +48,13 @@ public class UsersController {
     }
 
     @GetMapping("")
-    public List<User> readAll(){
-        return usersService.findAll();
+    public List<UserDTO> readAll(){
+        return usersService.findAll().stream().map(this::convertToUserDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public User readOne(@PathVariable("id") int id){
-        return usersService.findById(id);
+    public UserDTO readOne(@PathVariable("id") int id){
+        return convertToUserDTO(usersService.findById(id));
     }
 
     @PatchMapping("/{id}")
@@ -65,7 +66,9 @@ public class UsersController {
                 ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
-        //TODO
+        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
+        user.setPasswordHash(passwordHash);
+
         usersService.edit(user, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
