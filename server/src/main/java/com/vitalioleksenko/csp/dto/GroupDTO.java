@@ -33,10 +33,6 @@ public class GroupDTO {
     @Size(min = 40, message = "Description must be at least 40 characters long")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "user_id")
-    private User createdBy;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }
