@@ -1,6 +1,7 @@
 package com.vitalioleksenko.csp.security;
 
 import com.vitalioleksenko.csp.models.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,9 +10,12 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
     private final User user;
+    @Getter
+    private int id;
 
     public CustomUserDetails(User user) {
         this.user = user;
+        this.id = user.getUserId();
     }
 
     @Override
@@ -48,4 +52,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
