@@ -99,6 +99,13 @@
 			<version>2.4.240</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>11.17.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
