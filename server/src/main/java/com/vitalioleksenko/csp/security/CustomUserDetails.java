@@ -1,17 +1,24 @@
 package com.vitalioleksenko.csp.security;
 
 import com.vitalioleksenko.csp.models.User;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
     private final User user;
     @Getter
     private int id;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public CustomUserDetails(User user) {
         this.user = user;
@@ -20,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
@@ -52,5 +59,4 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

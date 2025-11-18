@@ -35,8 +35,16 @@ public class TasksService {
         return tasksRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    public List<Task> findByUserId(int id){
-        return tasksRepository.findByUser_UserId(id);
+    public List<Task> findByGroup(int groupId) {
+        return tasksRepository.findByGroup_GroupId(groupId);
+    }
+
+    public List<Task> findByUser(int userId) {
+        return tasksRepository.findByUserId(userId);
+    }
+
+    public List<Task> findByUserAndGroup(int userId, int groupId) {
+        return tasksRepository.findByUserIdAndGroupId(userId, groupId);
     }
 
     @Transactional

@@ -45,7 +45,10 @@ public class GroupsController {
     }
 
     @GetMapping("")
-    public List<GroupDTO> readAll(){
+    public List<GroupDTO> readAll(@RequestParam(name = "userId", required = false) Integer userId){
+        if(userId != null){
+            return groupsService.findAllByMember(userId).stream().map(this::convertToGroupDTO).collect(Collectors.toList());
+        }
         return groupsService.findAll().stream().map(this::convertToGroupDTO).collect(Collectors.toList());
     }
 

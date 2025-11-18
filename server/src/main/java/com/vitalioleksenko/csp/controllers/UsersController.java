@@ -1,6 +1,8 @@
 package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.UserDTO;
+import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
@@ -24,12 +26,14 @@ public class UsersController {
     private final UsersService usersService;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final AppMapper mapper;
 
     @Autowired
-    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder, ModelMapper modelMapper, AppMapper mapper) {
         this.usersService = usersService;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     @PostMapping("")
@@ -53,8 +57,8 @@ public class UsersController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO readOne(@PathVariable("id") int id){
-        return convertToUserDTO(usersService.findById(id));
+    public UserDetailedDTO readOne(@PathVariable("id") int id){
+        return mapper.toUserDetailed(usersService.findById(id));
     }
 
     @PatchMapping("/{id}")
@@ -77,6 +81,10 @@ public class UsersController {
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         usersService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private UserDetailedDTO convertToUserDetailedDTO(User user) {
+        return modelMapper.map(user, UserDetailedDTO.class);
     }
 
     private User convertToUser(UserDTO userDTO) {

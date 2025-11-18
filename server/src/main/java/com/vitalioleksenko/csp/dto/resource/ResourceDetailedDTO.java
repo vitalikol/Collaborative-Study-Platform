@@ -1,5 +1,9 @@
-package com.vitalioleksenko.csp.models;
+package com.vitalioleksenko.csp.dto.resource;
 
+import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
+import com.vitalioleksenko.csp.dto.user.UserShortDTO;
+import com.vitalioleksenko.csp.models.Group;
+import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.util.ResourceFormat;
 import com.vitalioleksenko.csp.util.ResourceType;
 import jakarta.persistence.*;
@@ -9,46 +13,30 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Resources")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Resource {
-    @Id
-    @Column(name = "resource_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ResourceDetailedDTO {
     private int resourceId;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
-    private Group group;
+    private GroupShortDTO group;
 
-    @ManyToOne
-    @JoinColumn(name = "uploaded_by", referencedColumnName = "user_id")
-    private User user;
+    private UserShortDTO user;
 
-    @Column(name = "title")
     @NotEmpty(message = "Title must not be empty")
     @Size(min = 5, message = "Title must be at least 5 characters long")
     private String title;
 
-    @Column(name = "type")
     @NotEmpty(message = "Type must not be empty")
-    @Enumerated(EnumType.STRING)
     private ResourceType type;
 
-    @Column(name = "format")
     @NotEmpty(message = "Format must not be empty")
-    @Enumerated(EnumType.STRING)
     private ResourceFormat format;
 
-    @Column(name = "path_or_url")
     @NotEmpty(message = "Path or url must not be empty")
     private String pathOrUrl;
 
-    @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
 }

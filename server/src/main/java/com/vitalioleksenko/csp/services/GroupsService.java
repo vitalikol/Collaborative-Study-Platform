@@ -35,6 +35,10 @@ public class GroupsService {
         return groupsRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    public List<Group> findAllByMember(int id){
+        return groupsRepository.findAllByUserId(id);
+    }
+
     @Transactional
     public void edit(Group updatedGroup, int id){
         Group group = groupsRepository.findById(id).orElseThrow(NotFoundException::new);

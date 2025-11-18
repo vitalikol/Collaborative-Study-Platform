@@ -47,23 +47,30 @@ public class TasksController {
     }
 
     @GetMapping("")
-    public List<TaskDTO> readAll(){
-        return tasksService.findAll().stream().map(this::convertToTaskDTO).collect(Collectors.toList());
+    public List<TaskDTO> readAll(
+            @RequestParam(name = "groupId", required = false) Integer groupId,
+            @RequestParam(name = "userId", required = false) Integer userId) {
+
+        if (groupId != null && userId != null) {
+            return tasksService.findByUserAndGroup(userId, groupId)
+                    .stream().map(this::convertToTaskDTO).toList();
+        }
+        if (groupId != null) {
+            return tasksService.findByGroup(groupId)
+                    .stream().map(this::convertToTaskDTO).toList();
+        }
+        if (userId != null) {
+            return tasksService.findByUser(userId)
+                    .stream().map(this::convertToTaskDTO).toList();
+        }
+
+        return tasksService.findAll()
+                .stream().map(this::convertToTaskDTO).toList();
     }
 
     @GetMapping("/{id}")
     public TaskDTO readOne(@PathVariable("id") int id){
         return convertToTaskDTO(tasksService.findById(id));
-    }
-
-    @GetMapping("/my")
-    public ResponseEntity<List<TaskDTO>> readMy(@AuthenticationPrincipal CustomUserDetails user) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        List<Task> tasks = tasksService.findByUserId(user.getId());
-        List<TaskDTO> dtos = tasks.stream().map(this::convertToTaskDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
     }
 
     @PatchMapping("/{id}")

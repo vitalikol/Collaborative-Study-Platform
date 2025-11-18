@@ -1,5 +1,6 @@
 package com.vitalioleksenko.csp.models;
 
+import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.validation.UniqueValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -52,4 +53,8 @@ public class User {
     @Column(name = "password_hash")
     @NotEmpty(message = "Password must not be empty")
     private String passwordHash;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
