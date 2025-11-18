@@ -1,5 +1,7 @@
-package com.vitaliioleksenko.csp.client.controller;
+package com.vitaliioleksenko.csp.client.controller.auth;
 
+import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.LoginRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
@@ -57,13 +59,15 @@ public class LoginController {
 
     @FXML
     private void handleRegister() {
-        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/register.fxml");
+        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/auth/register.fxml");
     }
 
     private boolean login(String username, String password)  {
         LoginRequest credentials = new LoginRequest(username, password);
         try {
             authService.login(credentials);
+            User user = authService.me();
+            UserSession.getInstance().login(user);
             return true;
         } catch (IOException e){
             return false;

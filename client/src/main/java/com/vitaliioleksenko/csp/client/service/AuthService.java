@@ -7,9 +7,6 @@ import com.vitaliioleksenko.csp.client.util.RegisterRequest;
 import com.vitaliioleksenko.csp.client.model.User;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
-import okio.BufferedSink;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -43,7 +40,6 @@ public class AuthService {
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
-
         }
     }
 

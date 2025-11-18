@@ -1,105 +1,194 @@
 package com.vitaliioleksenko.csp.client.controller;
 
+import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
+import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
+import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
+import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
+import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
+import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
 import com.vitaliioleksenko.csp.client.model.Task;
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
-import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 
 import java.io.IOException;
 
 public class DashboardController {
+    @FXML private BorderPane mainBorderPane;
+    @FXML private MenuButton userMenuButton;
+    @FXML private Button usersButton;
+    @FXML private Button teamButton;
+    @FXML private Button taskButton;
+    @FXML private Button archiveButton;
+    @FXML private Button calendarButton;
+    @FXML private Button logsButton;
 
-    @FXML
-    private MenuButton userMenuButton;
-
-    @FXML
-    private ListView<Task> taskListView;
-
-    private ObservableList<Task> taskData = FXCollections.observableArrayList();
-    private AuthService authService;
-    private TaskService taskService;
-    private User currentUser;
+    private final AuthService authService;
+    private UserSession session = UserSession.getInstance();
 
     public DashboardController() {
         this.authService = new AuthService();
-        this.taskService = new TaskService();
     }
 
     @FXML
-    public void initialize() throws IOException {
-        loadTasks();
-        loadUser();
-
-        userMenuButton.setText(currentUser.getEmail());
-
-        taskListView.setItems(taskData);
-        taskListView.setCellFactory(listView -> new TaskCell());
+    public void initialize() {
+        setupRoleBasedUI();
+        showActiveTasks();
+        userMenuButton.setText(session.getCurrentUser().getEmail());
     }
 
     @FXML
-    private void handleLogOut() throws IOException {
-        authService.logOut();
-        WindowRenderer.switchScene((Stage) taskListView.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/login.fxml");
+    private void showMyProfile(){
+        loadUserProfileView(session.getCurrentUserId());
     }
 
     @FXML
-    private void handleProfile(){
-        //WindowRenderer.switchScene((Stage) taskListView.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/profile.fxml");
+    private  void showSettings(){
+        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/settings/settings.fxml");
     }
 
     @FXML
-    private  void handleSettings(){
-       //WindowRenderer.switchScene((Stage) taskListView.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/settings.fxml");
+    private void handleLogOut() {
+        try{
+            authService.logOut();
+            UserSession.getInstance().logout();
+            WindowRenderer.switchScene((Stage) userMenuButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/auth/login.fxml");
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
-    private void loadTasks() throws IOException {
-        taskData.setAll(taskService.getMyTasks());
-    }
-
-    private void loadUser(){
+    @FXML
+    private void showMyTeam(){
         try {
-            currentUser = authService.me();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-view.fxml"));
+            Parent view = loader.load();
+
+            GroupViewController controller = loader.getController();
+
+            controller.setNavigationCallback(this::showGroupProfileView);
+
+            mainBorderPane.setCenter(view);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static class TaskCell extends ListCell<Task> {
-        private Node cardNode;
-        private TaskCardController cardController;
+    @FXML
+    private void showActiveTasks(){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-view.fxml"));
+            Parent view = loader.load();
 
-        public TaskCell() {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task-card.fxml"));
-                cardNode = loader.load();
-                cardController = loader.getController();
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            TaskViewController controller = loader.getController();
+
+            // Використовуємо згенерований Lombok'ом метод setNavigationCallback
+            controller.setNavigationCallback(this::showTaskProfileView);
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        @Override
-        protected void updateItem(Task task, boolean empty) {
-            super.updateItem(task, empty);
+    @FXML
+    private void showTasksArchive(){
+        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/task/tasks-archive.fxml");
+    }
 
-            if (empty || task == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                cardController.setData(task);
-                setGraphic(cardNode);
-            }
+    @FXML
+    private void showCalendar(){
+        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/calendar/calendar.fxml");
+    }
+
+    @FXML
+    private void showLogs(){
+        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/logs/logs.fxml");
+    }
+
+    @FXML
+    private void showUsers() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"));
+            Parent view = loader.load();
+            UserViewController controller = loader.getController();
+            controller.setNavigationCallback(this::loadUserProfileView);
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setupRoleBasedUI() {
+        if (session.getCurrentUserRole().equals("ROLE_ADMIN")) {
+            usersButton.setVisible(true);
+            usersButton.setManaged(true);
+            teamButton.setText("Team's");
+            calendarButton.setVisible(false);
+            calendarButton.setManaged(false);
+        }
+    }
+
+    public void showTaskProfileView(Task task) {
+        if (task == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-profile.fxml"));
+            Parent view = loader.load();
+
+            TaskProfileController controller = loader.getController();
+
+            // Передаємо базовий об'єкт Task у контролер профілю
+            controller.initData(task);
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadViewToCenter(String fxmlFileName) {
+        try {
+            Parent view = WindowRenderer.loadViewInternal(fxmlFileName);
+            mainBorderPane.setCenter(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void loadUserProfileView(Integer userId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-profile.fxml"));
+            Parent view = loader.load();
+            UserProfileController controller = loader.getController();
+            controller.initData(userId);
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showGroupProfileView(int groupId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-profile.fxml"));
+            Parent view = loader.load();
+
+            GroupProfileController controller = loader.getController();
+            controller.initData(groupId); // Передаємо ID
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.Task;
+import com.vitaliioleksenko.csp.client.model.TaskDetails;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;
@@ -19,7 +20,7 @@ public class TaskService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public Task getTaskById(int id) throws IOException {
+    public TaskDetails getTaskById(int id) throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/" + id)
                 .build();
@@ -30,13 +31,23 @@ public class TaskService {
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
-            return objectMapper.readValue(response.body().string(), Task.class);
+            return objectMapper.readValue(response.body().string(), TaskDetails.class);
         }
     }
 
-    public List<Task> getMyTasks() throws IOException{
+
+    public List<Task> getTasks(Integer userId, Integer teamId) throws IOException{
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
+
+        if (teamId != null) {
+            urlBuilder.addQueryParameter("groupId", teamId.toString());
+        }
+        if (userId != null) {
+            urlBuilder.addQueryParameter("userId", userId.toString());
+        }
+
         Request request = new Request.Builder()
-                .url(BASE_URL + "/my")
+                .url(urlBuilder.build())
                 .build();
 
         try (Response response = client.newCall(request).execute()) {

@@ -1,5 +1,7 @@
-package com.vitaliioleksenko.csp.client.controller;
+package com.vitaliioleksenko.csp.client.controller.auth;
 
+import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.LoginRequest;
 import com.vitaliioleksenko.csp.client.util.RegisterRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
@@ -59,6 +61,8 @@ public class RegisterController {
         if (register(registerRequest)) {
             errorLabel.setVisible(false);
             authService.login(new LoginRequest(email, password));
+            User user = authService.me();
+            UserSession.getInstance().login(user);
             WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
         } else {
             showError("Wrong email or password");
@@ -67,7 +71,7 @@ public class RegisterController {
 
     @FXML
     public void handleLogin(){
-        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/login.fxml");
+        WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/auth/login.fxml");
     }
 
     private void showError(String message) {

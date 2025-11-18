@@ -11,7 +11,7 @@
         style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.vitaliioleksenko.csp.client.controller.TaskCardController">
+        fx:controller="com.vitaliioleksenko.csp.client.controller.task.TaskCardController">
     <children>
 
         <VBox

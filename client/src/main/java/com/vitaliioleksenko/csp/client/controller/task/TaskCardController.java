@@ -1,9 +1,9 @@
-package com.vitaliioleksenko.csp.client.controller;
+package com.vitaliioleksenko.csp.client.controller.task;
 
 import com.vitaliioleksenko.csp.client.model.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 
 public class TaskCardController {
@@ -14,26 +14,17 @@ public class TaskCardController {
     @FXML private Label dateLabel;
     @FXML private Label statusLabel;
 
-    // Форматер для LocalDateTime (змінено з LocalDate)
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
 
-    /**
-     * Заповнює FXML-картку даними з об'єкта Task
-     */
     public void setData(Task task) {
         taskTitleLabel.setText(task.getTitle());
         groupNameLabel.setText("task.getGroupName()");
         descriptionLabel.setText(task.getDescription());
-        statusLabel.setText(task.getStatus().toUpperCase()); // Наприклад, "NEW", "IN_PROGRESS"
+        statusLabel.setText(task.getStatus().toUpperCase());
         dateLabel.setText(task.getDeadline().format(formatter));
 
-        // Додамо трохи стилізації для статусу
         updateStatusStyle(task.getStatus());
     }
-
-    /**
-     * (Необов'язково) Допоміжний метод для кольорового статусу
-     */
     private void updateStatusStyle(String status) {
         String style = "-fx-text-fill: #FFFFFF; -fx-background-radius: 4; -fx-padding: 2 5;";
 

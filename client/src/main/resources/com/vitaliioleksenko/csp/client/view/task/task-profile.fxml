@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane style="-fx-background-color: #FAFAFA;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitaliioleksenko.csp.client.controller.task.TaskProfileController">
+    <children>
+        <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+
+            <!-- 1. ШАПКА ЗАВДАННЯ -->
+            <VBox spacing="5.0">
+                <children>
+                    <Label fx:id="taskTitleLabel" text="Завантаження назви завдання...">
+                        <font>
+                            <Font name="System Bold" size="28.0" />
+                        </font>
+                    </Label>
+                    <HBox spacing="10.0">
+                        <children>
+                            <Label fx:id="groupNameLabel" text="Група:" textFill="#555555">
+                                <font>
+                                    <Font name="System Italic" size="14.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="deadlineLabel" text="Дедлайн:" textFill="#D32F2F">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+
+            <Separator />
+
+            <!-- 2. ПАНЕЛІ ДІЙ (КОНТЕКСТНІ) -->
+            <HBox spacing="10.0">
+                <!-- 2.1 ПАНЕЛЬ АДМІНА (прихована за замовчуванням) -->
+                <HBox fx:id="adminActionsBox" managed="false" spacing="10.0" visible="false">
+                    <children>
+                        <Button mnemonicParsing="false" text="Редагувати завдання" />
+                        <Button mnemonicParsing="false" text="Додати матеріал" />
+                    </children>
+                </HBox>
+                <!-- 2.2 ПАНЕЛЬ ЮЗЕРА (прихована за замовчуванням) -->
+                <VBox fx:id="submissionBox" managed="false" spacing="8.0" style="-fx-border-color: #E0E0E0; -fx-border-radius: 5; -fx-padding: 10;" visible="false">
+                    <children>
+                        <Label text="Здати роботу:">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <HBox spacing="10.0">
+                            <children>
+                                <Button mnemonicParsing="false" text="Додати посилання" />
+                                <Button mnemonicParsing="false" text="Завантажити файл" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </HBox>
+
+            <!-- 3. ОПИС І РЕСУРСИ -->
+            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                <!-- 3.1 ОПИС -->
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Опис завдання:">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Label>
+                        <TextArea fx:id="descriptionArea" editable="false" prefHeight="400.0" wrapText="true" />
+                    </children>
+                </VBox>
+
+                <!-- 3.2 РЕСУРСИ (РОЗДІЛЕНІ) -->
+                <VBox minWidth="-Infinity" prefWidth="300.0" spacing="10.0">
+                    <children>
+                        <!-- МАТЕРІАЛИ ВІД АДМІНА -->
+                        <VBox>
+                            <children>
+                                <Label text="Матеріали до завдання:">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Label>
+                                <ListView fx:id="materialsListView" prefHeight="180.0" />
+                            </children>
+                        </VBox>
+                        <!-- ЗДАНІ РОБОТИ -->
+                        <VBox>
+                            <children>
+                                <Label text="Здані роботи:">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Label>
+                                <ListView fx:id="submissionsListView" prefHeight="180.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -4,11 +4,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Task {
     private int taskId;
     private String title;

@@ -1,17 +1,16 @@
 package com.vitaliioleksenko.csp.client.model;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Group {
     private int groupId;
     private String name;
     private String description;
-    private LocalDateTime createdAt;
+    private int memberCount;
 }
