@@ -1,34 +1,33 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.GroupDTO;
-import com.vitalioleksenko.csp.dto.TaskDTO;
+import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
+import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
 import com.vitalioleksenko.csp.models.Group;
-import com.vitalioleksenko.csp.models.Membership;
-import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.services.GroupsService;
+import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.util.ErrorBuilder;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/group")
 public class GroupsController {
     private final GroupsService groupsService;
-    private final ModelMapper modelMapper;
+    private final AppMapper mapper;
+
 
     @Autowired
-    public GroupsController(GroupsService groupsService, ModelMapper modelMapper) {
+    public GroupsController(GroupsService groupsService, @Qualifier("appMapperImpl") AppMapper mapper) {
         this.groupsService = groupsService;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     @PostMapping("")
@@ -45,16 +44,16 @@ public class GroupsController {
     }
 
     @GetMapping("")
-    public List<GroupDTO> readAll(@RequestParam(name = "userId", required = false) Integer userId){
+    public List<GroupPartialDTO> readAll(@RequestParam(name = "userId", required = false) Integer userId){
         if(userId != null){
-            return groupsService.findAllByMember(userId).stream().map(this::convertToGroupDTO).collect(Collectors.toList());
+            return mapper.toGroupPartialList(groupsService.findAllByMember(userId));
         }
-        return groupsService.findAll().stream().map(this::convertToGroupDTO).collect(Collectors.toList());
+        return mapper.toGroupPartialList(groupsService.findAll());
     }
 
     @GetMapping("/{id}")
-    public GroupDTO readOne(@PathVariable("id") int id){
-        return convertToGroupDTO(groupsService.findById(id));
+    public GroupDetailedDTO readOne(@PathVariable("id") int id){
+        return mapper.toGroupDetailed(groupsService.findById(id));
     }
 
     @PatchMapping("/{id}")
@@ -77,12 +76,4 @@ public class GroupsController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
-    private Group convertToGroup(GroupDTO groupDTO) {
-        return modelMapper.map(groupDTO, Group.class);
-    }
-
-    private GroupDTO convertToGroupDTO(Group group) {
-        return modelMapper.map(group, GroupDTO.class);
-    }
 }

@@ -1,7 +1,10 @@
 package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.UserDTO;
+import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
 import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
+import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.models.User;
@@ -10,6 +13,8 @@ import com.vitalioleksenko.csp.util.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,56 +29,47 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/user")
 public class UsersController {
     private final UsersService usersService;
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
-    private final AppMapper mapper;
 
     @Autowired
-    public UsersController(UsersService usersService, PasswordEncoder passwordEncoder, ModelMapper modelMapper, AppMapper mapper) {
+    public UsersController(UsersService usersService) {
         this.usersService = usersService;
-        this.passwordEncoder = passwordEncoder;
-        this.modelMapper = modelMapper;
-        this.mapper = mapper;
     }
 
     @PostMapping("")
-    public ResponseEntity<HttpStatus> create(@RequestBody  @Valid User user,
+    public ResponseEntity<HttpStatus> create(@RequestBody  @Valid UserCreateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
                 ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
-        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
-        user.setPasswordHash(passwordHash);
-
-        usersService.save(user);
+        usersService.save(dto);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("")
-    public List<UserDTO> readAll(){
-        return usersService.findAll().stream().map(this::convertToUserDTO).collect(Collectors.toList());
+    public Page<UserPartialDTO> readAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search) {
+        return usersService.getUsers(page, size, search);
     }
 
     @GetMapping("/{id}")
     public UserDetailedDTO readOne(@PathVariable("id") int id){
-        return mapper.toUserDetailed(usersService.findById(id));
+        return usersService.findById(id);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
-                                             @RequestBody  @Valid User user,
+                                             @RequestBody  @Valid UserUpdateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
                 ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
-        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
-        user.setPasswordHash(passwordHash);
-
-        usersService.edit(user, id);
+        usersService.edit(dto, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -81,17 +77,5 @@ public class UsersController {
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         usersService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-    private UserDetailedDTO convertToUserDetailedDTO(User user) {
-        return modelMapper.map(user, UserDetailedDTO.class);
-    }
-
-    private User convertToUser(UserDTO userDTO) {
-        return modelMapper.map(userDTO, User.class);
-    }
-
-    private UserDTO convertToUserDTO(User user) {
-        return modelMapper.map(user, UserDTO.class);
     }
 }

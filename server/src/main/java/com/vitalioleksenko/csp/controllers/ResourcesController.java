@@ -1,12 +1,16 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourcePartialDTO;
 import com.vitalioleksenko.csp.models.Resource;
 import com.vitalioleksenko.csp.services.ResourcesService;
+import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.util.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,12 +22,12 @@ import java.util.List;
 @RequestMapping("/api/resource")
 public class ResourcesController {
     private final ResourcesService resourcesService;
-    private final ModelMapper modelMapper;
+    private final AppMapper mapper;
 
     @Autowired
-    public ResourcesController(ResourcesService resourcesService, ModelMapper modelMapper) {
+    public ResourcesController(ResourcesService resourcesService, @Qualifier("appMapperImpl") AppMapper mapper) {
         this.resourcesService = resourcesService;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     @PostMapping("")
@@ -40,13 +44,13 @@ public class ResourcesController {
     }
 
     @GetMapping("")
-    public List<Resource> readAll(){
-        return resourcesService.findAll();
+    public List<ResourcePartialDTO> readAll(){
+        return mapper.toResourcePartialList(resourcesService.findAll());
     }
 
     @GetMapping("/{id}")
-    public Resource readOne(@PathVariable("id") int id){
-        return resourcesService.findById(id);
+    public ResourceDetailedDTO readOne(@PathVariable("id") int id){
+        return mapper.toResourceDetailed(resourcesService.findById(id));
     }
 
     @PatchMapping("/{id}")

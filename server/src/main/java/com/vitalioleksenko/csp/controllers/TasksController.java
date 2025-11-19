@@ -1,36 +1,32 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.TaskDTO;
-import com.vitalioleksenko.csp.dto.UserDTO;
+import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
+import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.models.Task;
-import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.security.CustomUserDetails;
 import com.vitalioleksenko.csp.services.TasksService;
+import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.BadRequestException;
 import com.vitalioleksenko.csp.util.ErrorBuilder;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/task")
 public class TasksController {
     private final TasksService tasksService;
-    private final ModelMapper modelMapper;
+    private final AppMapper mapper;
 
     @Autowired
-    public TasksController(TasksService tasksService, ModelMapper modelMapper) {
+    public TasksController(TasksService tasksService, @Qualifier("appMapperImpl") AppMapper mapper) {
         this.tasksService = tasksService;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     @PostMapping("")
@@ -47,30 +43,25 @@ public class TasksController {
     }
 
     @GetMapping("")
-    public List<TaskDTO> readAll(
+    public List<TaskPartialDTO> readAll(
             @RequestParam(name = "groupId", required = false) Integer groupId,
             @RequestParam(name = "userId", required = false) Integer userId) {
 
         if (groupId != null && userId != null) {
-            return tasksService.findByUserAndGroup(userId, groupId)
-                    .stream().map(this::convertToTaskDTO).toList();
+            return mapper.toTaskPartialList(tasksService.findByUserAndGroup(userId, groupId));
         }
         if (groupId != null) {
-            return tasksService.findByGroup(groupId)
-                    .stream().map(this::convertToTaskDTO).toList();
+            return mapper.toTaskPartialList(tasksService.findByGroup(groupId));
         }
         if (userId != null) {
-            return tasksService.findByUser(userId)
-                    .stream().map(this::convertToTaskDTO).toList();
+            return mapper.toTaskPartialList(tasksService.findByUser(userId));
         }
-
-        return tasksService.findAll()
-                .stream().map(this::convertToTaskDTO).toList();
+        return mapper.toTaskPartialList(tasksService.findAll());
     }
 
     @GetMapping("/{id}")
-    public TaskDTO readOne(@PathVariable("id") int id){
-        return convertToTaskDTO(tasksService.findById(id));
+    public TaskDetailedDTO readOne(@PathVariable("id") int id){
+        return mapper.toTaskDetailed(tasksService.findById(id));
     }
 
     @PatchMapping("/{id}")
@@ -91,14 +82,5 @@ public class TasksController {
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         tasksService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-
-    private Task convertToTask(TaskDTO taskDTO) {
-        return modelMapper.map(taskDTO, Task.class);
-    }
-
-    private TaskDTO convertToTaskDTO(Task task) {
-        return modelMapper.map(task, TaskDTO.class);
     }
 }

@@ -14,28 +14,35 @@ import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
 import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.dto.task.TaskShortDTO;
-import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
-import com.vitalioleksenko.csp.dto.user.UserShortDTO;
+import com.vitalioleksenko.csp.dto.user.*;
 import com.vitalioleksenko.csp.models.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = AppMapper.class)
 public interface AppMapper {
 
     // ================= User =================
     UserShortDTO toUserShort(User user);
-
-    @Mapping(target = "createdGroups", source = "createdGroups")
-    @Mapping(target = "tasks", source = "tasks")
-    @Mapping(target = "resources", source = "resources")
-    @Mapping(target = "activities", source = "activities")
+    UserPartialDTO toUserPartial(User user);
     UserDetailedDTO toUserDetailed(User user);
 
     List<UserShortDTO> toUserShortList(List<User> users);
+    List<UserPartialDTO> toUserPartialList(List<User> users);
     List<UserDetailedDTO> toUserDetailedList(List<User> users);
+
+    @Mapping(source = "password", target = "passwordHash")
+    User toUser(UserCreateDTO dto);
+
+    @Mapping(source = "password", target = "passwordHash", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "email", target = "email", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "name", target = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "role", target = "role", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserFromDto(UserUpdateDTO dto, @MappingTarget User user);
 
     // ================= Group =================
     GroupShortDTO toGroupShort(Group group);

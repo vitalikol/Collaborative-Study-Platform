@@ -1,36 +1,18 @@
 package com.vitalioleksenko.csp.dto.user;
 
-import com.vitalioleksenko.csp.dto.activity.ActivityLogShortDTO;
-import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
-import com.vitalioleksenko.csp.dto.membership.MembershipShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
-import com.vitalioleksenko.csp.dto.task.TaskShortDTO;
-import com.vitalioleksenko.csp.models.*;
 import com.vitalioleksenko.csp.security.Role;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDetailedDTO {
-    private int userId;
-
-    private List<GroupShortDTO> createdGroups;
-
-    private List<TaskShortDTO> tasks;
-
-    private List<ResourceShortDTO> resources;
-
-    private List<ActivityLogShortDTO> activities;
-
+public class UserCreateDTO {
     @NotEmpty(message = "Name must not be empty")
     @Size(min = 5, message = "Name must be at least 5 characters long")
     private String name;
@@ -40,6 +22,8 @@ public class UserDetailedDTO {
     //@UniqueValue(message = "Email must be unique", fieldName = "email", entityClass = User.class)
     private String email;
 
-    private Role role;
+    @NotEmpty(message = "Password must not be empty")
+    private String password;
 
+    private Role role;
 }

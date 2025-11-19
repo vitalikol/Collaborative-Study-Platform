@@ -1,5 +1,8 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
+import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.AuthenticationRequest;
 import com.vitalioleksenko.csp.dto.UserDTO;
 import com.vitalioleksenko.csp.security.CustomUserDetails;
@@ -37,13 +40,15 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final UsersService usersService;
     private final ModelMapper modelMapper;
+    private final UsersRepository usersRepository;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UsersService usersService, ModelMapper modelMapper) {
+    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UsersService usersService, ModelMapper modelMapper, UsersRepository usersRepository) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.usersService = usersService;
         this.modelMapper = modelMapper;
+        this.usersRepository = usersRepository;
     }
 
     @PostMapping("/login")
@@ -71,7 +76,7 @@ public class AuthController {
         User newUser = new User();
         modelMapper.map(request, newUser);
         newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        usersService.save(newUser);
+        usersRepository.save(newUser);
 
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
@@ -87,11 +92,11 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> me(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<UserDetailedDTO> me(@AuthenticationPrincipal CustomUserDetails user) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserDTO dto = convertToUserDTO(usersService.findById(user.getId()));
+        UserDetailedDTO dto = usersService.findById(user.getId());
         return ResponseEntity.ok(dto);
     }
 
