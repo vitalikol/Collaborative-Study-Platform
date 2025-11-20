@@ -3,15 +3,16 @@ package com.vitalioleksenko.csp.controllers;
 import com.vitalioleksenko.csp.dto.user.AuthenticationRequest;
 import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
 import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
+import com.vitalioleksenko.csp.security.CustomUserDetails;
 import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.services.ActivitiesLogsService;
-import com.vitalioleksenko.csp.util.*;
-import com.vitalioleksenko.csp.security.CustomUserDetails;
-import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.services.UsersService;
+import com.vitalioleksenko.csp.util.AppMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/auth")

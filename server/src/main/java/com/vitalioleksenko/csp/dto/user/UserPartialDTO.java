@@ -1,8 +1,6 @@
 package com.vitalioleksenko.csp.dto.user;
 
-import com.vitalioleksenko.csp.models.*;
 import com.vitalioleksenko.csp.security.Role;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

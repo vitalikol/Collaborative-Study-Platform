@@ -1,6 +1,5 @@
 package com.vitalioleksenko.csp.dto.group;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 

@@ -1,8 +1,6 @@
 package com.vitalioleksenko.csp.dto.activity;
 
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import com.vitalioleksenko.csp.models.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 

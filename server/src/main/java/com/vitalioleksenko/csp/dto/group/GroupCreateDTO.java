@@ -1,16 +1,8 @@
 package com.vitalioleksenko.csp.dto.group;
 
-import com.vitalioleksenko.csp.dto.membership.MembershipShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
-import com.vitalioleksenko.csp.dto.task.TaskShortDTO;
-import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

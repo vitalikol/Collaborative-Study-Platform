@@ -1,11 +1,8 @@
 package com.vitalioleksenko.csp.dto.activity;
 
-import com.vitalioleksenko.csp.models.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

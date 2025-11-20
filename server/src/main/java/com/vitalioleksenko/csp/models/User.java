@@ -1,7 +1,6 @@
 package com.vitalioleksenko.csp.models;
 
 import com.vitalioleksenko.csp.security.Role;
-import com.vitalioleksenko.csp.validation.UniqueValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

@@ -15,7 +15,10 @@ import com.vitalioleksenko.csp.models.*;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

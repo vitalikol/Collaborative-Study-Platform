@@ -1,17 +1,11 @@
 package com.vitalioleksenko.csp.dto.group;
 
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import com.vitalioleksenko.csp.models.Membership;
-import com.vitalioleksenko.csp.models.Resource;
-import com.vitalioleksenko.csp.models.Task;
-import com.vitalioleksenko.csp.models.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
