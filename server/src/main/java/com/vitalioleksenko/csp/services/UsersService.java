@@ -6,6 +6,7 @@ import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
 import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
+import com.vitalioleksenko.csp.security.CustomUserDetails;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +27,14 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final AppMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final ActivitiesLogsService activitiesLogsService;
 
     @Autowired
-    public UsersService(UsersRepository usersRepository, @Qualifier("appMapperImpl") AppMapper appMapper, PasswordEncoder passwordEncoder) {
+    public UsersService(UsersRepository usersRepository, @Qualifier("appMapperImpl") AppMapper appMapper, PasswordEncoder passwordEncoder, ActivitiesLogsService activitiesLogsService) {
         this.usersRepository = usersRepository;
         this.mapper = appMapper;
         this.passwordEncoder = passwordEncoder;
+        this.activitiesLogsService = activitiesLogsService;
     }
 
     @Transactional
@@ -37,6 +43,10 @@ public class UsersService {
         String passwordHash = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(passwordHash);
         usersRepository.save(user);
+        activitiesLogsService.log(
+                "USER_CREATED",
+                "Created user with ID: " + user.getUserId()
+        );
     }
 
     public Page<UserPartialDTO> getUsers(int page, int size, String search){
@@ -64,10 +74,21 @@ public class UsersService {
         User user = usersRepository.findById(id).orElseThrow(NotFoundException::new);
         mapper.updateUserFromDto(updatedUser, user);
         usersRepository.save(user);
+        activitiesLogsService.log(
+                "USER_EDITED",
+                "Edited user with ID: " + user.getUserId()
+        );
     }
 
     @Transactional
-    public void remove(int id){
-        usersRepository.deleteById(id);
+    public boolean remove(int id){
+        return usersRepository.findById(id).map(user -> {
+            usersRepository.delete(user);
+            activitiesLogsService.log(
+                    "USER_DELETED",
+                    "Deleted user with id " + id
+            );
+            return true;
+        }).orElse(false);
     }
 }

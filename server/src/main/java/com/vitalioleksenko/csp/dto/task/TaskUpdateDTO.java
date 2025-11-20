@@ -1,14 +1,8 @@
 package com.vitalioleksenko.csp.dto.task;
 
-import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
-import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import com.vitalioleksenko.csp.models.Group;
-import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.TaskStatus;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -19,15 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TaskPartialDTO {
-    private int taskId;
-
-    private GroupShortDTO group;
-
-    private UserShortDTO user;
-
+public class TaskUpdateDTO {
     @Size(min = 5, message = "Title must be at least 5 characters long")
     private String title;
+
+    @Size(min = 40, message = "Description must be at least 40 characters long")
+    private String description;
 
     private TaskStatus status;
 

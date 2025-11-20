@@ -1,7 +1,9 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
 import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
+import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.services.TasksService;
 import com.vitalioleksenko.csp.util.AppMapper;
@@ -10,6 +12,7 @@ import com.vitalioleksenko.csp.util.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,16 +24,14 @@ import java.util.List;
 @RequestMapping("/api/task")
 public class TasksController {
     private final TasksService tasksService;
-    private final AppMapper mapper;
 
     @Autowired
-    public TasksController(TasksService tasksService, @Qualifier("appMapperImpl") AppMapper mapper) {
+    public TasksController(TasksService tasksService) {
         this.tasksService = tasksService;
-        this.mapper = mapper;
     }
 
     @PostMapping("")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid Task task,
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid TaskCreateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
@@ -38,35 +39,27 @@ public class TasksController {
             );
         }
 
-        tasksService.save(task);
+        tasksService.save(dto);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("")
-    public List<TaskPartialDTO> readAll(
-            @RequestParam(name = "groupId", required = false) Integer groupId,
-            @RequestParam(name = "userId", required = false) Integer userId) {
-
-        if (groupId != null && userId != null) {
-            return mapper.toTaskPartialList(tasksService.findByUserAndGroup(userId, groupId));
-        }
-        if (groupId != null) {
-            return mapper.toTaskPartialList(tasksService.findByGroup(groupId));
-        }
-        if (userId != null) {
-            return mapper.toTaskPartialList(tasksService.findByUser(userId));
-        }
-        return mapper.toTaskPartialList(tasksService.findAll());
+    public Page<TaskPartialDTO> readAll(
+            @RequestParam(required = false) Integer groupId,
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return tasksService.getTasks(groupId, userId, page, size);
     }
 
     @GetMapping("/{id}")
     public TaskDetailedDTO readOne(@PathVariable("id") int id){
-        return mapper.toTaskDetailed(tasksService.findById(id));
+        return tasksService.getById(id);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
-                                             @RequestBody  @Valid Task task,
+                                             @RequestBody  @Valid TaskUpdateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
@@ -74,7 +67,7 @@ public class TasksController {
             );
         }
 
-        tasksService.edit(task, id);
+        tasksService.edit(dto, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

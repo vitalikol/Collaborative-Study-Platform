@@ -1,7 +1,9 @@
 package com.vitalioleksenko.csp.models;
 
+import com.vitalioleksenko.csp.util.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -39,11 +41,10 @@ public class Task {
     private String description;
 
     @Column(name = "status")
-    @NotEmpty(message = "Status must not be empty")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
-    @Column(name = "deadline")
-    @NotEmpty(message = "Deadline must not be empty")
+    @Column(name = "deadline",  columnDefinition = "TEXT")
     private LocalDateTime deadline;
 
     @Column(name = "created_at")
