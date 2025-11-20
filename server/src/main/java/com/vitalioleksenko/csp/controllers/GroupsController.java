@@ -4,21 +4,16 @@ import com.vitalioleksenko.csp.dto.group.GroupCreateDTO;
 import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
 import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
 import com.vitalioleksenko.csp.dto.group.GroupUpdateDTO;
-import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.services.GroupsService;
-import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.BadRequestException;
-import com.vitalioleksenko.csp.util.ErrorBuilder;
+import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
+import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/group")

@@ -4,24 +4,20 @@ import com.vitalioleksenko.csp.dto.activity.ActivityLogDetailedDTO;
 import com.vitalioleksenko.csp.dto.activity.ActivityLogPartialDTO;
 import com.vitalioleksenko.csp.dto.activity.ActivityLogShortDTO;
 import com.vitalioleksenko.csp.dto.group.*;
+import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
 import com.vitalioleksenko.csp.dto.membership.MembershipDTO;
 import com.vitalioleksenko.csp.dto.membership.MembershipShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourcePartialDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
+import com.vitalioleksenko.csp.dto.membership.MembershipUpdateDTO;
+import com.vitalioleksenko.csp.dto.resource.*;
 import com.vitalioleksenko.csp.dto.task.*;
 import com.vitalioleksenko.csp.dto.user.*;
 import com.vitalioleksenko.csp.models.*;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -50,6 +46,8 @@ public abstract class AppMapper {
     @Mapping(source = "name", target = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "role", target = "role", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void updateUserFromDto(UserUpdateDTO dto, @MappingTarget User user);
+
+
 
     // ================= Group =================
     public abstract GroupShortDTO toGroupShort(Group group);
@@ -98,12 +96,31 @@ public abstract class AppMapper {
     public abstract List<ResourcePartialDTO> toResourcePartialList(List<Resource> resources);
     public abstract List<ResourceDetailedDTO> toResourceDetailedList(List<Resource> resources);
 
+    @Mapping(target = "group", expression = "java(getGroup(dto.getGroupId()))")
+    @Mapping(target = "user", expression = "java(getUser(dto.getUserId()))")
+    @Mapping(target = "uploadedAt", expression = "java(java.time.LocalDateTime.now())")
+    public abstract Resource toResource(ResourceCreateDTO dto);
+
+    @Mapping(source = "title", target = "title", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "type", target = "type", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "format", target = "format", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "pathOrUrl", target = "pathOrUrl", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract void updateResourceFromDto(ResourceUpdateDTO dto, @MappingTarget Resource resource);
+
     // ================= Membership =================
     public abstract MembershipShortDTO toMembershipShort(Membership membership);
     public abstract MembershipDTO toMembership(Membership membership);
 
     public abstract List<MembershipShortDTO> toMembershipShortList(List<Membership> memberships);
     public abstract List<MembershipDTO> toMembership(List<Membership> memberships);
+
+    @Mapping(target = "group", expression = "java(getGroup(dto.getGroupId()))")
+    @Mapping(target = "user", expression = "java(getUser(dto.getUserId()))")
+    @Mapping(target = "joinedAt", expression = "java(java.time.LocalDateTime.now())")
+    public abstract Membership toMembership(MembershipCreateDTO dto);
+
+    @Mapping(source = "role", target = "role", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract void updateMembershipFromDto(MembershipUpdateDTO dto, @MappingTarget Membership membership);
 
     // ================= ActivityLog =================
     public abstract ActivityLogShortDTO toActivityLogShort(ActivityLog log);

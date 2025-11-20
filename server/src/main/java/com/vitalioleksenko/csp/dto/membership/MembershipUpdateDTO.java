@@ -1,7 +1,5 @@
 package com.vitalioleksenko.csp.dto.membership;
-
 import com.vitalioleksenko.csp.util.enums.GroupRole;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,9 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MembershipShortDTO {
-    private int membershipId;
-
-    @NotNull(message = "Role must not be empty")
+public class MembershipUpdateDTO {
     private GroupRole role;
 }

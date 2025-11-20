@@ -4,21 +4,16 @@ import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
 import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
-import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.services.TasksService;
-import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.BadRequestException;
-import com.vitalioleksenko.csp.util.ErrorBuilder;
+import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
+import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/task")

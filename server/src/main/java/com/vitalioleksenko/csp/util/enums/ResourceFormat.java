@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.util;
+package com.vitalioleksenko.csp.util.enums;
 
 public enum ResourceFormat {
     URL,

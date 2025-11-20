@@ -2,11 +2,8 @@ package com.vitalioleksenko.csp.dto.resource;
 
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import com.vitalioleksenko.csp.models.Group;
-import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.util.ResourceFormat;
-import com.vitalioleksenko.csp.util.ResourceType;
-import jakarta.persistence.*;
+import com.vitalioleksenko.csp.util.enums.ResourceFormat;
+import com.vitalioleksenko.csp.util.enums.ResourceType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;

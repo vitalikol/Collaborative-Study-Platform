@@ -1,8 +1,6 @@
 package com.vitalioleksenko.csp.dto.task;
 
-import com.vitalioleksenko.csp.util.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotEmpty;
+import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 

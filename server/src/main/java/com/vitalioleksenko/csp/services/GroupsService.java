@@ -5,11 +5,9 @@ import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
 import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
 import com.vitalioleksenko.csp.dto.group.GroupUpdateDTO;
 import com.vitalioleksenko.csp.models.Group;
-import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.NotFoundException;
-import org.modelmapper.ModelMapper;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -17,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +33,7 @@ public class GroupsService {
     @Transactional
     public void save(GroupCreateDTO dto){
         Group group = mapper.toGroup(dto);
-        Group saved = groupsRepository.save(group);
+        groupsRepository.save(group);
         activitiesLogsService.log(
                 "GROUP_CREATED",
                 "Created group with ID: " + group.getGroupId()
@@ -67,7 +63,7 @@ public class GroupsService {
         groupsRepository.save(group);
 
         activitiesLogsService.log(
-                "GROUP_UPDATED",
+                "GROUP_EDITED",
                 "Edited group with ID: " + group.getGroupId()
         );
     }

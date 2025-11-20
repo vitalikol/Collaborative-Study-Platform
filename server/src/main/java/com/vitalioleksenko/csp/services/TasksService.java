@@ -4,15 +4,10 @@ import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
 import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
-import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.models.Task;
-import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.repositories.TasksRepository;
-import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.NotFoundException;
-import org.modelmapper.ModelMapper;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -20,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,8 +33,7 @@ public class TasksService {
     @Transactional
     public void save(TaskCreateDTO dto){
         Task task = mapper.toTask(dto);
-        Task saved = tasksRepository.save(task);
-        mapper.toTaskDetailed(saved);
+        tasksRepository.save(task);
         activitiesLogsService.log(
                 "TASK_CREATED",
                 "Created task with ID: " + task.getTaskId()

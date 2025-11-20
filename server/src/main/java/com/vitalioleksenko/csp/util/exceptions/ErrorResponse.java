@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.util;
+package com.vitalioleksenko.csp.util.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

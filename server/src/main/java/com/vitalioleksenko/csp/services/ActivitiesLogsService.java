@@ -1,41 +1,51 @@
 package com.vitalioleksenko.csp.services;
 
+import com.vitalioleksenko.csp.dto.activity.ActivityLogDetailedDTO;
+import com.vitalioleksenko.csp.dto.activity.ActivityLogPartialDTO;
 import com.vitalioleksenko.csp.models.ActivityLog;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.ActivitiesLogsRepository;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.CustomUserDetails;
-import com.vitalioleksenko.csp.util.NotFoundException;
-import org.modelmapper.ModelMapper;
+import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class ActivitiesLogsService {
     private final ActivitiesLogsRepository activitiesLogsRepository;
-    private final ModelMapper modelMapper;
     private final UsersRepository usersRepository;
+    private final AppMapper mapper;
 
     @Autowired
-    public ActivitiesLogsService(ActivitiesLogsRepository activitiesLogsTaskRepository, ModelMapper modelMapper, UsersRepository usersRepository) {
+    public ActivitiesLogsService(ActivitiesLogsRepository activitiesLogsTaskRepository, UsersRepository usersRepository, @Qualifier("appMapperImpl") AppMapper mapper) {
         this.activitiesLogsRepository = activitiesLogsTaskRepository;
-        this.modelMapper = modelMapper;
         this.usersRepository = usersRepository;
+        this.mapper = mapper;
     }
 
     @Transactional
     public void log(String action, String details) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new NotFoundException();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            ActivityLog log = new ActivityLog();
+            log.setUser(null);
+            log.setAction(action);
+            log.setDetails(details + " (anonymous)");
+            log.setTimestamp(LocalDateTime.now());
+            activitiesLogsRepository.save(log);
+            return;
         }
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User user = usersRepository.findById(userDetails.getId()).orElseThrow(NotFoundException::new);
@@ -43,34 +53,27 @@ public class ActivitiesLogsService {
         ActivityLog log = new ActivityLog();
         log.setUser(user);
         log.setAction(action);
-        log.setDetails(details + " by user with id " + user.getUserId());
+        log.setDetails(details + " by user with ID: " + user.getUserId());
         log.setTimestamp(LocalDateTime.now());
 
         activitiesLogsRepository.save(log);
     }
 
-    @Transactional
-    public void save(ActivityLog activityLog){
-        activitiesLogsRepository.save(activityLog);
+    public Page<ActivityLogPartialDTO> findAll(Integer userId, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ActivityLog> result;
+
+        if (userId != null) {
+            result = activitiesLogsRepository.findByUser_UserId(userId, pageable);
+        } else {
+            result = activitiesLogsRepository.findAll(pageable);
+        }
+
+        return result.map(mapper::toActivityLogPartial);
     }
 
-    public List<ActivityLog> findAll(){
-        return activitiesLogsRepository.findAll();
-    }
-
-    public ActivityLog findById(int id){
-        return activitiesLogsRepository.findById(id).orElseThrow(NotFoundException::new);
-    }
-
-    @Transactional
-    public void edit(ActivityLog updatedActivityLog, int id) {
-        ActivityLog activityLog = activitiesLogsRepository.findById(id).orElseThrow(NotFoundException::new);
-        modelMapper.map(updatedActivityLog, activityLog);
-        activitiesLogsRepository.save(activityLog);
-    }
-
-    @Transactional
-    public void remove(int id){
-        activitiesLogsRepository.deleteById(id);
+    public ActivityLogDetailedDTO findById(int id){
+        ActivityLog log = activitiesLogsRepository.findById(id).orElseThrow(NotFoundException::new);
+        return mapper.toActivityLogDetailed(log);
     }
 }

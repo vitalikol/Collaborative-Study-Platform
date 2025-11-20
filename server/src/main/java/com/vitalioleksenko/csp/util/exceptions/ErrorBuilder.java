@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.util;
+package com.vitalioleksenko.csp.util.exceptions;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;

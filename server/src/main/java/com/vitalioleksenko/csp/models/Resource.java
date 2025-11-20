@@ -1,9 +1,10 @@
 package com.vitalioleksenko.csp.models;
 
-import com.vitalioleksenko.csp.util.ResourceFormat;
-import com.vitalioleksenko.csp.util.ResourceType;
+import com.vitalioleksenko.csp.util.enums.ResourceFormat;
+import com.vitalioleksenko.csp.util.enums.ResourceType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -36,12 +37,12 @@ public class Resource {
     private String title;
 
     @Column(name = "type")
-    @NotEmpty(message = "Type must not be empty")
+    @NotNull(message = "Type must not be empty")
     @Enumerated(EnumType.STRING)
     private ResourceType type;
 
     @Column(name = "format")
-    @NotEmpty(message = "Format must not be empty")
+    @NotNull(message = "Format must not be empty")
     @Enumerated(EnumType.STRING)
     private ResourceFormat format;
 

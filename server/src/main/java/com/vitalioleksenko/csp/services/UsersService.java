@@ -6,17 +6,14 @@ import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
 import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
-import com.vitalioleksenko.csp.security.CustomUserDetails;
+import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.NotFoundException;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +39,7 @@ public class UsersService {
         User user = mapper.toUser(dto);
         String passwordHash = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(passwordHash);
+        if (user.getRole() == null) user.setRole(Role.ROLE_USER);
         usersRepository.save(user);
         activitiesLogsService.log(
                 "USER_CREATED",

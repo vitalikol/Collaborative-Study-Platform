@@ -1,36 +1,32 @@
 package com.vitalioleksenko.csp.dto.resource;
 
-import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
-import com.vitalioleksenko.csp.dto.user.UserShortDTO;
 import com.vitalioleksenko.csp.util.enums.ResourceFormat;
 import com.vitalioleksenko.csp.util.enums.ResourceType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResourcePartialDTO {
-    private int resourceId;
+public class ResourceCreateDTO {
+    private Integer groupId;
 
-    private GroupShortDTO group;
-
-    private UserShortDTO user;
+    private Integer userId;
 
     @NotEmpty(message = "Title must not be empty")
     @Size(min = 5, message = "Title must be at least 5 characters long")
     private String title;
 
-    @NotEmpty(message = "Type must not be empty")
+    @NotNull(message = "Type must not be empty")
     private ResourceType type;
 
-    @NotEmpty(message = "Format must not be empty")
+    @NotNull(message = "Format must not be empty")
     private ResourceFormat format;
 
-    private LocalDateTime uploadedAt;
+    @NotEmpty(message = "Path or url must not be empty")
+    private String pathOrUrl;
 }

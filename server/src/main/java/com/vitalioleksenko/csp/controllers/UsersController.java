@@ -1,29 +1,19 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.UserDTO;
 import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
 import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
 import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
 import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
-import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.BadRequestException;
-import com.vitalioleksenko.csp.models.User;
+import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.services.UsersService;
-import com.vitalioleksenko.csp.util.ErrorBuilder;
+import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")

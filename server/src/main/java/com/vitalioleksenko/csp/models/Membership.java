@@ -1,7 +1,8 @@
 package com.vitalioleksenko.csp.models;
 
+import com.vitalioleksenko.csp.util.enums.GroupRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,9 +28,10 @@ public class Membership {
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")
     private Group group;
 
-    @NotEmpty(message = "Role must not be empty")
+    @NotNull(message = "Role must not be empty")
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private GroupRole role;
 
     @Column(name = "joined_at")
     private LocalDateTime joinedAt;

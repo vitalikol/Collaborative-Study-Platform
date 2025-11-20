@@ -1,34 +1,29 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.models.Membership;
-import com.vitalioleksenko.csp.models.Resource;
+import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
+import com.vitalioleksenko.csp.dto.membership.MembershipUpdateDTO;
 import com.vitalioleksenko.csp.services.MembershipsService;
-import com.vitalioleksenko.csp.util.BadRequestException;
-import com.vitalioleksenko.csp.util.ErrorBuilder;
+import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
+import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/membership")
 public class MembershipsController {
     private final MembershipsService membershipsService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public MembershipsController(MembershipsService membershipsService, ModelMapper modelMapper) {
+    public MembershipsController(MembershipsService membershipsService) {
         this.membershipsService = membershipsService;
-        this.modelMapper = modelMapper;
     }
 
     @PostMapping("")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid Membership membership,
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid MembershipCreateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
@@ -36,23 +31,13 @@ public class MembershipsController {
             );
         }
 
-        membershipsService.save(membership);
+        membershipsService.save(dto);
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-    @GetMapping("")
-    public List<Membership> readAll(){
-        return membershipsService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Membership readOne(@PathVariable("id") int id){
-        return membershipsService.findById(id);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
-                                             @RequestBody  @Valid Membership membership,
+                                             @RequestBody  @Valid MembershipUpdateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BadRequestException(
@@ -60,7 +45,7 @@ public class MembershipsController {
             );
         }
 
-        membershipsService.edit(membership, id);
+        membershipsService.edit(dto, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

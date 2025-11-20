@@ -2,12 +2,8 @@ package com.vitalioleksenko.csp.dto.task;
 
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
-import com.vitalioleksenko.csp.models.Group;
-import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.util.TaskStatus;
-import jakarta.persistence.*;
+import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 

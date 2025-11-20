@@ -13,15 +13,4 @@ public class CspApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CspApplication.class, args);
 	}
-
-	@Bean
-	public ModelMapper modelMapper(){
-		ModelMapper modelMapper = new ModelMapper();
-
-		modelMapper.getConfiguration()
-				.setMatchingStrategy(MatchingStrategies.STRICT)
-				.setSkipNullEnabled(true);
-
-		return modelMapper;
-	}
 }

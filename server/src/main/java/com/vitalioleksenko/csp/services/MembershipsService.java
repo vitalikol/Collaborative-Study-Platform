@@ -1,49 +1,60 @@
 package com.vitalioleksenko.csp.services;
 
+import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
+import com.vitalioleksenko.csp.dto.membership.MembershipUpdateDTO;
 import com.vitalioleksenko.csp.models.Membership;
 import com.vitalioleksenko.csp.repositories.MembershipsRepository;
-import com.vitalioleksenko.csp.util.NotFoundException;
-import org.modelmapper.ModelMapper;
+import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class MembershipsService {
     private final MembershipsRepository membershipRepository;
-    private final ModelMapper modelMapper;
+    private final AppMapper mapper;
+    private final ActivitiesLogsService activitiesLogsService;
 
     @Autowired
-    public MembershipsService(MembershipsRepository membershipRepository, ModelMapper modelMapper) {
+    public MembershipsService(MembershipsRepository membershipRepository, @Qualifier("appMapperImpl")  AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
         this.membershipRepository = membershipRepository;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
+        this.activitiesLogsService = activitiesLogsService;
     }
 
     @Transactional
-    public void save(Membership membership){
+    public void save(MembershipCreateDTO dto){
+        Membership membership = mapper.toMembership(dto);
         membershipRepository.save(membership);
-    }
-
-    public List<Membership> findAll(){
-        return membershipRepository.findAll();
-    }
-
-    public Membership findById(int id){
-        return membershipRepository.findById(id).orElseThrow(NotFoundException::new);
+        activitiesLogsService.log(
+                "MEMBER_ADDED",
+                "Member with ID: " + membership.getUser().getUserId() + " joined group with ID: " + membership.getMembershipId()
+        );
     }
 
     @Transactional
-    public void edit(Membership updatedMembership, int id){
+    public void edit(MembershipUpdateDTO dto, int id){
         Membership membership = membershipRepository.findById(id).orElseThrow(NotFoundException::new);
-        modelMapper.map(updatedMembership, membership);
+        mapper.updateMembershipFromDto(dto, membership);
         membershipRepository.save(membership);
+        activitiesLogsService.log(
+                "MEMBERSHIP_EDITED",
+                "Edited membership with ID: " + membership.getMembershipId()
+        );
     }
 
     @Transactional
-    public void remove(int id){
-        membershipRepository.deleteById(id);
+    public boolean remove(int id){
+        return membershipRepository.findById(id).map(membership -> {
+            membershipRepository.delete(membership);
+            activitiesLogsService.log(
+                    "MEMBER_LEFT",
+                    "Member with ID: " + membership.getUser().getUserId() +" left the group with ID: " + id
+            );
+            return true;
+        }).orElse(false);
     }
 }
