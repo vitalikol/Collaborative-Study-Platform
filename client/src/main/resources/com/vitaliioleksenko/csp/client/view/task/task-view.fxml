@@ -14,6 +14,10 @@
 <children>
     <HBox alignment="CENTER_LEFT" spacing="10.0">
         <children>
+            <Button fx:id="createTaskButton" disable="true" mnemonicParsing="false" onAction="#onCreateTaskClicked"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"
+                    text="+ Create" />
+
             <Label text="Team:" />
             <ComboBox fx:id="teamFilterCombo" promptText="All groups"/>
 

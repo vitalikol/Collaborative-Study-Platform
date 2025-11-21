@@ -4,10 +4,12 @@ import com.vitaliioleksenko.csp.client.controller.group.GroupCreateController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
 import com.vitaliioleksenko.csp.client.controller.logs.LogViewController;
+import com.vitaliioleksenko.csp.client.controller.task.TaskCreateController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
 import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
+import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
@@ -88,6 +90,7 @@ public class DashboardController {
 
             controller.setViewMode(TaskViewController.TaskViewMode.ACTIVE);
             controller.setNavigationCallback(this::showTaskProfileView);
+            controller.setCreateTaskCallback(v -> loadTaskCreateView(controller.getSelectedGroup()));
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -200,6 +203,23 @@ public class DashboardController {
             GroupCreateController controller = loader.getController();
 
             controller.setCloseCallback(v -> showMyTeam());
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadTaskCreateView(GroupPartial group) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-create.fxml"));
+            Parent view = loader.load();
+
+            TaskCreateController controller = loader.getController();
+
+            controller.setPreSelectedGroup(group);
+
+            controller.setCloseCallback(v -> showActiveTasks());
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {

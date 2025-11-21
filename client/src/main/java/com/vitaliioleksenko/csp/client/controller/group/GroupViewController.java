@@ -72,8 +72,7 @@ public class GroupViewController {
         }
     }
 
-    @FXML
-    private void onCreateGroupClicked() {
+    @FXML private void onCreateGroupClicked() {
         if (createGroupCallback != null) {
             createGroupCallback.accept(null);
         }

@@ -2,6 +2,8 @@ package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.PageResponse;
 
+import com.vitaliioleksenko.csp.client.model.group.GroupCreate;
+import com.vitaliioleksenko.csp.client.model.task.TaskCreate;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
@@ -36,7 +38,6 @@ public class TaskService {
             return objectMapper.readValue(response.body().string(), TaskDetailed.class);
         }
     }
-
 
     public PageResponse<TaskPartial> getActiveTasks(Integer userId, Integer teamId, Integer page, Integer size) throws IOException{
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + "/active").newBuilder();
@@ -101,6 +102,28 @@ public class TaskService {
             JavaType type = objectMapper.getTypeFactory()
                     .constructParametricType(PageResponse.class, TaskPartial.class);
             return objectMapper.readValue(response.body().string(), type);
+        }
+    }
+
+    public void createTask(TaskCreate taskCreate) throws IOException{
+        String json = objectMapper.writeValueAsString(taskCreate);
+
+        RequestBody body = RequestBody.create(
+                json,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(BASE_URL)
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.code() == 400) {
+                throw new IOException(response.message());
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
         }
     }
 }

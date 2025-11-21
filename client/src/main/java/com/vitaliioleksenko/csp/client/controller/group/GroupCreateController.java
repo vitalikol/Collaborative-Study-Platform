@@ -18,13 +18,17 @@ public class GroupCreateController {
     @FXML private TextField nameField;
     @FXML private TextArea descriptionArea;
 
-    private final GroupService groupService = new GroupService();
-    private final UserSession session = UserSession.getInstance();
+    private final GroupService groupService;
+    private final UserSession session;
 
     @Setter private Consumer<Void> closeCallback;
 
-    @FXML
-    private void handleCreate() {
+    public GroupCreateController() {
+        this.groupService = new GroupService();
+        this.session = UserSession.getInstance();
+    }
+
+    @FXML private void handleCreate() {
         if (nameField.getText().trim().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Error", "The group name cannot be empty.");
             return;
@@ -53,8 +57,7 @@ public class GroupCreateController {
         }
     }
 
-    @FXML
-    private void handleCancel() {
+    @FXML private void handleCancel() {
         if (closeCallback != null) {
             closeCallback.accept(null);
         }

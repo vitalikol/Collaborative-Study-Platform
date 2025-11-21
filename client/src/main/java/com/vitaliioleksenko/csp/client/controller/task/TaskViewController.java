@@ -1,5 +1,6 @@
 package com.vitaliioleksenko.csp.client.controller.task;
 
+import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.model.user.UserPartial;
@@ -7,6 +8,7 @@ import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.UserService;
+import com.vitaliioleksenko.csp.client.util.enums.GroupRole;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,8 +32,11 @@ public class TaskViewController {
     @FXML private Label userFilterLabel;
     @FXML private ComboBox<UserPartial> userFilterCombo;
     @FXML private Button applyFilterButton;
+    @FXML private Button createTaskButton;
     @FXML private Button clearFilterButton;
     @FXML private ListView<TaskPartial> taskListView;
+    @Setter private Consumer<Void> createTaskCallback;
+
 
     @Setter private Consumer<TaskPartial> navigationCallback;
 
@@ -56,7 +61,15 @@ public class TaskViewController {
 
     public void setViewMode(TaskViewMode mode) {
         this.currentMode = mode;
+        if(currentMode == TaskViewMode.ARCHIVE){
+            createTaskButton.setVisible(false);
+            createTaskButton.setManaged(false);
+        }
         handleFilterAction();
+    }
+
+    public GroupPartial getSelectedGroup(){
+        return teamFilterCombo.getValue();
     }
 
     @FXML public void initialize() {
@@ -81,6 +94,12 @@ public class TaskViewController {
         GroupPartial selectedGroup = teamFilterCombo.getValue();
         Integer teamId = (selectedGroup != null) ? selectedGroup.getGroupId() : null;
 
+        if (selectedGroup != null && currentMode == TaskViewMode.ACTIVE && isTeamLeadInGroup(selectedGroup.getGroupId())){
+            createTaskButton.setVisible(true);
+            createTaskButton.setManaged(true);
+            createTaskButton.setDisable(false);
+        }
+
         Integer userId = null;
         if (isAdmin) {
             UserPartial selectedUser = userFilterCombo.getValue();
@@ -93,11 +112,18 @@ public class TaskViewController {
     }
 
     @FXML private void handleClearFilterAction() {
+        createTaskButton.setDisable(true);
         teamFilterCombo.setValue(null);
         if (isAdmin) {
             userFilterCombo.setValue(null);
         }
         loadTasks(null, null);
+    }
+
+    @FXML private void onCreateTaskClicked() {
+        if (createTaskCallback != null) {
+            createTaskCallback.accept(null);
+        }
     }
 
     private void setupComboBoxes() {teamFilterCombo.setCellFactory(lv -> new ListCell<GroupPartial>() {
@@ -158,6 +184,19 @@ public class TaskViewController {
             taskListView.setItems(FXCollections.observableArrayList(tasks));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private boolean isTeamLeadInGroup(int groupId) {
+        try {
+            GroupDetailed detailed = groupService.getGroupById(groupId);
+            return detailed.getMembers().stream()
+                    .anyMatch(member ->
+                            member.getUser().getUserId() == currentUserId &&
+                                    member.getRole() == GroupRole.TEAM_LEAD
+                    );
+        } catch (IOException e) {
+            return false;
         }
     }
 
