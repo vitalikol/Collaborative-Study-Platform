@@ -20,7 +20,7 @@
                 </ImageView>
                 <VBox spacing="5.0">
                     <children>
-                        <Label fx:id="fullNameLabel" text="Повне Ім'я Користувача">
+                        <Label fx:id="fullNameLabel" text="email">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>

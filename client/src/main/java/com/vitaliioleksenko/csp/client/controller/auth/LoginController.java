@@ -1,8 +1,8 @@
 package com.vitaliioleksenko.csp.client.controller.auth;
 
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
+import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
 import com.vitaliioleksenko.csp.client.util.UserSession;
-import com.vitaliioleksenko.csp.client.util.LoginRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
@@ -15,32 +15,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
-
-    @FXML
-    private TextField usernameField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
-    private Label errorLabel;
-
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button loginButton;
+    @FXML private Label errorLabel;
     private final AuthService authService;
 
     public LoginController() {
         this.authService = new AuthService();
     }
 
-    @FXML
-    private void initialize() {
+    @FXML private void initialize() {
         errorLabel.setVisible(false);
     }
 
-    @FXML
-    private void handleLogin() {
+    @FXML private void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -63,10 +52,10 @@ public class LoginController {
     }
 
     private boolean login(String username, String password)  {
-        LoginRequest credentials = new LoginRequest(username, password);
+        AuthenticationRequest credentials = new AuthenticationRequest(username, password);
         try {
             authService.login(credentials);
-            User user = authService.me();
+            UserDetailed user = authService.me();
             UserSession.getInstance().login(user);
             return true;
         } catch (IOException e){

@@ -1,12 +1,13 @@
 package com.vitaliioleksenko.csp.client.controller.task;
 
-import com.vitaliioleksenko.csp.client.model.Group;
-import com.vitaliioleksenko.csp.client.model.Task;
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
+import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
+import com.vitaliioleksenko.csp.client.model.user.UserPartial;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.UserService;
+import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,50 +21,41 @@ import java.util.List;
 import java.util.function.Consumer; // НОВИЙ ІМПОРТ
 
 public class TaskViewController {
-    @FXML private ComboBox<Group> teamFilterCombo;
+    @FXML private ComboBox<GroupPartial> teamFilterCombo;
     @FXML private Label userFilterLabel;
-    @FXML private ComboBox<User> userFilterCombo;
+    @FXML private ComboBox<UserPartial> userFilterCombo;
     @FXML private Button applyFilterButton;
     @FXML private Button clearFilterButton;
-    @FXML private ListView<Task> taskListView;
+    @FXML private ListView<TaskPartial> taskListView;
+    @Setter private Consumer<TaskPartial> navigationCallback;
 
-    @Setter
-    private Consumer<Task> navigationCallback;
-
-    private ObservableList<Task> taskData = FXCollections.observableArrayList();
+    private ObservableList<TaskPartial> taskData = FXCollections.observableArrayList();
 
     private final TaskService taskService;
     private final GroupService groupService;
     private final UserService userService;
-
-    private UserSession session = UserSession.getInstance();
-    private boolean isAdmin;
-    private int currentUserId;
+    private final UserSession session = UserSession.getInstance();
+    private final boolean isAdmin;
+    private final int currentUserId;
 
     public TaskViewController() {
         taskService = new TaskService();
         groupService = new GroupService();
         userService = new UserService();
+        this.isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
+        this.currentUserId = session.getCurrentUserId();
     }
 
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         setupComboBoxes();
-        if (!session.isLoggedIn()) {
-            return;
-        }
-        this.isAdmin = session.getCurrentUserRole().equals("ROLE_ADMIN");
-        this.currentUserId = session.getCurrentUserId();
-
         setupFilters();
-
         loadTasks(null, null);
         taskListView.setItems(taskData);
         taskListView.setCellFactory(listView -> new TaskCell());
 
         taskListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && navigationCallback != null) {
-                Task selectedTask = taskListView.getSelectionModel().getSelectedItem();
+                TaskPartial selectedTask = taskListView.getSelectionModel().getSelectedItem();
                 if (selectedTask != null) {
                     navigationCallback.accept(selectedTask);
                 }
@@ -73,12 +65,12 @@ public class TaskViewController {
 
     @FXML
     private void handleFilterAction() {
-        Group selectedGroup = teamFilterCombo.getValue();
+        GroupPartial selectedGroup = teamFilterCombo.getValue();
         Integer teamId = (selectedGroup != null) ? selectedGroup.getGroupId() : null;
 
         Integer userId = null;
         if (isAdmin) {
-            User selectedUser = userFilterCombo.getValue();
+            UserPartial selectedUser = userFilterCombo.getValue();
             userId = (selectedUser != null) ? selectedUser.getUserId() : null;
         } else {
             userId = this.currentUserId;
@@ -87,8 +79,7 @@ public class TaskViewController {
         loadTasks(teamId, userId);
     }
 
-    @FXML
-    private void handleClearFilterAction() {
+    @FXML private void handleClearFilterAction() {
         teamFilterCombo.setValue(null);
         if (isAdmin) {
             userFilterCombo.setValue(null);
@@ -97,18 +88,18 @@ public class TaskViewController {
     }
 
     private void setupComboBoxes() {
-        teamFilterCombo.setCellFactory(lv -> new ListCell<Group>() {
+        teamFilterCombo.setCellFactory(lv -> new ListCell<GroupPartial>() {
             @Override
-            protected void updateItem(Group group, boolean empty) {
+            protected void updateItem(GroupPartial group, boolean empty) {
                 super.updateItem(group, empty);
                 setText(empty || group == null ? "All Groups" : group.getName());
             }
         });
         teamFilterCombo.setButtonCell(teamFilterCombo.getCellFactory().call(null));
 
-        userFilterCombo.setCellFactory(lv -> new ListCell<User>() {
+        userFilterCombo.setCellFactory(lv -> new ListCell<UserPartial>() {
             @Override
-            protected void updateItem(User user, boolean empty) {
+            protected void updateItem(UserPartial user, boolean empty) {
                 super.updateItem(user, empty);
                 setText(empty || user == null ? "All users" : user.getName() + " (" + user.getRole() + ")");
             }
@@ -124,16 +115,16 @@ public class TaskViewController {
             userFilterCombo.setManaged(true);
 
             try {
-                List<Group> groups = groupService.getGroups(null);
+                List<GroupPartial> groups = groupService.getGroups(null, null, null, null).getContent();
                 teamFilterCombo.setItems(FXCollections.observableArrayList(groups));
-                List<User> users = userService.getUsers();
+                List<UserPartial> users = userService.getUsers(null, null, null).getContent();
                 userFilterCombo.setItems(FXCollections.observableArrayList(users));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             try {
-                List<Group> groups = groupService.getGroups(this.currentUserId);
+                List<GroupPartial> groups = groupService.getGroups(null, this.currentUserId, null, null).getContent();
                 teamFilterCombo.setItems(FXCollections.observableArrayList(groups));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -146,14 +137,14 @@ public class TaskViewController {
             userId = this.currentUserId;
         }
         try{
-            List<Task> tasks = taskService.getTasks(userId, teamId);
+            List<TaskPartial> tasks = taskService.getTasks(userId, teamId, null, null).getContent();
             taskListView.setItems(FXCollections.observableArrayList(tasks));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static class TaskCell extends ListCell<Task> {
+    static class TaskCell extends ListCell<TaskPartial> {
         private Node cardNode;
         private TaskCardController cardController;
 
@@ -168,7 +159,7 @@ public class TaskViewController {
         }
 
         @Override
-        protected void updateItem(Task task, boolean empty) {
+        protected void updateItem(TaskPartial task, boolean empty) {
             super.updateItem(task, empty);
 
             if (empty || task == null) {

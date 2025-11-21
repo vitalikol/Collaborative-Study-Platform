@@ -1,30 +1,33 @@
 package com.vitaliioleksenko.csp.client.controller.task;
 
-import com.vitaliioleksenko.csp.client.model.Task;
+import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import java.time.format.DateTimeFormatter;
 
 public class TaskCardController {
-
     @FXML private Label taskTitleLabel;
     @FXML private Label groupNameLabel;
     @FXML private Label descriptionLabel;
     @FXML private Label dateLabel;
     @FXML private Label statusLabel;
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+    private final DateTimeFormatter formatter;
 
-    public void setData(Task task) {
+    public TaskCardController() {
+        this.formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+    }
+
+    public void setData(TaskPartial task) {
         taskTitleLabel.setText(task.getTitle());
         groupNameLabel.setText("task.getGroupName()");
-        descriptionLabel.setText(task.getDescription());
-        statusLabel.setText(task.getStatus().toUpperCase());
+        descriptionLabel.setText(task.getUser().getEmail());
+        statusLabel.setText(task.getStatus().toString().toUpperCase());
         dateLabel.setText(task.getDeadline().format(formatter));
-
-        updateStatusStyle(task.getStatus());
+        updateStatusStyle(task.getStatus().toString());
     }
+
     private void updateStatusStyle(String status) {
         String style = "-fx-text-fill: #FFFFFF; -fx-background-radius: 4; -fx-padding: 2 5;";
 

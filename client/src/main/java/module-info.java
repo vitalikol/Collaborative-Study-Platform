@@ -12,6 +12,12 @@ module com.vitaliioleksenko.csp.client {
     requires annotations;
 
 
+    opens com.vitaliioleksenko.csp.client.model.user to tools.jackson.databind;
+    opens com.vitaliioleksenko.csp.client.model.task to tools.jackson.databind;
+    opens com.vitaliioleksenko.csp.client.model.resource to tools.jackson.databind;
+    opens com.vitaliioleksenko.csp.client.model.membership to tools.jackson.databind;
+    opens com.vitaliioleksenko.csp.client.model.group to tools.jackson.databind;
+    opens com.vitaliioleksenko.csp.client.model.activity to tools.jackson.databind;
     opens com.vitaliioleksenko.csp.client.model to tools.jackson.databind;
     opens com.vitaliioleksenko.csp.client to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller to javafx.fxml;

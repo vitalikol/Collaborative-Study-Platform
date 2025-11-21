@@ -1,18 +1,15 @@
 package com.vitaliioleksenko.csp.client.util;
 
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
+import com.vitaliioleksenko.csp.client.util.enums.Role;
 
-// Реалізація Singleton
 public class UserSession {
-
     private static UserSession instance;
-
-    private User currentUser;
+    private UserDetailed currentUser;
 
     private UserSession() {
     }
 
-    // Метод для отримання єдиного екземпляра
     public static UserSession getInstance() {
         if (instance == null) {
             instance = new UserSession();
@@ -20,23 +17,19 @@ public class UserSession {
         return instance;
     }
 
-    // Викликається при успішному логіні
-    public void login(User user) {
+    public void login(UserDetailed user) {
         this.currentUser = user;
     }
 
-    // Викликається при виході
     public void logout() {
         this.currentUser = null;
-        // Тут також можна очистити кеш, повернути на сторінку логіна
     }
 
-    // Методи для швидкого доступу з будь-якого контролера
     public boolean isLoggedIn() {
         return currentUser != null;
     }
 
-    public User getCurrentUser() {
+    public UserDetailed getCurrentUser() {
         return currentUser;
     }
 
@@ -44,7 +37,7 @@ public class UserSession {
         return (currentUser != null) ? currentUser.getUserId() : null;
     }
 
-    public String getCurrentUserRole() {
+    public Role getCurrentUserRole() {
         return (currentUser != null) ? currentUser.getRole() : null;
     }
 }

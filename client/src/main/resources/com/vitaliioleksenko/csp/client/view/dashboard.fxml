@@ -44,7 +44,7 @@
     <left>
         <VBox prefWidth="160.0" spacing="10.0" style="-fx-background-color: #F4F4F8;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="usersButton" maxWidth="Infinity" mnemonicParsing="false" text="Users" onAction="#showUsers" visible="false" managed="false" />
+                <Button fx:id="usersButton" maxWidth="Infinity" mnemonicParsing="false" text="Users" onAction="#showUsers"/>
                 <Button fx:id="teamButton" maxWidth="Infinity" mnemonicParsing="false" text="My Team" onAction="#showMyTeam"/>
                 <Button fx:id="taskButton" maxWidth="Infinity" mnemonicParsing="false" text="Active Task's" onAction="#showActiveTasks"/>
                 <Button fx:id="archiveButton" maxWidth="Infinity" mnemonicParsing="false" text="Task's archive" onAction="#showTasksArchive"/>

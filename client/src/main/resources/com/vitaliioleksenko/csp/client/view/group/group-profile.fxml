@@ -15,31 +15,26 @@
     <children>
         <VBox spacing="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <!-- 1. НАЗВА -->
-                <Label fx:id="groupNameLabel" text="Завантаження назви групи...">
+                <Label fx:id="groupNameLabel" text="Loading group name....">
                     <font>
                         <Font name="System Bold" size="28.0" />
                     </font>
                 </Label>
-
-                <!-- 2. ПАНЕЛЬ АДМІНА (прихована) -->
                 <HBox fx:id="adminActionsBox" managed="false" spacing="10.0" visible="false">
                     <children>
-                        <Button mnemonicParsing="false" text="Додати учасника" />
-                        <Button mnemonicParsing="false" text="Редагувати групу" />
-                        <Button mnemonicParsing="false" style="-fx-background-color: #DC3545;" text="Видалити групу" textFill="WHITE" />
+                        <Button mnemonicParsing="false" text="Add participant" />
+                        <Button mnemonicParsing="false" text="Edit group" />
+                        <Button mnemonicParsing="false" style="-fx-background-color: #DC3545;" text="Delete group" textFill="WHITE" />
                     </children>
                 </HBox>
 
                 <Separator />
 
-                <!-- 3. ДЕТАЛІ -->
                 <HBox spacing="20.0">
                     <children>
-                        <!-- 3.1 ОПИС -->
                         <VBox HBox.hgrow="ALWAYS">
                             <children>
-                                <Label text="Опис:">
+                                <Label text="Description:">
                                     <font>
                                         <Font name="System Bold" size="16.0" />
                                     </font>
@@ -47,25 +42,22 @@
                                 <TextArea fx:id="descriptionArea" editable="false" prefHeight="150.0" wrapText="true" />
                             </children>
                         </VBox>
-                        <!-- 3.2 ІНФО -->
                         <VBox minWidth="-Infinity" prefWidth="250.0" spacing="5.0">
                             <children>
-                                <Label text="Інформація:">
+                                <Label text="Information:">
                                     <font>
                                         <Font name="System Bold" size="16.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="createdByLabel" text="Створено: ..." />
-                                <Label fx:id="createdAtLabel" text="Дата створення: ..." />
+                                <Label fx:id="createdByLabel" text="Created: ..." />
+                                <Label fx:id="createdAtLabel" text="Date of creation: ..." />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
-
-                <!-- 4. УЧАСНИКИ -->
                 <VBox VBox.vgrow="ALWAYS">
                     <children>
-                        <Label text="Учасники Групи:">
+                        <Label text="Group members:">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>

@@ -1,7 +1,8 @@
 package com.vitaliioleksenko.csp.client.service;
 
-import com.vitaliioleksenko.csp.client.model.Group;
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.PageResponse;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
+import com.vitaliioleksenko.csp.client.model.user.UserPartial;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -11,7 +12,6 @@ import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.List;
 
 public class UserService {
     private static final String BASE_URL = "http://localhost:8080/api/user";
@@ -23,7 +23,7 @@ public class UserService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public User getUserById(int id) throws IOException {
+    public UserDetailed getUserById(int id) throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/" + id)
                 .build();
@@ -34,23 +34,35 @@ public class UserService {
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
-            return objectMapper.readValue(response.body().string(), User.class);
+            return objectMapper.readValue(response.body().string(), UserDetailed.class);
         }
     }
 
-    public List<User> getUsers() throws IOException {
+    public PageResponse<UserPartial> getUsers(String search, Integer page, Integer size) throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
+
+        if (search != null) {
+            urlBuilder.addQueryParameter("search", search);
+        }
+        if (page != null) {
+            urlBuilder.addQueryParameter("page", page.toString());
+        }
+        if (size != null) {
+            urlBuilder.addQueryParameter("size", size.toString());
+        }
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .build();
 
         try(Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
+            if(response.code() == 403){
+                throw new IOException("First log in");
+            } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
             JavaType type = objectMapper.getTypeFactory()
-                    .constructCollectionType(List.class, User.class);
+                    .constructParametricType(PageResponse.class, UserPartial.class);
             return objectMapper.readValue(response.body().string(), type);
         }
     }

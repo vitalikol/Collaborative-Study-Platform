@@ -1,9 +1,9 @@
 package com.vitaliioleksenko.csp.client.controller.auth;
 
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
+import com.vitaliioleksenko.csp.client.model.user.RegisterRequest;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.UserSession;
-import com.vitaliioleksenko.csp.client.util.LoginRequest;
-import com.vitaliioleksenko.csp.client.util.RegisterRequest;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
@@ -15,34 +15,24 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class RegisterController {
-    @FXML
-    private TextField nameField;
-    @FXML
-    private TextField emailField;
-    @FXML
-    private TextField passwordField;
-    @FXML
-    private TextField rePasswordField;
-    @FXML
-    private Label errorLabel;
-    @FXML
-    private Button loginButton;
-    @FXML
-    private Button registerButton;
-
+    @FXML private TextField nameField;
+    @FXML private TextField emailField;
+    @FXML private TextField passwordField;
+    @FXML private TextField rePasswordField;
+    @FXML private Label errorLabel;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
     private final AuthService authService;
 
     public RegisterController() {
         this.authService = new AuthService();
     }
 
-    @FXML
-    public void initialize(){
+    @FXML public void initialize(){
         errorLabel.setVisible(false);
     }
 
-    @FXML
-    public void handleRegister() throws IOException {
+    @FXML public void handleRegister() throws IOException {
         String name = nameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -60,8 +50,8 @@ public class RegisterController {
         RegisterRequest registerRequest = new RegisterRequest(name, email, password);
         if (register(registerRequest)) {
             errorLabel.setVisible(false);
-            authService.login(new LoginRequest(email, password));
-            User user = authService.me();
+            authService.login(new AuthenticationRequest(email, password));
+            UserDetailed user = authService.me();
             UserSession.getInstance().login(user);
             WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
         } else {

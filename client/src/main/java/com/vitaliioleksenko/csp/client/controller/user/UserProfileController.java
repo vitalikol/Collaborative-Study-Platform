@@ -1,9 +1,10 @@
 package com.vitaliioleksenko.csp.client.controller.user;
 
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.service.UserService;
+import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,35 +18,38 @@ import javafx.scene.text.FontWeight;
 import java.io.IOException;
 
 public class UserProfileController {
-
-    @FXML
-    private ImageView avatarView;
+    @FXML private ImageView avatarView;
     @FXML private Label fullNameLabel;
     @FXML private Label roleLabel;
-
     @FXML private HBox actionButtonsBox;
     @FXML private Button editProfileButton;
     @FXML private Button changePasswordButton;
     @FXML private Button adminActionsButton;
-
     @FXML private GridPane userInfoGrid;
-
     @FXML private VBox userStatsBox;
     @FXML private Label tasksCompletedLabel;
     @FXML private Label tasksInProgressLabel;
     @FXML private Label tasksOverdueLabel;
 
-    private final UserService userService = new UserService();
-    private final AuthService authService = new AuthService();
-    private final UserSession userSession = UserSession.getInstance();;
+    private final UserService userService;
+    private final AuthService authService;
+    private final UserSession userSession;
+    private final boolean amIAdmin;
+
+
+    public UserProfileController() {
+        this.userService = new UserService();
+        this.authService = new AuthService();
+        this.userSession = UserSession.getInstance();
+        this.amIAdmin = userSession.getCurrentUserRole() == Role.ROLE_ADMIN;
+    }
 
     public void initData(Integer userId) {
         boolean isMyProfile = (userId == null || userId.equals(userSession.getCurrentUserId()));
-        boolean amIAdmin = userSession.getCurrentUserRole().equals("ROLE_ADMIN");
 
         if (isMyProfile) {
             try{
-                User user = authService.me();
+                UserDetailed user = authService.me();
                 populateUI(user);
                 setupMyProfileView(user);
             } catch (IOException e) {
@@ -53,7 +57,7 @@ public class UserProfileController {
             }
         } else {
             try{
-                User user = userService.getUserById(userId);
+                UserDetailed user = userService.getUserById(userId);
                 populateUI(user);
                 setupGuestProfileView(amIAdmin);
             } catch (IOException e) {
@@ -62,15 +66,15 @@ public class UserProfileController {
         }
     }
 
-    private void populateUI(User user) {
+    private void populateUI(UserDetailed user) {
         fullNameLabel.setText(user.getName());
-        roleLabel.setText(user.getRole());
+        roleLabel.setText(user.getRole().toString());
         tasksCompletedLabel.setText("Task completed: -" ); //+ user.getStats().getCompleted());
         tasksInProgressLabel.setText("Task in progress: -"); // + user.getStats().getInProgress());
         tasksOverdueLabel.setText("Overdue tasks: -"); // + user.getStats().getOverdue());
     }
 
-    private void setupMyProfileView(User me) {
+    private void setupMyProfileView(UserDetailed me) {
         addRowToGrid(userInfoGrid, "Email", me.getEmail(), 0);
         addRowToGrid(userInfoGrid, "Team","--", 1); //me.getTeamName()
         addRowToGrid(userInfoGrid, "Registration date","--", 2); //me.getCreatedAt()

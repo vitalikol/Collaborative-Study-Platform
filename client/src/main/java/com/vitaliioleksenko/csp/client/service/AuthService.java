@@ -1,10 +1,8 @@
 package com.vitaliioleksenko.csp.client.service;
 
-
-import com.vitaliioleksenko.csp.client.util.LoginRequest;
-
-import com.vitaliioleksenko.csp.client.util.RegisterRequest;
-import com.vitaliioleksenko.csp.client.model.User;
+import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
+import com.vitaliioleksenko.csp.client.model.user.RegisterRequest;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.ObjectMapper;
@@ -21,8 +19,8 @@ public class AuthService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void login(LoginRequest loginRequest) throws IOException {
-        String json = objectMapper.writeValueAsString(loginRequest);
+    public void login(AuthenticationRequest authenticationRequest) throws IOException {
+        String json = objectMapper.writeValueAsString(authenticationRequest);
 
         RequestBody body = RequestBody.create(
                 json,
@@ -66,7 +64,7 @@ public class AuthService {
     }
 
     public void logOut() throws IOException{
-        RequestBody body = RequestBody.create(null, new byte[]{});
+        RequestBody body = RequestBody.EMPTY;
 
         Request request = new Request.Builder()
                 .url(BASE_URL + "/logout")
@@ -76,7 +74,7 @@ public class AuthService {
         client.newCall(request).execute();
     }
 
-    public User me() throws IOException {
+    public UserDetailed me() throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/me")
                 .build();
@@ -88,7 +86,7 @@ public class AuthService {
                 throw new IOException("Server error: " + response.code());
             }
             String json = response.body().string();
-            return objectMapper.readValue(json, User.class);
+            return objectMapper.readValue(json, UserDetailed.class);
         }
     }
 }

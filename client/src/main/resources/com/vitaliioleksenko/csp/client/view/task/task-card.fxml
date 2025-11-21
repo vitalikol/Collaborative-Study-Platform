@@ -21,18 +21,18 @@
                 AnchorPane.rightAnchor="100.0"
                 AnchorPane.topAnchor="10.0">
             <children>
-                <Label fx:id="taskTitleLabel" text="Назва Завдання (Task)">
+                <Label fx:id="taskTitleLabel" text="Title">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
                 </Label>
-                <Label fx:id="groupNameLabel" text="Назва групи" textFill="#555555">
+                <Label fx:id="groupNameLabel" text="Group name" textFill="#555555">
                     <font>
                         <Font name="System Italic" size="12.0" />
                     </font>
                 </Label>
                 <Label fx:id="descriptionLabel"
-                       text="Короткий опис завдання буде тут, і він має автоматично переносити текст, якщо той не вміщається..."
+                       text="Created:"
                        textFill="#333333"
                        wrapText="true" />
             </children>

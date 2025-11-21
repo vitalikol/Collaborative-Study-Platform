@@ -1,6 +1,7 @@
 package com.vitaliioleksenko.csp.client.controller.group;
 
-import com.vitaliioleksenko.csp.client.model.Group;
+import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
+import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -10,9 +11,9 @@ public class GroupCardController {
     @FXML private Label descriptionLabel;
     @FXML private Label memberCountLabel;
 
-    public void setData(Group group) {
+    public void setData(GroupPartial group) {
         groupNameLabel.setText(group.getName());
         descriptionLabel.setText(group.getDescription());
-        memberCountLabel.setText("Members: " + group.getMemberCount());
+        memberCountLabel.setText("Created: " + group.getCreatedBy().getEmail());
     }
 }

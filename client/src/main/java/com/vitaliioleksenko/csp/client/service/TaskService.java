@@ -1,14 +1,15 @@
 package com.vitaliioleksenko.csp.client.service;
 
-import com.vitaliioleksenko.csp.client.model.Task;
-import com.vitaliioleksenko.csp.client.model.TaskDetails;
+import com.vitaliioleksenko.csp.client.model.PageResponse;
+
+import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
+import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.List;
 
 public class TaskService {
     private static final String BASE_URL = "http://localhost:8080/api/task";
@@ -20,7 +21,7 @@ public class TaskService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public TaskDetails getTaskById(int id) throws IOException {
+    public TaskDetailed getTaskById(int id) throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/" + id)
                 .build();
@@ -31,12 +32,12 @@ public class TaskService {
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
-            return objectMapper.readValue(response.body().string(), TaskDetails.class);
+            return objectMapper.readValue(response.body().string(), TaskDetailed.class);
         }
     }
 
 
-    public List<Task> getTasks(Integer userId, Integer teamId) throws IOException{
+    public PageResponse<TaskPartial> getTasks(Integer userId, Integer teamId, Integer page, Integer size) throws IOException{
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
         if (teamId != null) {
@@ -44,6 +45,12 @@ public class TaskService {
         }
         if (userId != null) {
             urlBuilder.addQueryParameter("userId", userId.toString());
+        }
+        if (page != null) {
+            urlBuilder.addQueryParameter("page", page.toString());
+        }
+        if (size != null) {
+            urlBuilder.addQueryParameter("size", size.toString());
         }
 
         Request request = new Request.Builder()
@@ -57,7 +64,7 @@ public class TaskService {
                 throw new IOException("Server error: " + response.code());
             }
             JavaType type = objectMapper.getTypeFactory()
-                    .constructCollectionType(List.class, Task.class);
+                    .constructParametricType(PageResponse.class, TaskPartial.class);
             return objectMapper.readValue(response.body().string(), type);
         }
     }

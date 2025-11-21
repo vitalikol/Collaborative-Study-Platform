@@ -1,15 +1,17 @@
 package com.vitaliioleksenko.csp.client.controller;
 
+import com.vitaliioleksenko.csp.client.controller.group.GroupCreateController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
 import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
-import com.vitaliioleksenko.csp.client.model.Task;
+import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
+import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,31 +34,28 @@ public class DashboardController {
     @FXML private Button logsButton;
 
     private final AuthService authService;
-    private UserSession session = UserSession.getInstance();
+    private final UserSession session;
 
     public DashboardController() {
         this.authService = new AuthService();
+        this.session = UserSession.getInstance();
     }
 
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         setupRoleBasedUI();
         showActiveTasks();
         userMenuButton.setText(session.getCurrentUser().getEmail());
     }
 
-    @FXML
-    private void showMyProfile(){
+    @FXML private void showMyProfile(){
         loadUserProfileView(session.getCurrentUserId());
     }
 
-    @FXML
-    private  void showSettings(){
+    @FXML private void showSettings(){
         loadViewToCenter("/com/vitaliioleksenko/csp/client/view/settings/settings.fxml");
     }
 
-    @FXML
-    private void handleLogOut() {
+    @FXML private void handleLogOut() {
         try{
             authService.logOut();
             UserSession.getInstance().logout();
@@ -66,8 +65,7 @@ public class DashboardController {
         }
     }
 
-    @FXML
-    private void showMyTeam(){
+    @FXML private void showMyTeam(){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-view.fxml"));
             Parent view = loader.load();
@@ -75,6 +73,8 @@ public class DashboardController {
             GroupViewController controller = loader.getController();
 
             controller.setNavigationCallback(this::showGroupProfileView);
+
+            controller.setCreateGroupCallback(v -> loadGroupCreateView());
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -90,7 +90,6 @@ public class DashboardController {
 
             TaskViewController controller = loader.getController();
 
-            // Використовуємо згенерований Lombok'ом метод setNavigationCallback
             controller.setNavigationCallback(this::showTaskProfileView);
 
             mainBorderPane.setCenter(view);
@@ -129,30 +128,24 @@ public class DashboardController {
     }
 
     private void setupRoleBasedUI() {
-        if (session.getCurrentUserRole().equals("ROLE_ADMIN")) {
-            usersButton.setVisible(true);
-            usersButton.setManaged(true);
+        if (session.getCurrentUserRole() == Role.ROLE_ADMIN) {
             teamButton.setText("Team's");
             calendarButton.setVisible(false);
             calendarButton.setManaged(false);
         }
     }
 
-    public void showTaskProfileView(Task task) {
+    public void showTaskProfileView(TaskPartial task) {
         if (task == null) return;
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-profile.fxml"));
             Parent view = loader.load();
-
             TaskProfileController controller = loader.getController();
-
-            // Передаємо базовий об'єкт Task у контролер профілю
             controller.initData(task);
-
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -188,7 +181,23 @@ public class DashboardController {
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadGroupCreateView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-create.fxml"));
+            Parent view = loader.load();
+
+            GroupCreateController controller = loader.getController();
+
+            // Встановлюємо колбек, щоб після створення/скасування повернутися до списку груп
+            controller.setCloseCallback(v -> showMyTeam());
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
