@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class GroupCardController {
-
     @FXML private Label groupNameLabel;
     @FXML private Label descriptionLabel;
     @FXML private Label memberCountLabel;

@@ -4,9 +4,11 @@ import com.vitalioleksenko.csp.dto.group.GroupCreateDTO;
 import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
 import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
 import com.vitalioleksenko.csp.dto.group.GroupUpdateDTO;
+import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
 import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.enums.GroupRole;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,32 +24,41 @@ public class GroupsService {
     private final GroupsRepository groupsRepository;
     private final AppMapper mapper;
     private final ActivitiesLogsService activitiesLogsService;
+    private final MembershipsService membershipsService;
 
     @Autowired
-    public GroupsService(GroupsRepository groupsRepository, @Qualifier("appMapperImpl") AppMapper appMapper, ActivitiesLogsService activitiesLogsService) {
+    public GroupsService(GroupsRepository groupsRepository, @Qualifier("appMapperImpl") AppMapper appMapper, ActivitiesLogsService activitiesLogsService, MembershipsService membershipsService) {
         this.groupsRepository = groupsRepository;
         this.mapper = appMapper;
         this.activitiesLogsService = activitiesLogsService;
+        this.membershipsService = membershipsService;
     }
 
     @Transactional
     public void save(GroupCreateDTO dto){
         Group group = mapper.toGroup(dto);
         groupsRepository.save(group);
+        membershipsService.save(new MembershipCreateDTO(group.getCreatedBy().getUserId(), group.getGroupId(), GroupRole.TEAM_LEAD));
         activitiesLogsService.log(
                 "GROUP_CREATED",
                 "Created group with ID: " + group.getGroupId()
         );
     }
 
-    public Page<GroupPartialDTO> getGroups(Integer userId, int page, int size){
+    public Page<GroupPartialDTO> getGroups(String search, Integer userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Group> result;
-        if(userId != null){
-            result = groupsRepository.findAllByUserId(userId, pageable);
+
+        if (userId != null && search != null && !search.isBlank()) {
+            result = groupsRepository.findByMembersUserUserIdAndNameContainingIgnoreCase(userId, search, pageable);
+        } else if (userId != null) {
+            result = groupsRepository.findByMembersUserUserId(userId, pageable);
+        } else if (search != null && !search.isBlank()) {
+            result = groupsRepository.findByNameContainingIgnoreCase(search, pageable);
         } else {
             result = groupsRepository.findAll(pageable);
         }
+
         return result.map(mapper::toGroupPartial);
     }
 

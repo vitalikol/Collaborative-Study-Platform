@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ActivityLogPartialDTO {
+public class ActivityLogDetailed {
     private int logId;
     private UserShort user;
     private String action;
     private LocalDateTime timestamp;
+    private String details;
 }

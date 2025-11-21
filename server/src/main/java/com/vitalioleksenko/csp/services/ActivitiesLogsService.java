@@ -59,17 +59,14 @@ public class ActivitiesLogsService {
         activitiesLogsRepository.save(log);
     }
 
-    public Page<ActivityLogPartialDTO> findAll(Integer userId, int page, int size){
+    public Page<ActivityLogDetailedDTO> findAll(int page, int size){
         Pageable pageable = PageRequest.of(page, size);
-        Page<ActivityLog> result;
+        return activitiesLogsRepository.findAll(pageable).map(mapper::toActivityLogDetailed);
+    }
 
-        if (userId != null) {
-            result = activitiesLogsRepository.findByUser_UserId(userId, pageable);
-        } else {
-            result = activitiesLogsRepository.findAll(pageable);
-        }
-
-        return result.map(mapper::toActivityLogPartial);
+    public Page<ActivityLogDetailedDTO> findAllForUser(int userId, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return activitiesLogsRepository.findByUser_UserId(userId, pageable).map(mapper::toActivityLogDetailed);
     }
 
     public ActivityLogDetailedDTO findById(int id){

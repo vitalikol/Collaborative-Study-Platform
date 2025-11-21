@@ -42,7 +42,7 @@ public class GroupViewController {
     private final boolean isAdmin;
 
     private int currentPage = 0;
-    private final int pageSize = 10; // Кількість елементів на сторінці
+    private final int pageSize = 10;
     private int totalPages = 0;
 
     public GroupViewController() {

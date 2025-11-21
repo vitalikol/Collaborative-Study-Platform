@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/activitylog")
+@RequestMapping("/api/log")
 public class ActivitiesLogsController {
     private final ActivitiesLogsService activitiesLogsService;
 
@@ -18,10 +18,16 @@ public class ActivitiesLogsController {
     }
 
     @GetMapping("")
-    public Page<ActivityLogPartialDTO> readAll(@RequestParam(name = "userId", required = false) Integer userId,
-                                               @RequestParam(defaultValue = "0") int page,
+    public Page<ActivityLogDetailedDTO> readAll(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "20") int size){
-        return activitiesLogsService.findAll(userId, page, size);
+        return activitiesLogsService.findAll(page, size);
+    }
+
+    @GetMapping("/user/{id}")
+    public Page<ActivityLogDetailedDTO> readAllForUser(@PathVariable("id") int userId,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "20") int size){
+        return activitiesLogsService.findAllForUser(userId, page, size);
     }
 
     @GetMapping("/{id}")

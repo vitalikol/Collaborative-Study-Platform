@@ -26,8 +26,6 @@ public class UserDetailedDTO {
 
     private List<ResourceShortDTO> resources;
 
-    private List<ActivityLogShortDTO> activities;
-
     @NotEmpty(message = "Name must not be empty")
     @Size(min = 5, message = "Name must be at least 5 characters long")
     private String name;

@@ -1,6 +1,6 @@
 package com.vitaliioleksenko.csp.client.model.user;
 
-import com.vitaliioleksenko.csp.client.model.activity.ActivityLogShortDTO;
+import com.vitaliioleksenko.csp.client.model.activity.ActivityLogShort;
 import com.vitaliioleksenko.csp.client.model.group.GroupShort;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceShortDTO;
 import com.vitaliioleksenko.csp.client.model.task.TaskShort;
@@ -19,7 +19,7 @@ public class UserDetailed {
     private List<GroupShort> createdGroups;
     private List<TaskShort> tasks;
     private List<ResourceShortDTO> resources;
-    private List<ActivityLogShortDTO> activities;
+    private List<ActivityLogShort> activities;
     private String name;
     private String email;
     private Role role;

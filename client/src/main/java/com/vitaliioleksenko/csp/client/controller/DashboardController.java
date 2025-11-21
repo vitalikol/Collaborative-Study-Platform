@@ -3,6 +3,7 @@ package com.vitaliioleksenko.csp.client.controller;
 import com.vitaliioleksenko.csp.client.controller.group.GroupCreateController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
+import com.vitaliioleksenko.csp.client.controller.logs.LogViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
@@ -82,8 +83,7 @@ public class DashboardController {
         }
     }
 
-    @FXML
-    private void showActiveTasks(){
+    @FXML private void showActiveTasks(){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-view.fxml"));
             Parent view = loader.load();
@@ -98,23 +98,21 @@ public class DashboardController {
         }
     }
 
-    @FXML
-    private void showTasksArchive(){
+    @FXML private void showTasksArchive(){
         loadViewToCenter("/com/vitaliioleksenko/csp/client/view/task/tasks-archive.fxml");
     }
 
-    @FXML
-    private void showCalendar(){
-        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/calendar/calendar.fxml");
+    @FXML private void showLogs(){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/logs/log-view.fxml"));
+            Parent view = loader.load();
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @FXML
-    private void showLogs(){
-        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/logs/logs.fxml");
-    }
-
-    @FXML
-    private void showUsers() {
+    @FXML private void showUsers() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"));
             Parent view = loader.load();

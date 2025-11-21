@@ -1,5 +1,6 @@
 package com.vitalioleksenko.csp.config;
 
+import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

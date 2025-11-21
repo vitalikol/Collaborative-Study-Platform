@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="75.0" prefWidth="446.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitaliioleksenko.csp.client.controller.logs.LogCardController">
+    <children>
+        <VBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="10.0">
+            <children>
+                <Label fx:id="logNameLabel" text="Title">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+                <Label fx:id="descriptionLabel" text="Description" textFill="#555555" wrapText="true" />
+            </children>
+        </VBox>
+        <VBox spacing="5.0" AnchorPane.bottomAnchor="10.0"  AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="10.0">
+            <Label fx:id="userLabel" text="User: " textFill="#007BFF" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Label>
+            <Label fx:id="dateLabel" text="Date: " textFill="#007BFF" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</AnchorPane>

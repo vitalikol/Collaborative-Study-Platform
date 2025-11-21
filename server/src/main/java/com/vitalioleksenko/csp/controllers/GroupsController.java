@@ -39,10 +39,11 @@ public class GroupsController {
     }
 
     @GetMapping("")
-    public Page<GroupPartialDTO> readAll(@RequestParam(name = "userId", required = false) Integer userId,
+    public Page<GroupPartialDTO> readAll(@RequestParam(name = "search", required = false) String search,
+                                         @RequestParam(name = "userId", required = false) Integer userId,
                                          @RequestParam(defaultValue = "0") int page,
                                          @RequestParam(defaultValue = "20") int size){
-        return groupsService.getGroups(userId, page, size);
+        return groupsService.getGroups(search, userId, page, size);
     }
 
     @GetMapping("/{id}")
