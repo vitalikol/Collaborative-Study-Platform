@@ -44,7 +44,7 @@ public class DashboardController {
 
     @FXML public void initialize() {
         setupRoleBasedUI();
-        showActiveTasks();
+        showActiveTasks(); // Показуємо активні завдання при старті
         userMenuButton.setText(session.getCurrentUser().getEmail());
     }
 
@@ -70,13 +70,9 @@ public class DashboardController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-view.fxml"));
             Parent view = loader.load();
-
             GroupViewController controller = loader.getController();
-
             controller.setNavigationCallback(this::showGroupProfileView);
-
             controller.setCreateGroupCallback(v -> loadGroupCreateView());
-
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -90,16 +86,29 @@ public class DashboardController {
 
             TaskViewController controller = loader.getController();
 
+            controller.setViewMode(TaskViewController.TaskViewMode.ACTIVE);
             controller.setNavigationCallback(this::showTaskProfileView);
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     @FXML private void showTasksArchive(){
-        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/task/tasks-archive.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-view.fxml"));
+            Parent view = loader.load();
+
+            TaskViewController controller = loader.getController();
+
+            controller.setViewMode(TaskViewController.TaskViewMode.ARCHIVE);
+            controller.setNavigationCallback(this::showTaskProfileView);
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML private void showLogs(){
@@ -175,7 +184,7 @@ public class DashboardController {
             Parent view = loader.load();
 
             GroupProfileController controller = loader.getController();
-            controller.initData(groupId); // Передаємо ID
+            controller.initData(groupId);
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -190,7 +199,6 @@ public class DashboardController {
 
             GroupCreateController controller = loader.getController();
 
-            // Встановлюємо колбек, щоб після створення/скасування повернутися до списку груп
             controller.setCloseCallback(v -> showMyTeam());
 
             mainBorderPane.setCenter(view);

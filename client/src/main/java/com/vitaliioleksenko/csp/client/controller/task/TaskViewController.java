@@ -18,15 +18,21 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer; // НОВИЙ ІМПОРТ
+import java.util.function.Consumer;
 
 public class TaskViewController {
+    public enum TaskViewMode {
+        ACTIVE,
+        ARCHIVE
+    }
+
     @FXML private ComboBox<GroupPartial> teamFilterCombo;
     @FXML private Label userFilterLabel;
     @FXML private ComboBox<UserPartial> userFilterCombo;
     @FXML private Button applyFilterButton;
     @FXML private Button clearFilterButton;
     @FXML private ListView<TaskPartial> taskListView;
+
     @Setter private Consumer<TaskPartial> navigationCallback;
 
     private ObservableList<TaskPartial> taskData = FXCollections.observableArrayList();
@@ -38,6 +44,8 @@ public class TaskViewController {
     private final boolean isAdmin;
     private final int currentUserId;
 
+    private TaskViewMode currentMode = TaskViewMode.ACTIVE;
+
     public TaskViewController() {
         taskService = new TaskService();
         groupService = new GroupService();
@@ -46,10 +54,16 @@ public class TaskViewController {
         this.currentUserId = session.getCurrentUserId();
     }
 
+    public void setViewMode(TaskViewMode mode) {
+        this.currentMode = mode;
+        handleFilterAction();
+    }
+
     @FXML public void initialize() {
         setupComboBoxes();
         setupFilters();
         loadTasks(null, null);
+
         taskListView.setItems(taskData);
         taskListView.setCellFactory(listView -> new TaskCell());
 
@@ -63,8 +77,7 @@ public class TaskViewController {
         });
     }
 
-    @FXML
-    private void handleFilterAction() {
+    @FXML private void handleFilterAction() {
         GroupPartial selectedGroup = teamFilterCombo.getValue();
         Integer teamId = (selectedGroup != null) ? selectedGroup.getGroupId() : null;
 
@@ -87,8 +100,7 @@ public class TaskViewController {
         loadTasks(null, null);
     }
 
-    private void setupComboBoxes() {
-        teamFilterCombo.setCellFactory(lv -> new ListCell<GroupPartial>() {
+    private void setupComboBoxes() {teamFilterCombo.setCellFactory(lv -> new ListCell<GroupPartial>() {
             @Override
             protected void updateItem(GroupPartial group, boolean empty) {
                 super.updateItem(group, empty);
@@ -136,8 +148,13 @@ public class TaskViewController {
         if (!isAdmin) {
             userId = this.currentUserId;
         }
-        try{
-            List<TaskPartial> tasks = taskService.getTasks(userId, teamId, null, null).getContent();
+        try {
+            List<TaskPartial> tasks;
+            if (currentMode == TaskViewMode.ARCHIVE) {
+                tasks = taskService.getDoneTasks(userId, teamId, null, null).getContent();
+            } else {
+                tasks = taskService.getActiveTasks(userId, teamId, null, null).getContent();
+            }
             taskListView.setItems(FXCollections.observableArrayList(tasks));
         } catch (IOException e) {
             throw new RuntimeException(e);

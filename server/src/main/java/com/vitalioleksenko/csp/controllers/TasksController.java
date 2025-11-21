@@ -5,6 +5,7 @@ import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.services.TasksService;
+import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
@@ -42,9 +43,19 @@ public class TasksController {
     public Page<TaskPartialDTO> readAll(
             @RequestParam(required = false) Integer groupId,
             @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) TaskStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return tasksService.getTasks(groupId, userId, page, size);
+        return tasksService.getTasks(groupId, userId, status, page, size);
+    }
+
+    @GetMapping("/active")
+    public Page<TaskPartialDTO> getActiveTasks(
+            @RequestParam(required = false) Integer groupId,
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return tasksService.getActiveTasks(groupId, userId, page, size);
     }
 
     @GetMapping("/{id}")

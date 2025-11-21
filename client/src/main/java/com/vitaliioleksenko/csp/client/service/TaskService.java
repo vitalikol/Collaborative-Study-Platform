@@ -5,6 +5,7 @@ import com.vitaliioleksenko.csp.client.model.PageResponse;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
+import com.vitaliioleksenko.csp.client.util.enums.TaskStatus;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
@@ -37,7 +38,39 @@ public class TaskService {
     }
 
 
-    public PageResponse<TaskPartial> getTasks(Integer userId, Integer teamId, Integer page, Integer size) throws IOException{
+    public PageResponse<TaskPartial> getActiveTasks(Integer userId, Integer teamId, Integer page, Integer size) throws IOException{
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + "/active").newBuilder();
+
+        if (teamId != null) {
+            urlBuilder.addQueryParameter("groupId", teamId.toString());
+        }
+        if (userId != null) {
+            urlBuilder.addQueryParameter("userId", userId.toString());
+        }
+        if (page != null) {
+            urlBuilder.addQueryParameter("page", page.toString());
+        }
+        if (size != null) {
+            urlBuilder.addQueryParameter("size", size.toString());
+        }
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if(response.code() == 403){
+                throw new IOException("First log in");
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+            JavaType type = objectMapper.getTypeFactory()
+                    .constructParametricType(PageResponse.class, TaskPartial.class);
+            return objectMapper.readValue(response.body().string(), type);
+        }
+    }
+
+    public PageResponse<TaskPartial> getDoneTasks(Integer userId, Integer teamId, Integer page, Integer size) throws IOException{
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
         if (teamId != null) {
@@ -52,6 +85,8 @@ public class TaskService {
         if (size != null) {
             urlBuilder.addQueryParameter("size", size.toString());
         }
+        urlBuilder.addQueryParameter("status", TaskStatus.DONE.toString());
+
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())

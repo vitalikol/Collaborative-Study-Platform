@@ -7,12 +7,15 @@ import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.TasksRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.TaskSpecification;
+import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,19 +43,32 @@ public class TasksService {
         );
     }
 
-    public Page<TaskPartialDTO> getTasks(Integer groupId, Integer userId, int page, int size) {
+    public Page<TaskPartialDTO> getTasks(Integer groupId, Integer userId, TaskStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Task> result;
 
-        if (groupId != null && userId != null) {
-            result = tasksRepository.findByUserIdAndGroupId(userId, groupId, pageable);
-        } else if (groupId != null) {
-            result = tasksRepository.findByGroup_GroupId(groupId, pageable);
-        } else if (userId != null) {
-            result = tasksRepository.findByUserId(userId, pageable);
-        } else {
-            result = tasksRepository.findAll(pageable);
-        }
+        Page<Task> result = tasksRepository.findAll(
+                Specification.allOf(
+                        TaskSpecification.visibleForUser(userId),
+                        TaskSpecification.inGroup(groupId),
+                        TaskSpecification.hasStatus(status)
+                ),
+                pageable
+        );
+
+        return result.map(mapper::toTaskPartial);
+    }
+
+    public Page<TaskPartialDTO> getActiveTasks(Integer groupId, Integer userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Task> result = tasksRepository.findAll(
+                Specification.allOf(
+                        TaskSpecification.visibleForUser(userId),
+                        TaskSpecification.inGroup(groupId),
+                        TaskSpecification.isActive()
+                ),
+                pageable
+        );
 
         return result.map(mapper::toTaskPartial);
     }
