@@ -36,8 +36,6 @@ public class TaskViewController {
     @FXML private Button clearFilterButton;
     @FXML private ListView<TaskPartial> taskListView;
     @Setter private Consumer<Void> createTaskCallback;
-
-
     @Setter private Consumer<TaskPartial> navigationCallback;
 
     private ObservableList<TaskPartial> taskData = FXCollections.observableArrayList();

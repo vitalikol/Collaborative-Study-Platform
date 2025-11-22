@@ -3,11 +3,9 @@ package com.vitaliioleksenko.csp.client.service;
 import com.vitaliioleksenko.csp.client.model.PageResponse;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.UserPartial;
+import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 
@@ -64,6 +62,28 @@ public class UserService {
             JavaType type = objectMapper.getTypeFactory()
                     .constructParametricType(PageResponse.class, UserPartial.class);
             return objectMapper.readValue(response.body().string(), type);
+        }
+    }
+
+    public void editUser(UserUpdate dto, int userId) throws IOException{
+        String json = objectMapper.writeValueAsString(dto);
+
+        RequestBody body = RequestBody.create(
+                json,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + userId)
+                .patch(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.code() == 400) {
+                throw new IOException("Validation error " + response.message());
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
         }
     }
 }

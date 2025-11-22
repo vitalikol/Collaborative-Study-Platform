@@ -23,7 +23,6 @@ public class UserViewController {
     @FXML private Button prevButton;
     @FXML private Button nextButton;
     @FXML private Label pageLabel;
-
     @Setter private Consumer<Integer> navigationCallback;
 
     private final ObservableList<UserPartial> usersData = FXCollections.observableArrayList();

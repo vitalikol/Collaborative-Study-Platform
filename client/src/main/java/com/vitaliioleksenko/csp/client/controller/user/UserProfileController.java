@@ -14,22 +14,27 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import lombok.Setter;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class UserProfileController {
     @FXML private ImageView avatarView;
     @FXML private Label fullNameLabel;
     @FXML private Label roleLabel;
-    @FXML private HBox actionButtonsBox;
+    @FXML private VBox actionButtonsBox;
     @FXML private Button editProfileButton;
     @FXML private Button changePasswordButton;
     @FXML private Button adminActionsButton;
+    @FXML private Button deleteProfileButton;
     @FXML private GridPane userInfoGrid;
     @FXML private VBox userStatsBox;
     @FXML private Label tasksCompletedLabel;
     @FXML private Label tasksInProgressLabel;
     @FXML private Label tasksOverdueLabel;
+    @Setter private Consumer<Void> userEditCallback;
+
 
     private final UserService userService;
     private final AuthService authService;
@@ -42,6 +47,12 @@ public class UserProfileController {
         this.authService = new AuthService();
         this.userSession = UserSession.getInstance();
         this.amIAdmin = userSession.getCurrentUserRole() == Role.ROLE_ADMIN;
+    }
+
+    @FXML private void handleEditUser() {
+        if (userEditCallback != null) {
+            userEditCallback.accept(null);
+        }
     }
 
     public void initData(Integer userId) {
@@ -83,6 +94,8 @@ public class UserProfileController {
         editProfileButton.setManaged(true);
         changePasswordButton.setVisible(true);
         changePasswordButton.setManaged(true);
+        deleteProfileButton.setVisible(true);
+        deleteProfileButton.setManaged(true);
     }
 
     private void setupGuestProfileView(boolean amIAdmin) {

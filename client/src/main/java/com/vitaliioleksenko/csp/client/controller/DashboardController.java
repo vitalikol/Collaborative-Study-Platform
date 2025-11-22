@@ -7,6 +7,7 @@ import com.vitaliioleksenko.csp.client.controller.logs.LogViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskCreateController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
+import com.vitaliioleksenko.csp.client.controller.user.UserEditController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
 import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
@@ -175,6 +176,7 @@ public class DashboardController {
             Parent view = loader.load();
             UserProfileController controller = loader.getController();
             controller.initData(userId);
+            controller.setUserEditCallback(v -> loadUserEditView());
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -220,6 +222,21 @@ public class DashboardController {
             controller.setPreSelectedGroup(group);
 
             controller.setCloseCallback(v -> showActiveTasks());
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadUserEditView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-edit.fxml"));
+            Parent view = loader.load();
+
+            UserEditController controller = loader.getController();
+
+            controller.setCloseCallback(v -> showMyProfile());
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {

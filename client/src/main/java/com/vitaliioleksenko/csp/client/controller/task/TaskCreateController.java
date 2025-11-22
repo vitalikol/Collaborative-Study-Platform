@@ -39,17 +39,17 @@ public class TaskCreateController {
 
     @FXML private void handleCreate() {
         if (nameField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The group name cannot be empty.");
+            showAlert(Alert.AlertType.WARNING, "Error", "The task name cannot be empty.");
             return;
         }
 
         if (descriptionArea.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The group description cannot be empty.");
+            showAlert(Alert.AlertType.WARNING, "Error", "The task description cannot be empty.");
             return;
         }
 
         if (deadlinePicker.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The deadline description cannot be empty.");
+            showAlert(Alert.AlertType.WARNING, "Error", "The task deadline cannot be empty.");
             return;
         }
 
@@ -72,7 +72,7 @@ public class TaskCreateController {
                 closeCallback.accept(null);
             }
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to create group: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to create task: " + e.getMessage());
         }
     }
 
