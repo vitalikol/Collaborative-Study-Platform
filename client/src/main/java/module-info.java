@@ -28,7 +28,6 @@ module com.vitaliioleksenko.csp.client {
     opens com.vitaliioleksenko.csp.client.controller.auth to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller.task to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller.calendar to javafx.fxml;
-    opens com.vitaliioleksenko.csp.client.controller.settings to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller.user to javafx.fxml;
     opens com.vitaliioleksenko.csp.client.controller.logs to javafx.fxml;
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,8 +65,9 @@ public class UsersController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
+    public ResponseEntity<Void> delete(@PathVariable int id) {
         usersService.remove(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+
+        return ResponseEntity.noContent().build();
     }
 }

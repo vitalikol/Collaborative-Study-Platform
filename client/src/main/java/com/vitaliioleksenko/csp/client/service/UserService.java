@@ -86,4 +86,17 @@ public class UserService {
             }
         }
     }
+
+    public void deleteUser(int userId) throws IOException {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + userId)
+                .delete()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+        }
+    }
 }

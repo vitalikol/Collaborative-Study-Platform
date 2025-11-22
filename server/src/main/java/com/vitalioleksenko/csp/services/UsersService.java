@@ -36,8 +36,8 @@ public class UsersService {
 
     @Transactional
     public void save(UserCreateDTO dto){
+        String passwordHash = passwordEncoder.encode(dto.getPassword());
         User user = mapper.toUser(dto);
-        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(passwordHash);
         if (user.getRole() == null) user.setRole(Role.ROLE_USER);
         usersRepository.save(user);
@@ -69,8 +69,10 @@ public class UsersService {
 
     @Transactional
     public void edit(UserUpdateDTO updatedUser, int id){
+        String passwordHash = passwordEncoder.encode(updatedUser.getPassword());
         User user = usersRepository.findById(id).orElseThrow(NotFoundException::new);
         mapper.updateUserFromDto(updatedUser, user);
+        user.setPasswordHash(passwordHash);
         usersRepository.save(user);
         activitiesLogsService.log(
                 "USER_EDITED",

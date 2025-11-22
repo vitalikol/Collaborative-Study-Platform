@@ -1,23 +1,22 @@
 package com.vitaliioleksenko.csp.client.controller.user;
 
-import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
-import com.vitaliioleksenko.csp.client.model.task.TaskCreate;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
-import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.service.UserService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 
-public class UserEditController {
-    @FXML private TextField nameField;
-    @FXML private TextField emailField;
+public class UserEditPasswordController {
+    @FXML private PasswordField passwordField;
+    @FXML private TextField rePasswordField;
 
     private int userId;
     private final UserService userService;
@@ -25,46 +24,34 @@ public class UserEditController {
     @Setter
     private Consumer<Void> closeCallback;
 
-    public UserEditController() {
+    public UserEditPasswordController() {
         this.userService = new UserService();
     }
 
     public void initData(int id){
         userId = id;
-        try {
-            UserDetailed user = userService.getUserById(id);
-            nameField.setText(user.getName());
-            emailField.setText(user.getEmail());
-        } catch (IOException e){
-            throw new RuntimeException(e);
-        }
     }
 
-    @FXML private void handleEdit() {
-        if (nameField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The user name cannot be empty.");
-            return;
-        }
-
-        if (emailField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The user description cannot be empty.");
+    @FXML private void handleChange() {
+        if (!passwordField.getText().equals(rePasswordField.getText())) {
+            showAlert(Alert.AlertType.WARNING, "Error", "Password's doesn't match.");
             return;
         }
 
         UserUpdate userUpdate = UserUpdate.builder()
-                .name(nameField.getText().trim())
-                .email(emailField.getText().trim())
+                .password(passwordField.getText())
                 .build();
 
         try {
             userService.editUser(userUpdate, userId);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "The user has been successfully edited!");
+            //todo auto terminate all sessions
+            showAlert(Alert.AlertType.INFORMATION, "Success", "The password has been successfully changed!");
 
             if (closeCallback != null) {
                 closeCallback.accept(null);
             }
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to edit user: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to change password user: " + e.getMessage());
         }
     }
 
@@ -80,7 +67,7 @@ public class UserEditController {
         alert.setHeaderText(null);
         alert.setContentText(message);
 
-        Stage stage = (Stage) nameField.getScene().getWindow();
+        Stage stage = (Stage) passwordField.getScene().getWindow();
         alert.initOwner(stage);
 
         alert.showAndWait();

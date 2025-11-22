@@ -3,11 +3,11 @@ package com.vitaliioleksenko.csp.client.controller;
 import com.vitaliioleksenko.csp.client.controller.group.GroupCreateController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
-import com.vitaliioleksenko.csp.client.controller.logs.LogViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskCreateController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
 import com.vitaliioleksenko.csp.client.controller.user.UserEditController;
+import com.vitaliioleksenko.csp.client.controller.user.UserEditPasswordController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
 import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
@@ -52,11 +52,7 @@ public class DashboardController {
     }
 
     @FXML private void showMyProfile(){
-        loadUserProfileView(session.getCurrentUserId());
-    }
-
-    @FXML private void showSettings(){
-        loadViewToCenter("/com/vitaliioleksenko/csp/client/view/settings/settings.fxml");
+        showUserProfileView(session.getCurrentUserId());
     }
 
     @FXML private void handleLogOut() {
@@ -75,7 +71,7 @@ public class DashboardController {
             Parent view = loader.load();
             GroupViewController controller = loader.getController();
             controller.setNavigationCallback(this::showGroupProfileView);
-            controller.setCreateGroupCallback(v -> loadGroupCreateView());
+            controller.setCreateGroupCallback(v -> showGroupCreateView());
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -91,7 +87,7 @@ public class DashboardController {
 
             controller.setViewMode(TaskViewController.TaskViewMode.ACTIVE);
             controller.setNavigationCallback(this::showTaskProfileView);
-            controller.setCreateTaskCallback(v -> loadTaskCreateView(controller.getSelectedGroup()));
+            controller.setCreateTaskCallback(v -> showTaskCreateView(controller.getSelectedGroup()));
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -130,7 +126,7 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"));
             Parent view = loader.load();
             UserViewController controller = loader.getController();
-            controller.setNavigationCallback(this::loadUserProfileView);
+            controller.setNavigationCallback(this::showUserProfileView);
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -139,49 +135,10 @@ public class DashboardController {
     }
 
     private void setupRoleBasedUI() {
-        if (session.getCurrentUserRole() == Role.ROLE_ADMIN) {
-            teamButton.setText("Team's");
-            calendarButton.setVisible(false);
-            calendarButton.setManaged(false);
-        }
+
     }
 
-    public void showTaskProfileView(TaskPartial task) {
-        if (task == null) return;
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-profile.fxml"));
-            Parent view = loader.load();
-            TaskProfileController controller = loader.getController();
-            controller.initData(task);
-            mainBorderPane.setCenter(view);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void loadViewToCenter(String fxmlFileName) {
-        try {
-            Parent view = WindowRenderer.loadViewInternal(fxmlFileName);
-            mainBorderPane.setCenter(view);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void loadUserProfileView(Integer userId) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-profile.fxml"));
-            Parent view = loader.load();
-            UserProfileController controller = loader.getController();
-            controller.initData(userId);
-            controller.setUserEditCallback(v -> loadUserEditView());
-            mainBorderPane.setCenter(view);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void showGroupProfileView(int groupId) {
         try {
@@ -197,7 +154,7 @@ public class DashboardController {
         }
     }
 
-    public void loadGroupCreateView() {
+    public void showGroupCreateView() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-create.fxml"));
             Parent view = loader.load();
@@ -212,7 +169,22 @@ public class DashboardController {
         }
     }
 
-    public void loadTaskCreateView(GroupPartial group) {
+
+    public void showTaskProfileView(TaskPartial task) {
+        if (task == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-profile.fxml"));
+            Parent view = loader.load();
+            TaskProfileController controller = loader.getController();
+            controller.initData(task);
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showTaskCreateView(GroupPartial group) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-create.fxml"));
             Parent view = loader.load();
@@ -229,13 +201,43 @@ public class DashboardController {
         }
     }
 
-    public void loadUserEditView() {
+
+    private void showUserProfileView(Integer userId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-profile.fxml"));
+            Parent view = loader.load();
+            UserProfileController controller = loader.getController();
+            controller.initData(userId);
+            controller.setUserEditCallback(v -> showUserEditView(userId));
+            controller.setPasswordEditCallback(v -> showUserEditPasswordView(userId));
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showUserEditView(int id) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-edit.fxml"));
             Parent view = loader.load();
 
             UserEditController controller = loader.getController();
+            controller.initData(id);
+            controller.setCloseCallback(v -> showMyProfile());
 
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showUserEditPasswordView(int id){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-edit-password.fxml"));
+            Parent view = loader.load();
+
+            UserEditPasswordController controller = loader.getController();
+            controller.initData(id);
             controller.setCloseCallback(v -> showMyProfile());
 
             mainBorderPane.setCenter(view);

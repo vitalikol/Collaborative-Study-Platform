@@ -37,8 +37,8 @@
         <VBox fx:id="actionButtonsBox" alignment="TOP_CENTER" layoutX="-1.0" layoutY="310.0" prefHeight="98.0" prefWidth="303.0" spacing="10.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="280.0">
             <children>
                 <Button fx:id="editProfileButton"  onAction="#handleEditUser" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Edit profile" managed="false" visible="false"/>
-                <Button fx:id="changePasswordButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Change password" managed="false" visible="false"/>
-                <Button fx:id="deleteProfileButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" style="-fx-background-color: #DC3545;" text="Delete profile" textFill="WHITE" managed="false" visible="false"/>
+                <Button fx:id="changePasswordButton" onAction="#handleEditPassword" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Change password" managed="false" visible="false"/>
+                <Button fx:id="deleteProfileButton" onAction="#handleDeleteUser" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" style="-fx-background-color: #DC3545;" text="Delete profile" textFill="WHITE" managed="false" visible="false"/>
                 <Button fx:id="adminActionsButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" style="-fx-background-color: #DC3545;" text="Control (Admin)" textFill="WHITE" managed="false" visible="false"/>
             </children>
         </VBox>

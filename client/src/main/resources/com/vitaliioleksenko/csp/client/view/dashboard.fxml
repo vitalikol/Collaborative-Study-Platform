@@ -30,7 +30,6 @@
                 <MenuButton fx:id="userMenuButton" mnemonicParsing="false" text="Current user">
                     <items>
                         <MenuItem text="Profile" onAction="#showMyProfile"/>
-                        <MenuItem text="Settings" onAction="#showSettings"/>
                         <MenuItem text="Log out" onAction="#handleLogOut"/>
                     </items>
                 </MenuButton>

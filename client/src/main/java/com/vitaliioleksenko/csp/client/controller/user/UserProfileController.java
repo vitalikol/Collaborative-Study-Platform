@@ -4,6 +4,7 @@ import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.service.UserService;
+import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
@@ -34,12 +37,13 @@ public class UserProfileController {
     @FXML private Label tasksInProgressLabel;
     @FXML private Label tasksOverdueLabel;
     @Setter private Consumer<Void> userEditCallback;
-
+    @Setter private Consumer<Void> passwordEditCallback;
 
     private final UserService userService;
     private final AuthService authService;
     private final UserSession userSession;
     private final boolean amIAdmin;
+    private Integer userId;
 
 
     public UserProfileController() {
@@ -55,7 +59,25 @@ public class UserProfileController {
         }
     }
 
+    @FXML private void handleEditPassword() {
+        if (passwordEditCallback != null) {
+            passwordEditCallback.accept(null);
+        }
+    }
+
+    @FXML private void handleDeleteUser() {
+        if (this.userId != null) {
+            try {
+                userService.deleteUser(this.userId);
+                //todo solve cascade delete vs domain integrity problem
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void initData(Integer userId) {
+        this.userId = userId;
         boolean isMyProfile = (userId == null || userId.equals(userSession.getCurrentUserId()));
 
         if (isMyProfile) {
@@ -103,8 +125,12 @@ public class UserProfileController {
         addRowToGrid(userInfoGrid, "Registration date","--" , 1); //user.getCreatedAt()
 
         if (amIAdmin) {
-            adminActionsButton.setVisible(true);
-            adminActionsButton.setManaged(true);
+            editProfileButton.setVisible(true);
+            editProfileButton.setManaged(true);
+            changePasswordButton.setVisible(true);
+            changePasswordButton.setManaged(true);
+            deleteProfileButton.setVisible(true);
+            deleteProfileButton.setManaged(true);
         }
     }
 
