@@ -20,11 +20,11 @@
                         <Font name="System Bold" size="28.0" />
                     </font>
                 </Label>
-                <HBox fx:id="adminActionsBox" managed="false" spacing="10.0" visible="false">
+                <HBox fx:id="adminActionsBox" managed="false" visible="false" spacing="10.0" >
                     <children>
-                        <Button mnemonicParsing="false" text="Add participant" />
-                        <Button mnemonicParsing="false" text="Edit group" />
-                        <Button mnemonicParsing="false" style="-fx-background-color: #DC3545;" text="Delete group" textFill="WHITE" />
+                        <Button fx:id="addParticipantButton" mnemonicParsing="false" text="Add participant" onAction="#onAddParticipant" />
+                        <Button fx:id="editGroupButton" mnemonicParsing="false" text="Edit group" onAction="#onEditGroup" />
+                        <Button mnemonicParsing="false" style="-fx-background-color: #DC3545;" text="Delete group" textFill="WHITE" onAction="#onDeleteGroup"/>
                     </children>
                 </HBox>
 

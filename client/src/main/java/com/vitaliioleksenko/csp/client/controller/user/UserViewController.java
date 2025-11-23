@@ -2,8 +2,11 @@ package com.vitaliioleksenko.csp.client.controller.user;
 
 
 import com.vitaliioleksenko.csp.client.model.PageResponse;
+import com.vitaliioleksenko.csp.client.model.membership.MembershipCreate;
 import com.vitaliioleksenko.csp.client.model.user.UserPartial;
+import com.vitaliioleksenko.csp.client.service.MembershipService;
 import com.vitaliioleksenko.csp.client.service.UserService;
+import com.vitaliioleksenko.csp.client.util.enums.GroupRole;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -11,10 +14,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class UserViewController {
@@ -24,16 +29,21 @@ public class UserViewController {
     @FXML private Button nextButton;
     @FXML private Label pageLabel;
     @Setter private Consumer<Integer> navigationCallback;
+    private Runnable backNavigationCallback;
 
     private final ObservableList<UserPartial> usersData = FXCollections.observableArrayList();
     private final UserService userService;
+    private final MembershipService membershipService;
 
+    private boolean selectionMode = false;
     private int currentPage = 0;
-    private final int pageSize = 10; // Кількість елементів на сторінці
+    private final int pageSize = 10;
     private int totalPages = 0;
+    private int targetGroupId;
 
     public UserViewController() {
         this.userService = new UserService();
+        this.membershipService = new MembershipService();
     }
 
     @FXML
@@ -56,6 +66,12 @@ public class UserViewController {
             currentPage++;
             loadUsers();
         }
+    }
+
+    public void enableSelectionMode(int groupId, Runnable backCallback) {
+        this.selectionMode = true;
+        this.targetGroupId = groupId;
+        this.backNavigationCallback = backCallback;
     }
 
     private void loadUsers() {
@@ -96,11 +112,48 @@ public class UserViewController {
         userListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && navigationCallback != null) {
                 UserPartial selectedUser = userListView.getSelectionModel().getSelectedItem();
-                if (selectedUser != null) {
-                    navigationCallback.accept(selectedUser.getUserId());
+                if (!selectionMode) {
+                    if (navigationCallback != null) {
+                        navigationCallback.accept(selectedUser.getUserId());
+                    }
+                } else {
+                    showAddToGroupConfirmation(selectedUser);
                 }
             }
         });
+    }
+
+    private void showAddToGroupConfirmation(UserPartial user) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Add member");
+        alert.setHeaderText("Add " + user.getName() + " to this group?");
+
+        ButtonType addBtn = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(addBtn, cancelBtn);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        Stage stage = (Stage) searchFilterField.getScene().getWindow();
+        alert.initOwner(stage);
+
+        if (result.isPresent() && result.get() == addBtn) {
+
+            MembershipCreate membershipCreate = MembershipCreate.builder()
+                    .groupId(targetGroupId)
+                    .userId(user.getUserId())
+                    .role(GroupRole.MEMBER)
+                    .build();
+            try {
+                membershipService.creatMembership(membershipCreate);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (backNavigationCallback != null) {
+                backNavigationCallback.run();
+            }
+        }
     }
 
     private void setupListViewFactory() {

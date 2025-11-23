@@ -1,6 +1,7 @@
 package com.vitaliioleksenko.csp.client.controller;
 
 import com.vitaliioleksenko.csp.client.controller.group.GroupCreateController;
+import com.vitaliioleksenko.csp.client.controller.group.GroupEditController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskCreateController;
@@ -16,6 +17,7 @@ import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -47,8 +49,12 @@ public class DashboardController {
 
     @FXML public void initialize() {
         setupRoleBasedUI();
-        showActiveTasks(); // Показуємо активні завдання при старті
+        showActiveTasks();
         userMenuButton.setText(session.getCurrentUser().getEmail());
+
+        Platform.runLater(() -> {
+            mainBorderPane.getScene().getRoot().setUserData(this);
+        });
     }
 
     @FXML private void showMyProfile(){
@@ -139,7 +145,6 @@ public class DashboardController {
     }
 
 
-
     public void showGroupProfileView(int groupId) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-profile.fxml"));
@@ -147,6 +152,9 @@ public class DashboardController {
 
             GroupProfileController controller = loader.getController();
             controller.initData(groupId);
+            controller.setMainBorderPane(mainBorderPane);
+            controller.setBackNavigationCallback(this::showMyTeam);
+            controller.setGroupEditCallback(v -> showGroupEditView(groupId));
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -162,6 +170,21 @@ public class DashboardController {
             GroupCreateController controller = loader.getController();
 
             controller.setCloseCallback(v -> showMyTeam());
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showGroupEditView(int id){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/group/group-edit.fxml"));
+            Parent view = loader.load();
+
+            GroupEditController controller = loader.getController();
+            controller.initData(id);
+            controller.setCloseCallback(v -> showGroupProfileView(id));
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -245,4 +268,26 @@ public class DashboardController {
             throw new RuntimeException(e);
         }
     }
+
+    public void showUserSelectionForGroup(int groupId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"
+            ));
+            Parent view = loader.load();
+
+            UserViewController controller = loader.getController();
+
+            controller.enableSelectionMode(
+                    groupId,
+                    () -> showGroupProfileView(groupId)
+            );
+
+            mainBorderPane.setCenter(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

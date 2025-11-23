@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MembershipUpdateDTO {
+public class MembershipCreate {
+    private Integer userId;
+    private Integer groupId;
     private GroupRole role;
 }

@@ -1,40 +1,41 @@
-package com.vitaliioleksenko.csp.client.controller.user;
+package com.vitaliioleksenko.csp.client.controller.group;
 
-import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
-import com.vitaliioleksenko.csp.client.model.task.TaskCreate;
+import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
+import com.vitaliioleksenko.csp.client.model.group.GroupUpdate;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
-import com.vitaliioleksenko.csp.client.service.TaskService;
+import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.UserService;
-import com.vitaliioleksenko.csp.client.util.UserSession;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 
-public class UserEditController {
+public class GroupEditController {
     @FXML private TextField nameField;
-    @FXML private TextField emailField;
+    @FXML private TextArea descriptionArea;
 
-    private int userId;
-    private final UserService userService;
+    private int groupId;
+    private final GroupService groupService;
 
     @Setter
     private Consumer<Void> closeCallback;
 
-    public UserEditController() {
-        this.userService = new UserService();
+    public GroupEditController() {
+        this.groupService = new GroupService();
     }
 
     public void initData(int id){
-        userId = id;
+        groupId = id;
         try {
-            UserDetailed user = userService.getUserById(id);
-            nameField.setText(user.getName());
-            emailField.setText(user.getEmail());
+            GroupDetailed group = groupService.getGroupById(id);
+            nameField.setText(group.getName());
+            descriptionArea.setText(group.getDescription());
         } catch (IOException e){
             throw new RuntimeException(e);
         }
@@ -46,18 +47,18 @@ public class UserEditController {
             return;
         }
 
-        if (emailField.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Error", "The user email cannot be empty.");
+        if (descriptionArea.getText().trim().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Error", "The user description cannot be empty.");
             return;
         }
 
-        UserUpdate userUpdate = UserUpdate.builder()
+        GroupUpdate groupUpdate = GroupUpdate.builder()
                 .name(nameField.getText().trim())
-                .email(emailField.getText().trim())
+                .description(descriptionArea.getText().trim())
                 .build();
 
         try {
-            userService.editUser(userUpdate, userId);
+            groupService.editGroup(groupUpdate, groupId);
             showAlert(Alert.AlertType.INFORMATION, "Success", "The user has been successfully edited!");
 
             if (closeCallback != null) {

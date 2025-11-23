@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MembershipDTO {
+public class Membership {
     private int membershipId;
     private UserShort user;
     private GroupShort group;

@@ -4,6 +4,8 @@ import com.vitaliioleksenko.csp.client.model.PageResponse;
 import com.vitaliioleksenko.csp.client.model.group.GroupCreate;
 import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
+import com.vitaliioleksenko.csp.client.model.group.GroupUpdate;
+import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;
@@ -83,6 +85,41 @@ public class GroupService {
             if (response.code() == 400) {
                 throw new IOException(response.message());
             } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+        }
+    }
+
+    public void editGroup(GroupUpdate dto, int groupId) throws IOException{
+        String json = objectMapper.writeValueAsString(dto);
+
+        RequestBody body = RequestBody.create(
+                json,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + groupId)
+                .patch(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.code() == 400) {
+                throw new IOException("Validation error " + response.message());
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+        }
+    }
+
+    public void deleteGroup(int groupId) throws IOException {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + groupId)
+                .delete()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
         }
