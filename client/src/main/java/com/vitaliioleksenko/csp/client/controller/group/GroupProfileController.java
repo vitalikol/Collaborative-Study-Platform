@@ -5,6 +5,7 @@ import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
 import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.membership.MembershipCreate;
 import com.vitaliioleksenko.csp.client.model.membership.MembershipShort;
+import com.vitaliioleksenko.csp.client.model.membership.MembershipUpdate;
 import com.vitaliioleksenko.csp.client.model.user.UserPartial;
 import com.vitaliioleksenko.csp.client.service.MembershipService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
@@ -14,12 +15,11 @@ import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Setter;
@@ -39,8 +39,9 @@ public class GroupProfileController {
     @FXML private Button editGroupButton;
     @FXML private ListView<MembershipShort> membersListView;
     @Setter private Consumer<Void> groupEditCallback;
+    @Setter private Consumer<Void> addParticipantCallback;
     @Setter private Runnable backNavigationCallback;
-    @Setter private BorderPane mainBorderPane;
+
 
     private final GroupService groupService;
     private final MembershipService membershipService;
@@ -71,10 +72,9 @@ public class GroupProfileController {
     }
 
     @FXML private void onAddParticipant() {
-        DashboardController dashboard = (DashboardController)
-                mainBorderPane.getScene().getRoot().getUserData();
-
-        dashboard.showUserSelectionForGroup(groupId);
+        if (addParticipantCallback != null) {
+            addParticipantCallback.accept(null);
+        }
     }
 
     @FXML private void onEditGroup() {
@@ -124,6 +124,7 @@ public class GroupProfileController {
             boolean isCreator = details.getCreatedBy().getUserId() == session.getCurrentUser().getUserId();
 
             if (isAdmin || isCreator) {
+                setupListViewFactory();
                 adminActionsBox.setVisible(true);
                 adminActionsBox.setManaged(true);
             } else {
@@ -135,4 +136,135 @@ public class GroupProfileController {
             throw new RuntimeException(e);
         }
     }
+
+    public void handleRemoval(MembershipShort membership) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Remove member");
+        alert.setHeaderText("Remove " + membership.getUser().getEmail() + " from this group?");
+
+        Stage stage = (Stage) groupNameLabel.getScene().getWindow();
+        alert.initOwner(stage);
+
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                membershipService.deleteMembership(membership.getMembershipId());
+
+                loadGroupDetails();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+                //showError(e.getMessage());
+            }
+        }
+    }
+
+    private void setupListViewFactory() {
+        membersListView.setCellFactory(lv -> new GroupListCell(this));
+    }
+
+    static class GroupListCell extends ListCell<MembershipShort> {
+
+        private final HBox container = new HBox(10);
+
+        private final Label label = new Label();
+
+        private final Button roleBtn = new Button("Change role");
+        private final Button removeBtn = new Button("Remove");
+
+        // Елементи для редагування ролі
+        private final ComboBox<GroupRole> roleCombo = new ComboBox<>();
+        private final Button confirmBtn = new Button("Confirm");
+        private final Button cancelBtn = new Button("Cancel");
+
+        private final Region spacer = new Region();
+
+        private boolean editingRole = false;
+
+        private final GroupProfileController controller;
+
+        public GroupListCell(GroupProfileController controller) {
+            this.controller = controller;
+
+            container.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            roleBtn.setOnAction(e -> startEditRole());
+
+            removeBtn.setOnAction(e -> {
+                MembershipShort m = getItem();
+                if (m != null) controller.handleRemoval(m);
+            });
+
+            confirmBtn.setOnAction(e -> applyRoleChange());
+            cancelBtn.setOnAction(e -> stopEditRole());
+
+            roleCombo.getItems().setAll(GroupRole.values());
+        }
+
+        @Override
+        protected void updateItem(MembershipShort membership, boolean empty) {
+            super.updateItem(membership, empty);
+
+            if (empty || membership == null) {
+                setGraphic(null);
+                return;
+            }
+
+            label.setText(membership.getUser().getEmail() + " (" + membership.getRole() + ")");
+
+            if (editingRole) {
+                roleCombo.setValue(membership.getRole());
+
+                container.getChildren().setAll(
+                        label,
+                        spacer,
+                        roleCombo,
+                        confirmBtn,
+                        cancelBtn
+                );
+            } else {
+                // Стандартний стан
+                container.getChildren().setAll(
+                        label,
+                        spacer,
+                        roleBtn,
+                        removeBtn
+                );
+            }
+
+            setGraphic(container);
+        }
+
+        private void startEditRole() {
+            editingRole = true;
+            updateItem(getItem(), false); // пере-рендер
+        }
+
+        private void stopEditRole() {
+            editingRole = false;
+            updateItem(getItem(), false); // пере-рендер
+        }
+
+        private void applyRoleChange() {
+            MembershipShort m = getItem();
+            if (m == null) return;
+
+            GroupRole newRole = roleCombo.getValue();
+            if (newRole == null || newRole == m.getRole()) {
+                stopEditRole();
+                return;
+            }
+            try {
+                controller.membershipService.editMembership(new MembershipUpdate(newRole), getItem().getMembershipId());
+
+                m.setRole(newRole);
+                stopEditRole();
+                controller.loadGroupDetails();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+                //controller.showError(e.getMessage());
+            }
+        }
+    }
+
+
 }

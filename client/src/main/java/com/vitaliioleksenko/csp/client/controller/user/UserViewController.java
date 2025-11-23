@@ -29,7 +29,6 @@ public class UserViewController {
     @FXML private Button nextButton;
     @FXML private Label pageLabel;
     @Setter private Consumer<Integer> navigationCallback;
-    private Runnable backNavigationCallback;
 
     private final ObservableList<UserPartial> usersData = FXCollections.observableArrayList();
     private final UserService userService;
@@ -46,8 +45,7 @@ public class UserViewController {
         this.membershipService = new MembershipService();
     }
 
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         setupListViewFactory();
         setupNavigation();
         setupSearchFilter();
@@ -68,10 +66,9 @@ public class UserViewController {
         }
     }
 
-    public void enableSelectionMode(int groupId, Runnable backCallback) {
+    public void enableSelectionMode(int groupId) {
         this.selectionMode = true;
         this.targetGroupId = groupId;
-        this.backNavigationCallback = backCallback;
     }
 
     private void loadUsers() {
@@ -113,11 +110,9 @@ public class UserViewController {
             if (event.getClickCount() == 2 && navigationCallback != null) {
                 UserPartial selectedUser = userListView.getSelectionModel().getSelectedItem();
                 if (!selectionMode) {
-                    if (navigationCallback != null) {
-                        navigationCallback.accept(selectedUser.getUserId());
-                    }
+                    navigationCallback.accept(selectedUser.getUserId());
                 } else {
-                    showAddToGroupConfirmation(selectedUser);
+                    showAddToGroupConfirmation(userListView.getSelectionModel().getSelectedItem());
                 }
             }
         });
@@ -132,10 +127,10 @@ public class UserViewController {
         ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(addBtn, cancelBtn);
 
-        Optional<ButtonType> result = alert.showAndWait();
-
         Stage stage = (Stage) searchFilterField.getScene().getWindow();
         alert.initOwner(stage);
+
+        Optional<ButtonType> result = alert.showAndWait();
 
         if (result.isPresent() && result.get() == addBtn) {
 
@@ -147,12 +142,17 @@ public class UserViewController {
             try {
                 membershipService.creatMembership(membershipCreate);
             } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                Alert alertEr = new Alert(Alert.AlertType.ERROR);
+                alertEr.setTitle("Error");
+                alertEr.setHeaderText(null);
+                alertEr.setContentText(e.getMessage());
 
-            if (backNavigationCallback != null) {
-                backNavigationCallback.run();
+                alertEr.initOwner(stage);
+
+                alertEr.showAndWait();
+                return;
             }
+            navigationCallback.accept(targetGroupId);
         }
     }
 

@@ -152,9 +152,9 @@ public class DashboardController {
 
             GroupProfileController controller = loader.getController();
             controller.initData(groupId);
-            controller.setMainBorderPane(mainBorderPane);
             controller.setBackNavigationCallback(this::showMyTeam);
             controller.setGroupEditCallback(v -> showGroupEditView(groupId));
+            controller.setAddParticipantCallback(v -> showUserSelectionForGroup(groupId));
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
@@ -271,20 +271,14 @@ public class DashboardController {
 
     public void showUserSelectionForGroup(int groupId) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"
-            ));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/user/user-view.fxml"));
             Parent view = loader.load();
 
             UserViewController controller = loader.getController();
-
-            controller.enableSelectionMode(
-                    groupId,
-                    () -> showGroupProfileView(groupId)
-            );
+            controller.setNavigationCallback(this::showGroupProfileView);
+            controller.enableSelectionMode(groupId);
 
             mainBorderPane.setCenter(view);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
