@@ -95,7 +95,16 @@ public class ResourcesService {
     public void uploadFile(int resourceId, MultipartFile file) throws IOException {
         Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new); // метод, який ти вже маєш
 
+        Files.createDirectories(root.resolve(String.valueOf(resourceId)));
 
+        String original = file.getOriginalFilename();
+        String fileName = System.currentTimeMillis() + "_" + original;
+
+        Path dest = root.resolve(resourceId + "/" + fileName);
+        Files.copy(file.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
+
+        resource.setPathOrUrl(dest.toString());
+        resource.setUploadedAt(LocalDateTime.now());
         resourcesRepository.save(resource);
     }
 

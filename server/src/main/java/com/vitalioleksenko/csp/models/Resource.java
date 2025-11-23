@@ -47,7 +47,6 @@ public class Resource {
     private ResourceFormat format;
 
     @Column(name = "path_or_url")
-    @NotEmpty(message = "Path or url must not be empty")
     private String pathOrUrl;
 
     @Column(name = "uploaded_at")
