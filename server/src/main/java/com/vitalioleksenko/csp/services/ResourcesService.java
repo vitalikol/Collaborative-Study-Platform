@@ -15,6 +15,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +31,7 @@ public class ResourcesService {
     private final ResourcesRepository resourcesRepository;
     private final AppMapper mapper;
     private final ActivitiesLogsService activitiesLogsService;
+    private final Path root = Paths.get("../db/files");
 
     @Autowired
     public ResourcesService(ResourcesRepository resourcesRepository, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
@@ -80,4 +90,45 @@ public class ResourcesService {
             return true;
         }).orElse(false);
     }
+
+    @Transactional
+    public void uploadFile(int resourceId, MultipartFile file) throws IOException {
+        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new); // метод, який ти вже маєш
+
+
+        resourcesRepository.save(resource);
+    }
+
+    public byte[] getFile(int resourceId) throws IOException {
+        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new);
+
+        if (resource.getPathOrUrl() == null)
+            throw new FileNotFoundException("Resource has no file");
+
+        return Files.readAllBytes(Paths.get(resource.getPathOrUrl()));
+    }
+
+    public String getFileName(int resourceId) {
+        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new);
+
+        if (resource.getPathOrUrl() == null)
+            throw new RuntimeException("Resource has no file");
+
+        return Paths.get(resource.getPathOrUrl()).getFileName().toString();
+    }
+
+    @Transactional
+    public void deleteFile(int resourceId) throws IOException {
+        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new);
+
+
+        if (resource.getPathOrUrl() != null) {
+
+            boolean deleted = Files.deleteIfExists(Paths.get(resource.getPathOrUrl()));
+
+            resource.setPathOrUrl(null);
+            resourcesRepository.save(resource);
+        }
+    }
+
 }

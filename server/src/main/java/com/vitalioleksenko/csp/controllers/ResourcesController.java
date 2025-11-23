@@ -11,9 +11,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/resource")
@@ -25,7 +27,7 @@ public class ResourcesController {
         this.resourcesService = resourcesService;
     }
 
-    @PostMapping("")
+    @PostMapping("/file")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid ResourceCreateDTO dto,
                                              BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -69,4 +71,46 @@ public class ResourcesController {
         resourcesService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+
+    @PostMapping(value ="/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadFile(
+            @PathVariable("id") int id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        try {
+            resourcesService.uploadFile(id, file);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/file")
+    public ResponseEntity<?> downloadFile(@PathVariable("id") int id) {
+        try {
+            byte[] data = resourcesService.getFile(id);
+            String fileName = resourcesService.getFileName(id);
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                    .body(data);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/file")
+    public ResponseEntity<?> deleteFile(@PathVariable("id") int id) {
+        try {
+            resourcesService.deleteFile(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
