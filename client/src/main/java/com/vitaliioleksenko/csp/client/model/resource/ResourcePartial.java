@@ -21,5 +21,7 @@ public class ResourcePartial {
     private String title;
     private ResourceType type;
     private ResourceFormat format;
+    private String pathOrUrl;
+
     private LocalDateTime uploadedAt;
 }

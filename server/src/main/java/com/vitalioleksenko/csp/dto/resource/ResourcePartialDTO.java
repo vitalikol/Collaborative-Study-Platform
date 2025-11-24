@@ -33,5 +33,7 @@ public class ResourcePartialDTO {
     @NotEmpty(message = "Format must not be empty")
     private ResourceFormat format;
 
+    private String pathOrUrl;
+
     private LocalDateTime uploadedAt;
 }

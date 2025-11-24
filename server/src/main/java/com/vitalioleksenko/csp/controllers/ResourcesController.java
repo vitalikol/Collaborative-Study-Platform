@@ -1,18 +1,20 @@
 package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.resource.*;
+import com.vitalioleksenko.csp.models.Resource;
 import com.vitalioleksenko.csp.services.ResourcesService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/api/resource")
@@ -41,7 +43,7 @@ public class ResourcesController {
     }
 
     @GetMapping("")
-    public Page<ResourcePartialDTO> readAll(@RequestParam(name = "taskId", required = false) Integer taskId,
+    public Page<ResourceDetailedDTO> readAll(@RequestParam(name = "taskId", required = false) Integer taskId,
                                             @RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "20") int size){
         return resourcesService.findAll(taskId, page, size);
@@ -69,6 +71,7 @@ public class ResourcesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         resourcesService.remove(id);
+
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -91,13 +94,7 @@ public class ResourcesController {
     @GetMapping("/{id}/file")
     public ResponseEntity<?> downloadFile(@PathVariable("id") int id) {
         try {
-            byte[] data = resourcesService.getFile(id);
-            String fileName = resourcesService.getFileName(id);
-
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
-                    .body(data);
-
+            return resourcesService.getFile(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

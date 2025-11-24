@@ -5,15 +5,19 @@ import com.vitaliioleksenko.csp.client.model.resource.ResourcePartial;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceShort;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
+import com.vitaliioleksenko.csp.client.model.task.TaskUpdate;
 import com.vitaliioleksenko.csp.client.service.ResourceService;
 import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.enums.ResourceFormat;
 import com.vitaliioleksenko.csp.client.util.enums.ResourceType;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
+import com.vitaliioleksenko.csp.client.util.enums.TaskStatus;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,6 +25,7 @@ import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -98,6 +103,20 @@ public class TaskProfileController {
                             .toList()
             );
 
+            materialsListView.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    ResourcePartial item = materialsListView.getSelectionModel().getSelectedItem();
+                    if (item != null) showResourceDialog(item);
+                }
+            });
+
+            submissionsListView.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    ResourcePartial item = submissionsListView.getSelectionModel().getSelectedItem();
+                    if (item != null) showResourceDialog(item);
+                }
+            });
+
         } catch (IOException e) {
             descriptionArea.setText("Failed to load : " + e.getMessage());
         }
@@ -107,18 +126,80 @@ public class TaskProfileController {
 
     private void setupListViews() {
         materialsListView.setCellFactory(lv -> new ListCell<>() {
+            private final Button deleteBtn = new Button("Delete");
+            private final Label titleLabel = new Label();
+            private final Region spacer = new Region();
+            private final HBox root = new HBox(10);
+
+            {
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                deleteBtn.setOnAction(e -> {
+                    ResourcePartial item = getItem();
+                    if (item == null) return;
+                    try {
+                        if (item.getFormat() == ResourceFormat.FILE){
+                            resourceService.deleteFile(item.getResourceId());
+                        }
+                        resourceService.deleteResource(item.getResourceId());
+                        loadTaskDetails();
+                    } catch (Exception ex) {
+                        showError("Failed to delete: " + ex.getMessage());
+                    }
+                });
+
+                root.getChildren().addAll(titleLabel, spacer, deleteBtn);
+            }
+
             @Override
             protected void updateItem(ResourcePartial item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.getTitle() + " (" + item.getFormat() + ")");
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    titleLabel.setText(item.getTitle() + " (" + item.getFormat() + ")");
+                    setGraphic(root);
+                }
             }
         });
 
         submissionsListView.setCellFactory(lv -> new ListCell<>() {
+            private final Button deleteBtn = new Button("Delete");
+            private final Label titleLabel = new Label();
+            private final Region spacer = new Region();
+            private final HBox root = new HBox(10);
+
+            {
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                deleteBtn.setOnAction(e -> {
+                    ResourcePartial item = getItem();
+                    if (item == null) return;
+                    try {
+                        if (item.getFormat() == ResourceFormat.FILE){
+                            resourceService.deleteFile(item.getResourceId());
+                        }
+                        resourceService.deleteResource(item.getResourceId());
+                        loadTaskDetails();
+                    } catch (Exception ex) {
+                        showError("Failed to delete: " + ex.getMessage());
+                    }
+                });
+
+                root.getChildren().addAll(titleLabel, spacer, deleteBtn);
+            }
+
             @Override
             protected void updateItem(ResourcePartial item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.getTitle() + " — submitted");
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    titleLabel.setText(item.getTitle() + " (" + item.getFormat() + ")");
+                    setGraphic(root);
+                }
             }
         });
     }
@@ -159,28 +240,52 @@ public class TaskProfileController {
         }
     }
 
-    // ------------------------------ SUBMISSION (USER) ------------------------------
+    // ------------------------------ SUBMISSION ------------------------------
 
-    @FXML private void onSubmitUrl() {
-        showResourceCreateDialog(true);
+    @FXML private void onMarkAsDone() {
+        TaskUpdate done = new TaskUpdate();
+        done.setStatus(TaskStatus.DONE);
+        try {
+            taskService.editTask(done, taskId);
+            loadTaskDetails();
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "Task marked as done.");
+            a.initOwner(taskTitleLabel.getScene().getWindow());
+            a.showAndWait();
+        } catch (Exception e) {
+            showError("Failed: " + e.getMessage());
+        }
     }
 
-    @FXML private void onSubmitFile() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Upload submission");
-        File file = chooser.showOpenDialog(getStage());
-
-        if (file == null) return;
-//todo
-//        try {
-//            resourceService.uploadSubmission(taskId, session.getUserId(), file);
-//            loadTaskDetails();
-//        } catch (IOException e) {
-//            showError("Upload failed: " + e.getMessage());
-//        }
+    @FXML private void onRequestRework() {
+        TaskUpdate inProgress = new TaskUpdate();
+        inProgress.setStatus(TaskStatus.IN_PROGRESS);
+        try {
+            taskService.editTask(inProgress, taskId);
+            loadTaskDetails();
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "Rework requested.");
+            a.initOwner(taskTitleLabel.getScene().getWindow());
+            a.showAndWait();
+        } catch (Exception e) {
+            showError("Failed: " + e.getMessage());
+        }
     }
 
-    // ------------------------------ RESOURCE CREATE DIALOG ------------------------------
+    @FXML private void onSubmitForReview() {
+        TaskUpdate inReview = new TaskUpdate();
+        inReview.setStatus(TaskStatus.IN_REVIEW);
+        try {
+            taskService.editTask(inReview, taskId);
+            loadTaskDetails();
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "Submitted for review.");
+            a.initOwner(taskTitleLabel.getScene().getWindow());
+            a.showAndWait();
+        } catch (Exception e) {
+            showError("Failed: " + e.getMessage());
+        }
+    }
+
+
+    // ------------------------------ DIALOG ------------------------------
 
     private void showResourceCreateDialog(boolean submissionMode) {
         Dialog<ResourceCreate> dialog = new Dialog<>();
@@ -296,14 +401,46 @@ public class TaskProfileController {
         });
     }
 
-    // ------------------------------ UTIL ------------------------------
+    private void showResourceDialog(ResourcePartial resource) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Resource details");
+        dialog.setWidth(500);
+        dialog.initOwner(taskTitleLabel.getScene().getWindow());
 
-    private Stage getStage() {
-        return (Stage) taskTitleLabel.getScene().getWindow();
+        Label title = new Label("Title: " + resource.getTitle());
+        Label type = new Label("Type: " + resource.getType());
+        Label format = new Label("Format: " + resource.getFormat());
+
+        Button downloadBtn = new Button("Download");
+        downloadBtn.setVisible(resource.getFormat() == ResourceFormat.FILE);
+
+        downloadBtn.setOnAction(e -> {
+            try {
+                resourceService.downloadResource(resource.getResourceId(), Paths.get(resource.getPathOrUrl()).getFileName().toString());
+                Alert done = new Alert(Alert.AlertType.INFORMATION);
+                done.setHeaderText("Downloaded successfully");
+                done.setContentText("Saved to: " + System.getProperty("user.home"));
+
+                done.initOwner(taskTitleLabel.getScene().getWindow());
+                done.showAndWait();
+            } catch (Exception ex) {
+                showError("Failed to download: " + ex.getMessage());
+            }
+        });
+
+        VBox box = new VBox(10, title, type, format, downloadBtn);
+        dialog.getDialogPane().setContent(box);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
     }
+
+
+    // ------------------------------ UTIL ------------------------------
 
     private void showError(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR);
+        a.initOwner(taskTitleLabel.getScene().getWindow());
         a.setHeaderText("Error");
         a.setContentText(msg);
         a.showAndWait();

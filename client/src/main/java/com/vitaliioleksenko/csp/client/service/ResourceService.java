@@ -4,16 +4,15 @@ import com.vitaliioleksenko.csp.client.model.PageResponse;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceCreate;
 import com.vitaliioleksenko.csp.client.model.resource.ResourcePartial;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceShort;
-import com.vitaliioleksenko.csp.client.model.task.TaskCreate;
-import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
-import com.vitaliioleksenko.csp.client.model.user.UserPartial;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ResourceService {
     private static final String BASE_URL = "http://localhost:8080/api/resource";
@@ -77,6 +76,34 @@ public class ResourceService {
         }
     }
 
+    public void downloadResource(int resourceId, String filename) throws IOException {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + resourceId)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Failed to download file: " + response);
+            }
+
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new IOException("Empty response body");
+            }
+
+            try (InputStream in = body.byteStream();
+                 FileOutputStream out = new FileOutputStream(System.getProperty("user.home")+"/"+filename)) {
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+        }
+    }
+
     public void uploadResource(File file, int resourceId) throws IOException{
         RequestBody fileBody = RequestBody.create(
                 file,
@@ -99,4 +126,31 @@ public class ResourceService {
             }
         }
     }
+
+    public void deleteResource(int resourceId) throws IOException {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + resourceId)
+                .delete()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+        }
+    }
+
+    public void deleteFile(int resourceId) throws IOException {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + resourceId + "/file")
+                .delete()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+        }
+    }
+
 }

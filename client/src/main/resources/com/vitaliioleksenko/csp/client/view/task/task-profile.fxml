@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.Region?>
 <AnchorPane style="-fx-background-color: #FAFAFA;"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -47,41 +48,26 @@
             <Separator/>
 
             <!-- ACTION PANELS -->
-            <HBox spacing="10">
+            <HBox>
 
                 <!-- ADMIN PANEL -->
                 <HBox fx:id="adminActionsBox"
-                      spacing="10"
-                      visible="false"
-                      managed="false">
-
+                      spacing="10">
                     <children>
                         <Button onAction="#onEditTask" text="Edit Task"/>
                         <Button onAction="#onAddMaterial" text="Add Material"/>
                         <Button onAction="#onDeleteTask" text="Delete Task" style="-fx-background-color: #D32F2F; -fx-text-fill: white;"/>
                     </children>
                 </HBox>
-
-                <!-- USER SUBMISSION PANEL -->
-                <VBox fx:id="submissionBox"
-                      spacing="8"
-                      style="-fx-border-color: #E0E0E0; -fx-border-radius: 5; -fx-padding: 10;"
-                      visible="false"
-                      managed="false">
-
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox fx:id="submissionActionsBox"
+                      spacing="10">
                     <children>
-                        <Label text="Submit Work:">
-                            <font><Font name="System Bold" size="14"/></font>
-                        </Label>
-
-                        <HBox spacing="10">
-                            <children>
-                                <Button onAction="#onSubmitUrl"  text="Add Link"/>
-                                <Button onAction="#onSubmitFile"  text="Upload File"/>
-                            </children>
-                        </HBox>
+                        <Button text="Mark as Done" onAction="#onMarkAsDone"/>
+                        <Button text="Request Rework" onAction="#onRequestRework"/>
+                        <Button text="Submit for Review" onAction="#onSubmitForReview"/>
                     </children>
-                </VBox>
+                </HBox>
             </HBox>
 
             <!-- MAIN CONTENT -->

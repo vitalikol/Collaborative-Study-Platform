@@ -7,13 +7,16 @@ import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,7 +51,7 @@ public class ResourcesService {
         return mapper.toResourceShort(resource);
     }
 
-    public Page<ResourcePartialDTO> findAll(Integer taskId, int page, int size){
+    public Page<ResourceDetailedDTO> findAll(Integer taskId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         Page<Resource> result;
 
@@ -58,7 +61,7 @@ public class ResourcesService {
             result = resourcesRepository.findAll(pageable);
         }
 
-        return result.map(mapper::toResourcePartial);
+        return result.map(mapper::toResourceDetailed);
     }
 
     public ResourceDetailedDTO findById(int id){
@@ -106,13 +109,36 @@ public class ResourcesService {
         resourcesRepository.save(resource);
     }
 
-    public byte[] getFile(int resourceId) throws IOException {
-        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new);
+    public ResponseEntity<?> getFile(int resourceId) throws IOException {
+        Resource resource = resourcesRepository.findById(resourceId)
+                .orElseThrow(NotFoundException::new);
 
-        if (resource.getPathOrUrl() == null)
+        if (resource.getPathOrUrl() == null) {
             throw new FileNotFoundException("Resource has no file");
+        }
 
-        return Files.readAllBytes(Paths.get(resource.getPathOrUrl()));
+        Path path = Paths.get(resource.getPathOrUrl());
+        File file = path.toFile();
+
+        String mimeType = Files.probeContentType(path);
+        if (mimeType == null) {
+            mimeType = "application/octet-stream"; // fallback
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(mimeType));
+        headers.setContentLength(file.length());
+        headers.setContentDisposition(
+                ContentDisposition.attachment()
+                        .filename(file.getName())
+                        .build()
+        );
+
+        return new ResponseEntity<>(
+                new FileSystemResource(file),
+                headers,
+                HttpStatus.OK
+        );
     }
 
     public String getFileName(int resourceId) {
