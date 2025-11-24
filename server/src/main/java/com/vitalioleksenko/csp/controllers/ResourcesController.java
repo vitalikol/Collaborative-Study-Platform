@@ -1,9 +1,6 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.resource.ResourceCreateDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourcePartialDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceUpdateDTO;
+import com.vitalioleksenko.csp.dto.resource.*;
 import com.vitalioleksenko.csp.services.ResourcesService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
@@ -27,24 +24,27 @@ public class ResourcesController {
         this.resourcesService = resourcesService;
     }
 
-    @PostMapping("/file")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid ResourceCreateDTO dto,
-                                             BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    @PostMapping("")
+    public ResponseEntity<ResourceShortDTO> create(
+            @RequestBody @Valid ResourceCreateDTO dto,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
             throw new BadRequestException(
                     ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
 
-        resourcesService.save(dto);
-        return ResponseEntity.ok(HttpStatus.OK);
+        ResourceShortDTO shortDto = resourcesService.save(dto);
+
+        return ResponseEntity.ok(shortDto);
     }
 
     @GetMapping("")
-    public Page<ResourcePartialDTO> readAll(@RequestParam(name = "groupId", required = false) Integer groupId,
+    public Page<ResourcePartialDTO> readAll(@RequestParam(name = "taskId", required = false) Integer taskId,
                                             @RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "20") int size){
-        return resourcesService.findAll(groupId, page, size);
+        return resourcesService.findAll(taskId, page, size);
     }
 
     @GetMapping("/{id}")
@@ -79,7 +79,7 @@ public class ResourcesController {
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            resourcesService.uploadFile(id, file);
+            resourcesService.uploadFile(file, id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" prefHeight="426.0" prefWidth="1214.0" spacing="20.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitaliioleksenko.csp.client.controller.task.TaskEditController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
+
+    <Label fx:id="headerLabel" style="-fx-text-fill: #333333;" text="Edit the task">
+        <font>
+            <Font size="24.0" />
+        </font>
+    </Label>
+
+    <GridPane hgap="10.0" maxWidth="600.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+
+        <Label text="Edit task title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="nameField" promptText="Enter a title" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Label text="Edit task description:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextArea fx:id="descriptionArea" promptText="Enter a detailed description" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <Label text="Edit deadline:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <DatePicker fx:id="deadlinePicker" style="-fx-border-color: #CCCCCC; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
+
+    </GridPane>
+
+    <HBox alignment="CENTER" spacing="20.0">
+        <Button onAction="#handleEdit" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Edit" />
+        <Button onAction="#handleCancel" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Cancel" />
+    </HBox>
+
+</VBox>

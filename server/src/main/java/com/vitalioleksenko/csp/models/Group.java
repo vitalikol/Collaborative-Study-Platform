@@ -27,9 +27,6 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Resource> resources;
-
     @Column(name = "name")
     @NotEmpty(message = "Name must not be empty")
     @Size(min = 5, message = "Name must be at least 5 characters long")

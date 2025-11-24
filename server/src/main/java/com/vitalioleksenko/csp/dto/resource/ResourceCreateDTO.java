@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ResourceCreateDTO {
-    private Integer groupId;
+    private Integer taskId;
 
     private Integer userId;
 

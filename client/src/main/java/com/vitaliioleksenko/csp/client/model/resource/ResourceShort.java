@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResourceShortDTO {
+public class ResourceShort {
     private int resourceId;
     private String title;
 }

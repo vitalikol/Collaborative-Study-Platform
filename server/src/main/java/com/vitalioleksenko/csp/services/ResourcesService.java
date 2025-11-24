@@ -1,9 +1,6 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.resource.ResourceCreateDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourcePartialDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceUpdateDTO;
+import com.vitalioleksenko.csp.dto.resource.*;
 import com.vitalioleksenko.csp.models.Resource;
 import com.vitalioleksenko.csp.repositories.ResourcesRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
@@ -41,21 +38,22 @@ public class ResourcesService {
     }
 
     @Transactional
-    public void save(ResourceCreateDTO dto){
+    public ResourceShortDTO save(ResourceCreateDTO dto){
         Resource resource = mapper.toResource(dto);
         resourcesRepository.save(resource);
         activitiesLogsService.log(
                 "RESOURCE_CREATED",
                 "Created resource with ID: " + resource.getResourceId()
         );
+        return mapper.toResourceShort(resource);
     }
 
-    public Page<ResourcePartialDTO> findAll(Integer groupId, int page, int size){
+    public Page<ResourcePartialDTO> findAll(Integer taskId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         Page<Resource> result;
 
-        if (groupId != null) {
-            result = resourcesRepository.findByGroup_GroupId(groupId, pageable);
+        if (taskId != null) {
+            result = resourcesRepository.findByTask_TaskId(taskId, pageable);
         } else {
             result = resourcesRepository.findAll(pageable);
         }
@@ -92,15 +90,15 @@ public class ResourcesService {
     }
 
     @Transactional
-    public void uploadFile(int resourceId, MultipartFile file) throws IOException {
-        Resource resource = resourcesRepository.findById(resourceId).orElseThrow(NotFoundException::new); // метод, який ти вже маєш
+    public void uploadFile(MultipartFile file, int id) throws IOException {
+        Resource resource = resourcesRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        Files.createDirectories(root.resolve(String.valueOf(resourceId)));
+        Files.createDirectories(root.resolve(String.valueOf(resource.getResourceId())));
 
         String original = file.getOriginalFilename();
         String fileName = System.currentTimeMillis() + "_" + original;
 
-        Path dest = root.resolve(resourceId + "/" + fileName);
+        Path dest = root.resolve(resource.getResourceId() + "/" + fileName);
         Files.copy(file.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
 
         resource.setPathOrUrl(dest.toString());

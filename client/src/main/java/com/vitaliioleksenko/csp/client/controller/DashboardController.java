@@ -5,6 +5,7 @@ import com.vitaliioleksenko.csp.client.controller.group.GroupEditController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupProfileController;
 import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskCreateController;
+import com.vitaliioleksenko.csp.client.controller.task.TaskEditController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskProfileController;
 import com.vitaliioleksenko.csp.client.controller.task.TaskViewController;
 import com.vitaliioleksenko.csp.client.controller.user.UserEditController;
@@ -195,12 +196,13 @@ public class DashboardController {
 
     public void showTaskProfileView(TaskPartial task) {
         if (task == null) return;
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-profile.fxml"));
             Parent view = loader.load();
             TaskProfileController controller = loader.getController();
-            controller.initData(task);
+            controller.initData(task.getTaskId());
+            controller.setBackNavigationCallback(this::showActiveTasks);
+            controller.setTaskEditCallback(v -> showTaskEditView(task.getTaskId()));
             mainBorderPane.setCenter(view);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -217,6 +219,21 @@ public class DashboardController {
             controller.setPreSelectedGroup(group);
 
             controller.setCloseCallback(v -> showActiveTasks());
+
+            mainBorderPane.setCenter(view);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void showTaskEditView(int id){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/vitaliioleksenko/csp/client/view/task/task-edit.fxml"));
+            Parent view = loader.load();
+
+            TaskEditController controller = loader.getController();
+            controller.initData(id);
+            controller.setCloseCallback(this::showTaskProfileView);
 
             mainBorderPane.setCenter(view);
         } catch (IOException e) {

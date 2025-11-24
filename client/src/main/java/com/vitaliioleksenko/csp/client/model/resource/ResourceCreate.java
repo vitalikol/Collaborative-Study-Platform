@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResourceCreateDTO {
-    private Integer groupId;
+public class ResourceCreate {
+    private Integer taskId;
     private Integer userId;
     private String title;
     private ResourceType type;

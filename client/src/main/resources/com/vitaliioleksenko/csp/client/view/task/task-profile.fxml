@@ -11,101 +11,115 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane style="-fx-background-color: #FAFAFA;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitaliioleksenko.csp.client.controller.task.TaskProfileController">
-    <children>
-        <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+<AnchorPane style="-fx-background-color: #FAFAFA;"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.vitaliioleksenko.csp.client.controller.task.TaskProfileController">
 
-            <!-- 1. ШАПКА ЗАВДАННЯ -->
-            <VBox spacing="5.0">
+    <children>
+        <VBox spacing="15"
+              AnchorPane.topAnchor="20"
+              AnchorPane.leftAnchor="20"
+              AnchorPane.rightAnchor="20"
+              AnchorPane.bottomAnchor="20">
+
+            <!-- HEADER -->
+            <VBox spacing="6">
                 <children>
-                    <Label fx:id="taskTitleLabel" text="Завантаження назви завдання...">
-                        <font>
-                            <Font name="System Bold" size="28.0" />
-                        </font>
+                    <Label fx:id="taskTitleLabel" text="Loading task..." >
+                        <font><Font name="System Bold" size="28"/></font>
                     </Label>
-                    <HBox spacing="10.0">
+
+                    <HBox spacing="10">
                         <children>
-                            <Label fx:id="groupNameLabel" text="Група:" textFill="#555555">
-                                <font>
-                                    <Font name="System Italic" size="14.0" />
-                                </font>
+                            <Label fx:id="groupNameLabel" text="Group: -" textFill="#555">
+                                <font><Font name="System Italic" size="14"/></font>
                             </Label>
-                            <Label fx:id="deadlineLabel" text="Дедлайн:" textFill="#D32F2F">
-                                <font>
-                                    <Font name="System Bold" size="14.0" />
-                                </font>
+
+                            <Label fx:id="deadlineLabel" text="Deadline:" textFill="#D32F2F">
+                                <font><Font name="System Bold" size="14"/></font>
                             </Label>
                         </children>
                     </HBox>
                 </children>
             </VBox>
 
-            <Separator />
+            <Separator/>
 
-            <!-- 2. ПАНЕЛІ ДІЙ (КОНТЕКСТНІ) -->
-            <HBox spacing="10.0">
-                <!-- 2.1 ПАНЕЛЬ АДМІНА (прихована за замовчуванням) -->
-                <HBox fx:id="adminActionsBox" managed="false" spacing="10.0" visible="false">
+            <!-- ACTION PANELS -->
+            <HBox spacing="10">
+
+                <!-- ADMIN PANEL -->
+                <HBox fx:id="adminActionsBox"
+                      spacing="10"
+                      visible="false"
+                      managed="false">
+
                     <children>
-                        <Button mnemonicParsing="false" text="Редагувати завдання" />
-                        <Button mnemonicParsing="false" text="Додати матеріал" />
+                        <Button onAction="#onEditTask" text="Edit Task"/>
+                        <Button onAction="#onAddMaterial" text="Add Material"/>
+                        <Button onAction="#onDeleteTask" text="Delete Task" style="-fx-background-color: #D32F2F; -fx-text-fill: white;"/>
                     </children>
                 </HBox>
-                <!-- 2.2 ПАНЕЛЬ ЮЗЕРА (прихована за замовчуванням) -->
-                <VBox fx:id="submissionBox" managed="false" spacing="8.0" style="-fx-border-color: #E0E0E0; -fx-border-radius: 5; -fx-padding: 10;" visible="false">
+
+                <!-- USER SUBMISSION PANEL -->
+                <VBox fx:id="submissionBox"
+                      spacing="8"
+                      style="-fx-border-color: #E0E0E0; -fx-border-radius: 5; -fx-padding: 10;"
+                      visible="false"
+                      managed="false">
+
                     <children>
-                        <Label text="Здати роботу:">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
+                        <Label text="Submit Work:">
+                            <font><Font name="System Bold" size="14"/></font>
                         </Label>
-                        <HBox spacing="10.0">
+
+                        <HBox spacing="10">
                             <children>
-                                <Button mnemonicParsing="false" text="Додати посилання" />
-                                <Button mnemonicParsing="false" text="Завантажити файл" />
+                                <Button onAction="#onSubmitUrl"  text="Add Link"/>
+                                <Button onAction="#onSubmitFile"  text="Upload File"/>
                             </children>
                         </HBox>
                     </children>
                 </VBox>
             </HBox>
 
-            <!-- 3. ОПИС І РЕСУРСИ -->
-            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
-                <!-- 3.1 ОПИС -->
-                <VBox HBox.hgrow="ALWAYS">
+            <!-- MAIN CONTENT -->
+            <HBox spacing="20" VBox.vgrow="ALWAYS">
+
+                <!-- DESCRIPTION -->
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label text="Опис завдання:">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
+                        <Label text="Task Description:">
+                            <font><Font name="System Bold" size="16"/></font>
                         </Label>
-                        <TextArea fx:id="descriptionArea" editable="false" prefHeight="400.0" wrapText="true" />
+
+                        <TextArea fx:id="descriptionArea"
+                                  editable="false"
+                                  wrapText="true"
+                                  prefHeight="400"/>
                     </children>
                 </VBox>
 
-                <!-- 3.2 РЕСУРСИ (РОЗДІЛЕНІ) -->
-                <VBox minWidth="-Infinity" prefWidth="300.0" spacing="10.0">
+                <!-- RESOURCES -->
+                <VBox spacing="10" prefWidth="300">
+
                     <children>
-                        <!-- МАТЕРІАЛИ ВІД АДМІНА -->
-                        <VBox>
+                        <VBox spacing="5">
                             <children>
-                                <Label text="Матеріали до завдання:">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
+                                <Label text="Task Materials:">
+                                    <font><Font name="System Bold" size="16"/></font>
                                 </Label>
-                                <ListView fx:id="materialsListView" prefHeight="180.0" />
+                                <ListView fx:id="materialsListView" prefHeight="180"/>
                             </children>
                         </VBox>
-                        <!-- ЗДАНІ РОБОТИ -->
-                        <VBox>
+
+                        <VBox spacing="5">
                             <children>
-                                <Label text="Здані роботи:">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
+                                <Label text="Submitted Works:">
+                                    <font><Font name="System Bold" size="16"/></font>
                                 </Label>
-                                <ListView fx:id="submissionsListView" prefHeight="180.0" />
+                                <ListView fx:id="submissionsListView" prefHeight="180"/>
                             </children>
                         </VBox>
                     </children>

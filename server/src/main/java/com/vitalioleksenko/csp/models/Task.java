@@ -30,6 +30,9 @@ public class Task {
     @JoinColumn(name = "created_by", referencedColumnName = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "task")
+    private List<Resource> resources;
+
     @Column(name = "title")
     @NotEmpty(message = "Title must not be empty")
     @Size(min = 5, message = "Title must be at least 5 characters long")

@@ -1,6 +1,7 @@
 package com.vitaliioleksenko.csp.client.model.resource;
 
 import com.vitaliioleksenko.csp.client.model.group.GroupShort;
+import com.vitaliioleksenko.csp.client.model.task.TaskShort;
 import com.vitaliioleksenko.csp.client.model.user.UserShort;
 import com.vitaliioleksenko.csp.client.util.enums.ResourceFormat;
 import com.vitaliioleksenko.csp.client.util.enums.ResourceType;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ResourcePartial {
     private int resourceId;
-    private GroupShort group;
+    private TaskShort task;
     private UserShort user;
     private String title;
     private ResourceType type;

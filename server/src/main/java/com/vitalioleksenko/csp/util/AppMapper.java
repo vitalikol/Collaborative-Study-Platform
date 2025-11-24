@@ -13,6 +13,7 @@ import com.vitalioleksenko.csp.dto.task.*;
 import com.vitalioleksenko.csp.dto.user.*;
 import com.vitalioleksenko.csp.models.*;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
+import com.vitalioleksenko.csp.repositories.TasksRepository;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.mapstruct.Mapper;
@@ -31,6 +32,9 @@ public abstract class AppMapper {
 
     @Autowired
     protected GroupsRepository groupsRepository;
+
+    @Autowired
+    protected TasksRepository tasksRepository;
 
     // ================= User =================
     public abstract UserShortDTO toUserShort(User user);
@@ -71,6 +75,7 @@ public abstract class AppMapper {
     // ================= Task =================
     public abstract TaskShortDTO toTaskShort(Task task);
     public abstract TaskPartialDTO toTaskPartial(Task task);
+    @Mapping(target = "resources", expression = "java(toResourceShortList(task.getResources()))")
     public abstract TaskDetailedDTO toTaskDetailed(Task task);
 
     public abstract List<TaskShortDTO> toTaskShortList(List<Task> tasks);
@@ -99,7 +104,7 @@ public abstract class AppMapper {
     public abstract List<ResourcePartialDTO> toResourcePartialList(List<Resource> resources);
     public abstract List<ResourceDetailedDTO> toResourceDetailedList(List<Resource> resources);
 
-    @Mapping(target = "group", expression = "java(getGroup(dto.getGroupId()))")
+    @Mapping(target = "task", expression = "java(getTask(dto.getTaskId()))")
     @Mapping(target = "user", expression = "java(getUser(dto.getUserId()))")
     @Mapping(target = "uploadedAt", expression = "java(java.time.LocalDateTime.now())")
     public abstract Resource toResource(ResourceCreateDTO dto);
@@ -143,6 +148,11 @@ public abstract class AppMapper {
     protected User getUser(Integer userId) {
         if (userId == null) return null;
         return usersRepository.findById(userId).orElseThrow(NotFoundException::new);
+    }
+
+    protected Task getTask(Integer taskId) {
+        if (taskId == null) return null;
+        return tasksRepository.findById(taskId).orElseThrow(NotFoundException::new);
     }
 
 }

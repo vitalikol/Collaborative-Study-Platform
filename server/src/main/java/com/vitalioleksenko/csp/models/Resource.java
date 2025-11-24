@@ -2,6 +2,7 @@ package com.vitalioleksenko.csp.models;
 
 import com.vitalioleksenko.csp.util.enums.ResourceFormat;
 import com.vitalioleksenko.csp.util.enums.ResourceType;
+import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,8 +25,8 @@ public class Resource {
     private int resourceId;
 
     @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
-    private Group group;
+    @JoinColumn(name = "task_id", referencedColumnName = "task_id")
+    private Task task;
 
     @ManyToOne
     @JoinColumn(name = "uploaded_by", referencedColumnName = "user_id")

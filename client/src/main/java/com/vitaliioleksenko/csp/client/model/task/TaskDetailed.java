@@ -1,11 +1,13 @@
 package com.vitaliioleksenko.csp.client.model.task;
 
 import com.vitaliioleksenko.csp.client.model.group.GroupShort;
+import com.vitaliioleksenko.csp.client.model.resource.ResourceShort;
 import com.vitaliioleksenko.csp.client.model.user.UserShort;
 import com.vitaliioleksenko.csp.client.util.enums.TaskStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +18,7 @@ public class TaskDetailed {
     private int taskId;
     private GroupShort group;
     private UserShort user;
+    private List<ResourceShort> resources;
     private String title;
     private String description;
     private TaskStatus status;

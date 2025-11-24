@@ -1,6 +1,7 @@
 package com.vitalioleksenko.csp.dto.resource;
 
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
+import com.vitalioleksenko.csp.dto.task.TaskShortDTO;
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
 import com.vitalioleksenko.csp.util.enums.ResourceFormat;
 import com.vitalioleksenko.csp.util.enums.ResourceType;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class ResourcePartialDTO {
     private int resourceId;
 
-    private GroupShortDTO group;
+    private TaskShortDTO task;
 
     private UserShortDTO user;
 

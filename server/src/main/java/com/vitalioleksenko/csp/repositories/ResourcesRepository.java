@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ResourcesRepository extends JpaRepository<Resource, Integer> {
-    Page<Resource> findByGroup_GroupId(int groupGroupId, Pageable pageable);
+    Page<Resource> findByTask_TaskId(int taskId, Pageable pageable);
 }

@@ -1,6 +1,8 @@
 package com.vitalioleksenko.csp.dto.task;
 
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
 import com.vitalioleksenko.csp.util.enums.TaskStatus;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +23,8 @@ public class TaskDetailedDTO {
     private GroupShortDTO group;
 
     private UserShortDTO user;
+
+    private List<ResourceShortDTO> resources;
 
     @NotEmpty(message = "Title must not be empty")
     @Size(min = 5, message = "Title must be at least 5 characters long")
