@@ -1,5 +1,6 @@
 package com.vitaliioleksenko.csp.client.controller.user;
 
+import com.vitaliioleksenko.csp.client.model.UserStats;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
@@ -29,10 +30,10 @@ public class UserProfileController {
     @FXML private VBox actionButtonsBox;
     @FXML private Button editProfileButton;
     @FXML private Button changePasswordButton;
-    @FXML private Button adminActionsButton;
     @FXML private Button deleteProfileButton;
     @FXML private GridPane userInfoGrid;
     @FXML private VBox userStatsBox;
+    @FXML private Label userInfoLabel;
     @FXML private Label tasksCompletedLabel;
     @FXML private Label tasksInProgressLabel;
     @FXML private Label tasksOverdueLabel;
@@ -44,7 +45,6 @@ public class UserProfileController {
     private final UserSession userSession;
     private final boolean amIAdmin;
     private Integer userId;
-
 
     public UserProfileController() {
         this.userService = new UserService();
@@ -92,7 +92,7 @@ public class UserProfileController {
             try{
                 UserDetailed user = userService.getUserById(userId);
                 populateUI(user);
-                setupGuestProfileView(amIAdmin);
+                setupGuestProfileView(amIAdmin, user);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -102,15 +102,20 @@ public class UserProfileController {
     private void populateUI(UserDetailed user) {
         fullNameLabel.setText(user.getName());
         roleLabel.setText(user.getRole().toString());
-        tasksCompletedLabel.setText("Task completed: -" ); //+ user.getStats().getCompleted());
-        tasksInProgressLabel.setText("Task in progress: -"); // + user.getStats().getInProgress());
-        tasksOverdueLabel.setText("Overdue tasks: -"); // + user.getStats().getOverdue());
+
+        try{
+            UserStats stats = userService.getStats(user.getUserId());
+            tasksCompletedLabel.setText("Task completed: " + stats.getDoneTasks() );
+            tasksOverdueLabel.setText("Task in review: " + stats.getInReviewTasks());
+            tasksInProgressLabel.setText("Task in progress: " + stats.getInProgressTasks());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setupMyProfileView(UserDetailed me) {
         addRowToGrid(userInfoGrid, "Email", me.getEmail(), 0);
-        addRowToGrid(userInfoGrid, "Team","--", 1); //me.getTeamName()
-        addRowToGrid(userInfoGrid, "Registration date","--", 2); //me.getCreatedAt()
+        addRowToGrid(userInfoGrid, "Id", String.valueOf(me.getUserId()), 1);
 
         editProfileButton.setVisible(true);
         editProfileButton.setManaged(true);
@@ -120,17 +125,9 @@ public class UserProfileController {
         deleteProfileButton.setManaged(true);
     }
 
-    private void setupGuestProfileView(boolean amIAdmin) {
-        addRowToGrid(userInfoGrid, "Team", "--", 0); //user.getTeamName()
-        addRowToGrid(userInfoGrid, "Registration date","--" , 1); //user.getCreatedAt()
-
+    private void setupGuestProfileView(boolean amIAdmin, UserDetailed user) {
         if (amIAdmin) {
-            editProfileButton.setVisible(true);
-            editProfileButton.setManaged(true);
-            changePasswordButton.setVisible(true);
-            changePasswordButton.setManaged(true);
-            deleteProfileButton.setVisible(true);
-            deleteProfileButton.setManaged(true);
+            setupMyProfileView(user);
         }
     }
 

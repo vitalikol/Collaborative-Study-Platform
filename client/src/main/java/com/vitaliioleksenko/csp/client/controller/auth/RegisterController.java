@@ -47,7 +47,13 @@ public class RegisterController {
             showError("Passwords is not matched");
             return;
         }
-        RegisterRequest registerRequest = new RegisterRequest(name, email, password);
+
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .build();
+
         if (register(registerRequest)) {
             errorLabel.setVisible(false);
             authService.login(new AuthenticationRequest(email, password));
@@ -55,12 +61,11 @@ public class RegisterController {
             UserSession.getInstance().login(user);
             WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
         } else {
-            showError("Wrong email or password");
+
         }
     }
 
-    @FXML
-    public void handleLogin(){
+    @FXML public void handleLogin(){
         WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/auth/login.fxml");
     }
 
@@ -74,6 +79,7 @@ public class RegisterController {
             authService.register(registerRequest);
             return true;
         } catch (IOException e){
+            showError(e.getMessage());
             return false;
         }
     }

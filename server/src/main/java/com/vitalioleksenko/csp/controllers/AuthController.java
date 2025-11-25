@@ -1,6 +1,7 @@
 package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.dto.user.AuthenticationRequest;
+import com.vitalioleksenko.csp.dto.user.RegisterRequest;
 import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
 import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
 import com.vitalioleksenko.csp.models.User;
@@ -10,6 +11,8 @@ import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.services.ActivitiesLogsService;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
+import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -68,12 +71,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> register(@RequestBody @Valid UserCreateDTO dto,
+        public ResponseEntity<HttpStatus> register(@RequestBody @Valid RegisterRequest registerRequest,
                                                BindingResult bindingResult) {
-        User user = mapper.toUser(dto);
-        String passwordHash = passwordEncoder.encode(user.getPasswordHash());
-        user.setPasswordHash(passwordHash);
-        user.setRole(Role.ROLE_USER);
+        if(bindingResult.hasErrors()){
+            throw new BadRequestException(
+                    ErrorBuilder.fromBindingErrors(bindingResult)
+            );
+        }
+        User user = User.builder()
+                .name(registerRequest.getName())
+                .email(registerRequest.getEmail())
+                .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(Role.ROLE_USER)
+                .build();
+
         usersRepository.save(user);
         activitiesLogsService.log(
                 "USER_REGISTERED",

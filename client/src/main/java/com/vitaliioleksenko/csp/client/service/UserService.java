@@ -1,6 +1,7 @@
 package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.PageResponse;
+import com.vitaliioleksenko.csp.client.model.UserStats;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.UserPartial;
 import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
@@ -62,6 +63,21 @@ public class UserService {
             JavaType type = objectMapper.getTypeFactory()
                     .constructParametricType(PageResponse.class, UserPartial.class);
             return objectMapper.readValue(response.body().string(), type);
+        }
+    }
+
+    public UserStats getStats(int id) throws IOException{
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + id + "/stats")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if(response.code() == 404){
+                throw new IOException("Wrong id");
+            } else if (!response.isSuccessful()) {
+                throw new IOException("Server error: " + response.code());
+            }
+            return objectMapper.readValue(response.body().string(), UserStats.class);
         }
     }
 

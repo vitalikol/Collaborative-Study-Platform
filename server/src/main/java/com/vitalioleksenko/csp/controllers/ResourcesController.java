@@ -1,20 +1,21 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.resource.*;
-import com.vitalioleksenko.csp.models.Resource;
+import com.vitalioleksenko.csp.dto.resource.ResourceCreateDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
+import com.vitalioleksenko.csp.dto.resource.ResourceUpdateDTO;
 import com.vitalioleksenko.csp.services.ResourcesService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/api/resource")

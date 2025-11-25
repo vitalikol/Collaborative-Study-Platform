@@ -1,9 +1,12 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.dto.UserStats;
+import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
 import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
 import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
 import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
+import com.vitalioleksenko.csp.services.TasksService;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
@@ -12,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UsersController {
     private final UsersService usersService;
+    private final TasksService tasksService;
 
     @Autowired
-    public UsersController(UsersService usersService) {
+    public UsersController(UsersService usersService, TasksService tasksService) {
         this.usersService = usersService;
+        this.tasksService = tasksService;
     }
 
     @PostMapping("")
@@ -49,6 +53,11 @@ public class UsersController {
     @GetMapping("/{id}")
     public UserDetailedDTO readOne(@PathVariable("id") int id){
         return usersService.findById(id);
+    }
+
+    @GetMapping("/{id}/stats")
+    public UserStats readStats(@PathVariable("id") int id){
+        return tasksService.getStatsForUser(id);
     }
 
     @PatchMapping("/{id}")

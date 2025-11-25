@@ -1,6 +1,5 @@
 package com.vitalioleksenko.csp.dto.user;
 
-import com.vitalioleksenko.csp.dto.activity.ActivityLogShortDTO;
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
 import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
 import com.vitalioleksenko.csp.dto.task.TaskShortDTO;

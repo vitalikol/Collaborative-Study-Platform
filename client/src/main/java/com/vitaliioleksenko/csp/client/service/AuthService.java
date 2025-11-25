@@ -1,8 +1,10 @@
 package com.vitaliioleksenko.csp.client.service;
 
+import com.vitaliioleksenko.csp.client.model.ErrorResponse;
 import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
 import com.vitaliioleksenko.csp.client.model.user.RegisterRequest;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
+import com.vitaliioleksenko.csp.client.util.ErrorMessageParser;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.ObjectMapper;
@@ -34,7 +36,9 @@ public class AuthService {
 
         try (Response response = client.newCall(request).execute()) {
             if (response.code() == 404) {
-                throw new IOException("Invalid credentials");
+                String errorJson = response.body().string();
+                ErrorResponse errorResponse = objectMapper.readValue(errorJson, ErrorResponse.class);
+                throw new IOException(ErrorMessageParser.extractFirstMessage(errorResponse.getMessage()));
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
@@ -56,7 +60,9 @@ public class AuthService {
 
         try (Response response = client.newCall(request).execute()) {
             if (response.code() == 400) {
-                throw new IOException(response.message());
+                String errorJson = response.body().string();
+                ErrorResponse errorResponse = objectMapper.readValue(errorJson, ErrorResponse.class);
+                throw new IOException(ErrorMessageParser.extractFirstMessage(errorResponse.getMessage()));
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
@@ -81,7 +87,7 @@ public class AuthService {
 
         try (Response response = client.newCall(request).execute()) {
             if (response.code() == 403) {
-                throw new IOException("Forbidden");
+                throw new IOException("First login");
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }

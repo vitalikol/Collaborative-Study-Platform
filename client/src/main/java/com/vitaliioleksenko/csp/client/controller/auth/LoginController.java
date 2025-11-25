@@ -41,8 +41,6 @@ public class LoginController {
         if (login(username, password)) {
             errorLabel.setVisible(false);
             WindowRenderer.switchScene((Stage) loginButton.getScene().getWindow(), "/com/vitaliioleksenko/csp/client/view/dashboard.fxml");
-        } else {
-            showError("Wrong email or password");
         }
     }
 
@@ -59,6 +57,7 @@ public class LoginController {
             UserSession.getInstance().login(user);
             return true;
         } catch (IOException e){
+            showError(e.getMessage());
             return false;
         }
     }

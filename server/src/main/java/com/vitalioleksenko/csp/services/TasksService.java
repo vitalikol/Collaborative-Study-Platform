@@ -1,5 +1,6 @@
 package com.vitalioleksenko.csp.services;
 
+import com.vitalioleksenko.csp.dto.UserStats;
 import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
 import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
@@ -76,6 +77,16 @@ public class TasksService {
     public TaskDetailedDTO getById(int id){
         Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);
         return mapper.toTaskDetailed(task);
+    }
+
+    public UserStats getStatsForUser(int userId){
+        UserStats stats = UserStats.builder()
+                .doneTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.DONE))
+                .inReviewTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.IN_REVIEW))
+                .inProgressTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.IN_PROGRESS))
+                .build();
+
+        return stats;
     }
 
     @Transactional

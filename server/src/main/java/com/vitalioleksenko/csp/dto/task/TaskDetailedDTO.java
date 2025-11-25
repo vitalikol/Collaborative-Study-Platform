@@ -1,7 +1,6 @@
 package com.vitalioleksenko.csp.dto.task;
 
 import com.vitalioleksenko.csp.dto.group.GroupShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
 import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
 import com.vitalioleksenko.csp.dto.user.UserShortDTO;
 import com.vitalioleksenko.csp.util.enums.TaskStatus;
