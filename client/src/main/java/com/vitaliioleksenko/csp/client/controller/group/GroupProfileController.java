@@ -26,6 +26,7 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -47,15 +48,17 @@ public class GroupProfileController {
     private final MembershipService membershipService;
     private final UserSession session;
     private final DateTimeFormatter formatter;
-    private final boolean isAdmin;
+    private GroupDetailed details;
+    private boolean isAdmin;
+    private boolean isCreator;
+    private boolean isTeamLead;
     private int groupId;
 
     public GroupProfileController() {
-        this.groupService  = new GroupService();
+        this.groupService = new GroupService();
         this.membershipService = new MembershipService();
         this.session = UserSession.getInstance();
         this.formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm");
-        this.isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
     }
 
     public void initData(int groupId) {
@@ -112,7 +115,11 @@ public class GroupProfileController {
 
     private void loadGroupDetails() {
         try {
-            GroupDetailed details = groupService.getGroupById(groupId);
+            details = groupService.getGroupById(groupId);
+
+            isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
+            isCreator = session.getCurrentUserId() == details.getCreatedBy().getUserId();
+            isTeamLead = checkGroupRole();
 
             groupNameLabel.setText(details.getName());
             descriptionArea.setText(details.getDescription());
@@ -120,10 +127,7 @@ public class GroupProfileController {
             createdAtLabel.setText("Date: " + details.getCreatedAt().format(formatter));
             membersListView.setItems(FXCollections.observableArrayList(details.getMembers()));
 
-            //todo add role check
-            boolean isCreator = details.getCreatedBy().getUserId() == session.getCurrentUser().getUserId();
-
-            if (isAdmin || isCreator) {
+            if (isAdmin || isCreator || isTeamLead) {
                 setupListViewFactory();
                 adminActionsBox.setVisible(true);
                 adminActionsBox.setManaged(true);
@@ -135,6 +139,18 @@ public class GroupProfileController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean checkGroupRole(){
+        List<MembershipShort> members = details.getMembers();
+
+        for (MembershipShort member: members){
+            if ((member.getUser().getUserId() == session.getCurrentUserId()) && (member.getRole() == GroupRole.TEAM_LEAD)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void handleRemoval(MembershipShort membership) {
@@ -265,6 +281,4 @@ public class GroupProfileController {
             }
         }
     }
-
-
 }
