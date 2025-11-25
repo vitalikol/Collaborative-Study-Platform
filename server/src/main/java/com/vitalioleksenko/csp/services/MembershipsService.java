@@ -1,7 +1,7 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
-import com.vitalioleksenko.csp.dto.membership.MembershipUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.membership.MembershipCreateDTO;
+import com.vitalioleksenko.csp.models.dto.membership.MembershipUpdateDTO;
 import com.vitalioleksenko.csp.models.Membership;
 import com.vitalioleksenko.csp.repositories.MembershipsRepository;
 import com.vitalioleksenko.csp.util.AppMapper;

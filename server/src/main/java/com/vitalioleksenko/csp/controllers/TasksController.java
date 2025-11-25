@@ -1,11 +1,11 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
-import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
-import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
-import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskCreateDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskPartialDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.services.TasksService;
-import com.vitalioleksenko.csp.util.enums.TaskStatus;
+import com.vitalioleksenko.csp.models.enums.TaskStatus;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;
 import jakarta.validation.Valid;

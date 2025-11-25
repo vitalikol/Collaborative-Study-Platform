@@ -11,11 +11,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="mainBorderPane"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.vitaliioleksenko.csp.client.controller.DashboardController">
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
+<StackPane fx:id="rootStack"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.vitaliioleksenko.csp.client.controller.DashboardController">
+<BorderPane fx:id="mainBorderPane">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
             <children>
@@ -71,3 +73,5 @@
     </bottom>
 
 </BorderPane>
+    <StackPane fx:id="notificationLayer" pickOnBounds="false"/>
+</StackPane>

@@ -1,11 +1,10 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.UserStats;
-import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
-import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
-import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
-import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
-import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.UserStats;
+import com.vitalioleksenko.csp.models.dto.user.UserCreateDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserPartialDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserUpdateDTO;
 import com.vitalioleksenko.csp.services.TasksService;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;

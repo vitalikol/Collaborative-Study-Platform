@@ -1,6 +1,6 @@
 package com.vitalioleksenko.csp.models;
 
-import com.vitalioleksenko.csp.util.enums.TaskStatus;
+import com.vitalioleksenko.csp.models.enums.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

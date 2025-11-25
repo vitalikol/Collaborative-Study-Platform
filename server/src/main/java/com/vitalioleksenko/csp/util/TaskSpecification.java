@@ -1,12 +1,12 @@
 package com.vitalioleksenko.csp.util;
 
 import com.vitalioleksenko.csp.models.Task;
-import com.vitalioleksenko.csp.util.enums.TaskStatus;
+import com.vitalioleksenko.csp.models.enums.TaskStatus;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
-import static com.vitalioleksenko.csp.util.enums.TaskStatus.IN_PROGRESS;
-import static com.vitalioleksenko.csp.util.enums.TaskStatus.IN_REVIEW;
+import static com.vitalioleksenko.csp.models.enums.TaskStatus.IN_PROGRESS;
+import static com.vitalioleksenko.csp.models.enums.TaskStatus.IN_REVIEW;
 
 public class TaskSpecification {
 

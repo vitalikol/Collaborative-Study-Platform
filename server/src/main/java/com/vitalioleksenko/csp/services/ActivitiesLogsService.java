@@ -1,6 +1,6 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.activity.ActivityLogDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.activity.ActivityLogDetailedDTO;
 import com.vitalioleksenko.csp.models.ActivityLog;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.ActivitiesLogsRepository;

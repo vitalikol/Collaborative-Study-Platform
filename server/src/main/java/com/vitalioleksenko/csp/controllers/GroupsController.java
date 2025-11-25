@@ -1,9 +1,9 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.group.GroupCreateDTO;
-import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
-import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
-import com.vitalioleksenko.csp.dto.group.GroupUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupCreateDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupPartialDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupUpdateDTO;
 import com.vitalioleksenko.csp.services.GroupsService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;

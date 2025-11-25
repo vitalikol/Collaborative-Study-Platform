@@ -1,9 +1,8 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.user.AuthenticationRequest;
-import com.vitalioleksenko.csp.dto.user.RegisterRequest;
-import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
-import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.user.AuthenticationRequest;
+import com.vitalioleksenko.csp.models.dto.user.RegisterRequest;
+import com.vitalioleksenko.csp.models.dto.user.UserDetailedDTO;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.CustomUserDetails;

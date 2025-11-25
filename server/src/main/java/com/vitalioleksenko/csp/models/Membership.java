@@ -1,6 +1,6 @@
 package com.vitalioleksenko.csp.models;
 
-import com.vitalioleksenko.csp.util.enums.GroupRole;
+import com.vitalioleksenko.csp.models.enums.GroupRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

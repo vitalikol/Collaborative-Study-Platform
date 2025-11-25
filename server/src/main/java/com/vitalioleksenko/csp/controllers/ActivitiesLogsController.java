@@ -1,6 +1,6 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.activity.ActivityLogDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.activity.ActivityLogDetailedDTO;
 import com.vitalioleksenko.csp.services.ActivitiesLogsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

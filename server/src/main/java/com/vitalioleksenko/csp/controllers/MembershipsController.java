@@ -1,7 +1,7 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
-import com.vitalioleksenko.csp.dto.membership.MembershipUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.membership.MembershipCreateDTO;
+import com.vitalioleksenko.csp.models.dto.membership.MembershipUpdateDTO;
 import com.vitalioleksenko.csp.services.MembershipsService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;

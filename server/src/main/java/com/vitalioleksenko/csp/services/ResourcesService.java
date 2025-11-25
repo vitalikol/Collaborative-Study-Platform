@@ -1,9 +1,9 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.resource.ResourceCreateDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceCreateDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceShortDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceUpdateDTO;
 import com.vitalioleksenko.csp.models.Resource;
 import com.vitalioleksenko.csp.repositories.ResourcesRepository;
 import com.vitalioleksenko.csp.util.AppMapper;

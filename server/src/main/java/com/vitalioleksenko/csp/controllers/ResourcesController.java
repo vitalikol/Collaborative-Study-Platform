@@ -1,9 +1,9 @@
 package com.vitalioleksenko.csp.controllers;
 
-import com.vitalioleksenko.csp.dto.resource.ResourceCreateDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceDetailedDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceShortDTO;
-import com.vitalioleksenko.csp.dto.resource.ResourceUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceCreateDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceShortDTO;
+import com.vitalioleksenko.csp.models.dto.resource.ResourceUpdateDTO;
 import com.vitalioleksenko.csp.services.ResourcesService;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
 import com.vitalioleksenko.csp.util.exceptions.ErrorBuilder;

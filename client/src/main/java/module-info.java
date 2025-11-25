@@ -10,6 +10,7 @@ module com.vitaliioleksenko.csp.client {
     requires kotlin.stdlib;
     requires lombok;
     requires annotations;
+    requires java.net.http;
 
 
     opens com.vitaliioleksenko.csp.client.model.user to tools.jackson.databind;

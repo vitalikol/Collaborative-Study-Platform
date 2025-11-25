@@ -1,14 +1,14 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.group.GroupCreateDTO;
-import com.vitalioleksenko.csp.dto.group.GroupDetailedDTO;
-import com.vitalioleksenko.csp.dto.group.GroupPartialDTO;
-import com.vitalioleksenko.csp.dto.group.GroupUpdateDTO;
-import com.vitalioleksenko.csp.dto.membership.MembershipCreateDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupCreateDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupPartialDTO;
+import com.vitalioleksenko.csp.models.dto.group.GroupUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.membership.MembershipCreateDTO;
 import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
-import com.vitalioleksenko.csp.util.enums.GroupRole;
+import com.vitalioleksenko.csp.models.enums.GroupRole;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

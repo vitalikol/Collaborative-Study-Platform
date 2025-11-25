@@ -1,15 +1,15 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.UserStats;
-import com.vitalioleksenko.csp.dto.task.TaskCreateDTO;
-import com.vitalioleksenko.csp.dto.task.TaskDetailedDTO;
-import com.vitalioleksenko.csp.dto.task.TaskPartialDTO;
-import com.vitalioleksenko.csp.dto.task.TaskUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.UserStats;
+import com.vitalioleksenko.csp.models.dto.task.TaskCreateDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskPartialDTO;
+import com.vitalioleksenko.csp.models.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.TasksRepository;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.TaskSpecification;
-import com.vitalioleksenko.csp.util.enums.TaskStatus;
+import com.vitalioleksenko.csp.models.enums.TaskStatus;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,12 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TasksService {
     private final TasksRepository tasksRepository;
+    private final NotificationService notificationService;
     private final AppMapper mapper;
     private final ActivitiesLogsService activitiesLogsService;
 
     @Autowired
-    public TasksService(TasksRepository tasksRepository, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
+    public TasksService(TasksRepository tasksRepository, NotificationService notificationService, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
         this.tasksRepository = tasksRepository;
+        this.notificationService = notificationService;
         this.mapper = mapper;
         this.activitiesLogsService = activitiesLogsService;
     }
@@ -38,6 +40,7 @@ public class TasksService {
     public void save(TaskCreateDTO dto){
         Task task = mapper.toTask(dto);
         tasksRepository.save(task);
+        notificationService.notifyTaskCreated(task);
         activitiesLogsService.log(
                 "TASK_CREATED",
                 "Created task with ID: " + task.getTaskId()

@@ -1,9 +1,9 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.dto.user.UserCreateDTO;
-import com.vitalioleksenko.csp.dto.user.UserDetailedDTO;
-import com.vitalioleksenko.csp.dto.user.UserPartialDTO;
-import com.vitalioleksenko.csp.dto.user.UserUpdateDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserCreateDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserDetailedDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserPartialDTO;
+import com.vitalioleksenko.csp.models.dto.user.UserUpdateDTO;
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.Role;
