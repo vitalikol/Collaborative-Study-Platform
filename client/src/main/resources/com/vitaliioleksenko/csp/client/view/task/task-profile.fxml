@@ -55,7 +55,6 @@
                       spacing="10">
                     <children>
                         <Button onAction="#onEditTask" text="Edit Task"/>
-                        <Button onAction="#onAddMaterial" text="Add Material"/>
                         <Button onAction="#onDeleteTask" text="Delete Task" style="-fx-background-color: #D32F2F; -fx-text-fill: white;"/>
                     </children>
                 </HBox>
@@ -65,6 +64,7 @@
                         <Button fx:id="doneBtn" text="Mark as Done" onAction="#onMarkAsDone"/>
                         <Button fx:id="reworkBtn" text="Request Rework" onAction="#onRequestRework"/>
                         <Button fx:id="reviewBtn" text="Submit for Review" onAction="#onSubmitForReview"/>
+                        <Button fx:id="addMaterialBtn" text="Add Material" onAction="#onAddMaterial" />
                     </children>
                 </HBox>
             </HBox>

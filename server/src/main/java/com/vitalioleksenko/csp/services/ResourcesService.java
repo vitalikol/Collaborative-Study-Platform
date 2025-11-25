@@ -109,6 +109,11 @@ public class ResourcesService {
 
         resource.setPathOrUrl(dest.toString());
         resource.setUploadedAt(LocalDateTime.now());
+
+        activitiesLogsService.log(
+                "FILES_UPLOADED",
+                "Uploaded file to resource with id " + id
+        );
         resourcesRepository.save(resource);
     }
 
@@ -137,6 +142,11 @@ public class ResourcesService {
                         .build()
         );
 
+        activitiesLogsService.log(
+                "FILES_DOWNLOADED",
+                "Downloaded file from resource with id " + resourceId
+        );
+
         return new ResponseEntity<>(
                 new FileSystemResource(file),
                 headers,
@@ -163,6 +173,10 @@ public class ResourcesService {
             boolean deleted = Files.deleteIfExists(Paths.get(resource.getPathOrUrl()));
 
             resource.setPathOrUrl(null);
+            activitiesLogsService.log(
+                    "FILES_DELETED",
+                    "Deleted file in resource with id " + resourceId
+            );
             resourcesRepository.save(resource);
         }
     }

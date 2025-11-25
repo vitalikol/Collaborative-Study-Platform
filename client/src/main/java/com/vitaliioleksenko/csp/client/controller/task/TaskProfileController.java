@@ -40,6 +40,7 @@ public class TaskProfileController {
     @FXML private Button doneBtn;
     @FXML private Button reworkBtn;
     @FXML private Button reviewBtn;
+    @FXML private Button addMaterialBtn;
     @FXML private HBox adminActionsBox;
     @FXML private TextArea descriptionArea;
     @FXML private ListView<ResourcePartial> materialsListView;
@@ -55,6 +56,10 @@ public class TaskProfileController {
     private TaskDetailed taskDetails;
     private GroupDetailed groupDetails;
     private int taskId;
+    boolean isAdmin;
+    boolean isCreator;
+    boolean isTeamLead;
+    boolean canAdmin;
 
     public TaskProfileController() {
         this.taskService = new TaskService();
@@ -74,28 +79,44 @@ public class TaskProfileController {
 
         setupListViews();
 
-        boolean isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
-        boolean isCreator = session.getCurrentUserId() == groupDetails.getCreatedBy().getUserId();
+        isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
+        isCreator = session.getCurrentUserId() == groupDetails.getCreatedBy().getUserId();
 
-        adminActionsBox.setVisible(isAdmin || isCreator || checkGroupRole(GroupRole.TEAM_LEAD));
-        adminActionsBox.setManaged(isAdmin || isCreator || checkGroupRole(GroupRole.TEAM_LEAD));
+        isTeamLead = checkGroupRole(GroupRole.TEAM_LEAD);
+        canAdmin = isAdmin || isCreator || isTeamLead;
 
+        adminActionsBox.setVisible(canAdmin);
+        adminActionsBox.setManaged(canAdmin);
 
-        if(isAdmin || isCreator){
+        boolean isAdminOrCreator = isAdmin || isCreator;
+
+        if (isAdminOrCreator) {
             doneBtn.setVisible(true);
             doneBtn.setManaged(true);
+
             reworkBtn.setVisible(true);
             reworkBtn.setManaged(true);
+
             reviewBtn.setVisible(true);
             reviewBtn.setManaged(true);
         } else {
-            doneBtn.setVisible(checkGroupRole(GroupRole.TEAM_LEAD));
-            doneBtn.setManaged(checkGroupRole(GroupRole.TEAM_LEAD));
-            reworkBtn.setVisible(checkGroupRole(GroupRole.TEAM_LEAD));
-            reworkBtn.setManaged(checkGroupRole(GroupRole.TEAM_LEAD));
-            reviewBtn.setVisible(!checkGroupRole(GroupRole.TEAM_LEAD));
-            reviewBtn.setManaged(!checkGroupRole(GroupRole.TEAM_LEAD));
+            doneBtn.setVisible(isTeamLead);
+            doneBtn.setManaged(isTeamLead);
+
+            reworkBtn.setVisible(isTeamLead);
+            reworkBtn.setManaged(isTeamLead);
+
+            reviewBtn.setVisible(!isTeamLead);
+            reviewBtn.setManaged(!isTeamLead);
         }
+
+        if (taskDetails.getStatus() == TaskStatus.DONE) {
+            addMaterialBtn.setDisable(true);
+            reviewBtn.setDisable(true);
+            doneBtn.setDisable(true);
+        }
+
+
         loadDetails();
     }
 
@@ -154,6 +175,9 @@ public class TaskProfileController {
             {
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
+                deleteBtn.setManaged(canAdmin);
+                deleteBtn.setVisible(canAdmin);
+
                 deleteBtn.setOnAction(e -> {
                     ResourcePartial item = getItem();
                     if (item == null) return;
@@ -192,6 +216,9 @@ public class TaskProfileController {
 
             {
                 HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                deleteBtn.setManaged(canAdmin);
+                deleteBtn.setVisible(canAdmin);
 
                 deleteBtn.setOnAction(e -> {
                     ResourcePartial item = getItem();
@@ -233,7 +260,7 @@ public class TaskProfileController {
     }
 
     @FXML private void onAddMaterial() {
-        showResourceCreateDialog(false);
+        showResourceCreateDialog(checkGroupRole(GroupRole.MEMBER));
     }
 
     @FXML private void onDeleteTask() {
@@ -271,6 +298,10 @@ public class TaskProfileController {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Task marked as done.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
+            if (backNavigationCallback != null) {
+                backNavigationCallback.run();
+            }
+
         } catch (Exception e) {
             showError("Failed: " + e.getMessage());
         }
@@ -285,6 +316,9 @@ public class TaskProfileController {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Rework requested.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
+            if (backNavigationCallback != null) {
+                backNavigationCallback.run();
+            }
         } catch (Exception e) {
             showError("Failed: " + e.getMessage());
         }
@@ -299,6 +333,9 @@ public class TaskProfileController {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Submitted for review.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
+            if (backNavigationCallback != null) {
+                backNavigationCallback.run();
+            }
         } catch (Exception e) {
             showError("Failed: " + e.getMessage());
         }
@@ -310,7 +347,7 @@ public class TaskProfileController {
     private void showResourceCreateDialog(boolean submissionMode) {
         Dialog<ResourceCreate> dialog = new Dialog<>();
         dialog.setWidth(500);
-        dialog.setTitle(submissionMode ? "Submit work" : "Add material");
+        dialog.setTitle("Add resource");
         dialog.initOwner(taskTitleLabel.getScene().getWindow());
 
         Label titleLabel = new Label("Title:");

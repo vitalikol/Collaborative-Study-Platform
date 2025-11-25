@@ -142,7 +142,7 @@ public class DashboardController {
     }
 
     private void setupRoleBasedUI() {
-
+        teamButton.setText("All group's");
     }
 
 
