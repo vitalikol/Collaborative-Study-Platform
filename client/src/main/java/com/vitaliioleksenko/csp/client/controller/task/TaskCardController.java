@@ -21,7 +21,7 @@ public class TaskCardController {
 
     public void setData(TaskPartial task) {
         taskTitleLabel.setText(task.getTitle());
-        groupNameLabel.setText("task.getGroupName()");
+        groupNameLabel.setText(task.getGroup().getName());
         descriptionLabel.setText(task.getUser().getEmail());
         statusLabel.setText(task.getStatus().toString().toUpperCase());
         dateLabel.setText(task.getDeadline().format(formatter));

@@ -60,12 +60,11 @@
                     </children>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <HBox fx:id="submissionActionsBox"
-                      spacing="10">
+                <HBox spacing="10">
                     <children>
-                        <Button text="Mark as Done" onAction="#onMarkAsDone"/>
-                        <Button text="Request Rework" onAction="#onRequestRework"/>
-                        <Button text="Submit for Review" onAction="#onSubmitForReview"/>
+                        <Button fx:id="doneBtn" text="Mark as Done" onAction="#onMarkAsDone"/>
+                        <Button fx:id="reworkBtn" text="Request Rework" onAction="#onRequestRework"/>
+                        <Button fx:id="reviewBtn" text="Submit for Review" onAction="#onSubmitForReview"/>
                     </children>
                 </HBox>
             </HBox>

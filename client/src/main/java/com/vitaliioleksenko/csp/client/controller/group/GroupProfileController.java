@@ -49,9 +49,6 @@ public class GroupProfileController {
     private final UserSession session;
     private final DateTimeFormatter formatter;
     private GroupDetailed details;
-    private boolean isAdmin;
-    private boolean isCreator;
-    private boolean isTeamLead;
     private int groupId;
 
     public GroupProfileController() {
@@ -117,9 +114,9 @@ public class GroupProfileController {
         try {
             details = groupService.getGroupById(groupId);
 
-            isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
-            isCreator = session.getCurrentUserId() == details.getCreatedBy().getUserId();
-            isTeamLead = checkGroupRole();
+            boolean isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
+            boolean isCreator = session.getCurrentUserId() == details.getCreatedBy().getUserId();
+            boolean isTeamLead = checkGroupRole(GroupRole.TEAM_LEAD);
 
             groupNameLabel.setText(details.getName());
             descriptionArea.setText(details.getDescription());
@@ -141,11 +138,11 @@ public class GroupProfileController {
         }
     }
 
-    private boolean checkGroupRole(){
+    private boolean checkGroupRole(GroupRole role){
         List<MembershipShort> members = details.getMembers();
 
         for (MembershipShort member: members){
-            if ((member.getUser().getUserId() == session.getCurrentUserId()) && (member.getRole() == GroupRole.TEAM_LEAD)){
+            if ((member.getUser().getUserId() == session.getCurrentUserId()) && (member.getRole() == role)){
                 return true;
             }
         }

@@ -1,18 +1,19 @@
 package com.vitaliioleksenko.csp.client.controller.task;
 
+import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
+import com.vitaliioleksenko.csp.client.model.membership.MembershipShort;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceCreate;
 import com.vitaliioleksenko.csp.client.model.resource.ResourcePartial;
 import com.vitaliioleksenko.csp.client.model.resource.ResourceShort;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskUpdate;
+import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.ResourceService;
 import com.vitaliioleksenko.csp.client.service.TaskService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
-import com.vitaliioleksenko.csp.client.util.enums.ResourceFormat;
-import com.vitaliioleksenko.csp.client.util.enums.ResourceType;
-import com.vitaliioleksenko.csp.client.util.enums.Role;
-import com.vitaliioleksenko.csp.client.util.enums.TaskStatus;
+import com.vitaliioleksenko.csp.client.util.enums.*;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -36,8 +37,10 @@ public class TaskProfileController {
     @FXML private Label taskTitleLabel;
     @FXML private Label groupNameLabel;
     @FXML private Label deadlineLabel;
+    @FXML private Button doneBtn;
+    @FXML private Button reworkBtn;
+    @FXML private Button reviewBtn;
     @FXML private HBox adminActionsBox;
-    @FXML private VBox submissionBox;
     @FXML private TextArea descriptionArea;
     @FXML private ListView<ResourcePartial> materialsListView;
     @FXML private ListView<ResourcePartial> submissionsListView;
@@ -46,49 +49,66 @@ public class TaskProfileController {
 
     private final TaskService taskService;
     private final ResourceService resourceService;
+    private final GroupService groupService;
     private final UserSession session;
     private final DateTimeFormatter formatter;
-    private final boolean isAdmin;
-
-    private TaskDetailed details;
+    private TaskDetailed taskDetails;
+    private GroupDetailed groupDetails;
     private int taskId;
 
     public TaskProfileController() {
         this.taskService = new TaskService();
         this.resourceService = new ResourceService();
+        this.groupService = new GroupService();
         this.session = UserSession.getInstance();
         this.formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm");
-        this.isAdmin = true; //todo
     }
 
     // ------------------------------ INIT ------------------------------
 
     public void initData(int taskId) {
         this.taskId = taskId;
-        loadTaskDetails();
-        taskTitleLabel.setText(details.getTitle());
-        deadlineLabel.setText("Deadline: " + details.getDeadline().format(formatter));
+        loadDetails();
+        taskTitleLabel.setText(taskDetails.getTitle());
+        deadlineLabel.setText("Deadline: " + taskDetails.getDeadline().format(formatter));
 
         setupListViews();
 
-        if (isAdmin) {
-            adminActionsBox.setVisible(true);
-            adminActionsBox.setManaged(true);
-        } else {
-            submissionBox.setVisible(true);
-            submissionBox.setManaged(true);
-        }
+        boolean isAdmin = session.getCurrentUserRole() == Role.ROLE_ADMIN;
+        boolean isCreator = session.getCurrentUserId() == groupDetails.getCreatedBy().getUserId();
 
-        loadTaskDetails();
+        adminActionsBox.setVisible(isAdmin || isCreator || checkGroupRole(GroupRole.TEAM_LEAD));
+        adminActionsBox.setManaged(isAdmin || isCreator || checkGroupRole(GroupRole.TEAM_LEAD));
+
+
+        if(isAdmin || isCreator){
+            doneBtn.setVisible(true);
+            doneBtn.setManaged(true);
+            reworkBtn.setVisible(true);
+            reworkBtn.setManaged(true);
+            reviewBtn.setVisible(true);
+            reviewBtn.setManaged(true);
+        } else {
+            doneBtn.setVisible(checkGroupRole(GroupRole.TEAM_LEAD));
+            doneBtn.setManaged(checkGroupRole(GroupRole.TEAM_LEAD));
+            reworkBtn.setVisible(checkGroupRole(GroupRole.TEAM_LEAD));
+            reworkBtn.setManaged(checkGroupRole(GroupRole.TEAM_LEAD));
+            reviewBtn.setVisible(!checkGroupRole(GroupRole.TEAM_LEAD));
+            reviewBtn.setManaged(!checkGroupRole(GroupRole.TEAM_LEAD));
+        }
+        loadDetails();
     }
 
-    private void loadTaskDetails() {
+    private void loadDetails() {
         try {
-            details = taskService.getTaskById(taskId);
+            taskDetails = taskService.getTaskById(taskId);
+            groupDetails = groupService.getGroupById(taskDetails.getGroup().getGroupId());
+
             List<ResourcePartial> resources = resourceService.getResources(taskId, null, null).getContent();
 
-            descriptionArea.setText(details.getDescription());
-            groupNameLabel.setText("Group: " + details.getGroup().getName());
+
+            descriptionArea.setText(taskDetails.getDescription());
+            groupNameLabel.setText("Group: " + taskDetails.getGroup().getName());
 
             materialsListView.getItems().setAll(
                     resources.stream()
@@ -142,7 +162,7 @@ public class TaskProfileController {
                             resourceService.deleteFile(item.getResourceId());
                         }
                         resourceService.deleteResource(item.getResourceId());
-                        loadTaskDetails();
+                        loadDetails();
                     } catch (Exception ex) {
                         showError("Failed to delete: " + ex.getMessage());
                     }
@@ -181,7 +201,7 @@ public class TaskProfileController {
                             resourceService.deleteFile(item.getResourceId());
                         }
                         resourceService.deleteResource(item.getResourceId());
-                        loadTaskDetails();
+                        loadDetails();
                     } catch (Exception ex) {
                         showError("Failed to delete: " + ex.getMessage());
                     }
@@ -247,7 +267,7 @@ public class TaskProfileController {
         done.setStatus(TaskStatus.DONE);
         try {
             taskService.editTask(done, taskId);
-            loadTaskDetails();
+            loadDetails();
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Task marked as done.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
@@ -261,7 +281,7 @@ public class TaskProfileController {
         inProgress.setStatus(TaskStatus.IN_PROGRESS);
         try {
             taskService.editTask(inProgress, taskId);
-            loadTaskDetails();
+            loadDetails();
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Rework requested.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
@@ -275,7 +295,7 @@ public class TaskProfileController {
         inReview.setStatus(TaskStatus.IN_REVIEW);
         try {
             taskService.editTask(inReview, taskId);
-            loadTaskDetails();
+            loadDetails();
             Alert a = new Alert(Alert.AlertType.INFORMATION, "Submitted for review.");
             a.initOwner(taskTitleLabel.getScene().getWindow());
             a.showAndWait();
@@ -394,7 +414,7 @@ public class TaskProfileController {
                 if (formatBox.getValue() == ResourceFormat.FILE){
                     resourceService.uploadResource(selectedFile[0] , resourceShort.getResourceId());
                 }
-                loadTaskDetails();
+                loadDetails();
             } catch (IOException e) {
                 showError("Failed to create resource: " + e.getMessage());
             }
@@ -435,7 +455,6 @@ public class TaskProfileController {
         dialog.showAndWait();
     }
 
-
     // ------------------------------ UTIL ------------------------------
 
     private void showError(String msg) {
@@ -444,5 +463,17 @@ public class TaskProfileController {
         a.setHeaderText("Error");
         a.setContentText(msg);
         a.showAndWait();
+    }
+
+    private boolean checkGroupRole(GroupRole role){
+        List<MembershipShort> members = groupDetails.getMembers();
+
+        for (MembershipShort member: members){
+            if ((member.getUser().getUserId() == session.getCurrentUserId()) && (member.getRole() == role)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
