@@ -27,4 +27,6 @@ public interface TasksRepository extends JpaRepository<Task, Integer>, JpaSpecif
     WHERE t.deadline BETWEEN :now AND :soon
     """)
     List<Task> findTasksWithDeadlineBetween(LocalDateTime now, LocalDateTime soon);
+
+    boolean existsByTaskIdAndGroupMembersUserUserId(Integer taskId, Integer userId);
 }

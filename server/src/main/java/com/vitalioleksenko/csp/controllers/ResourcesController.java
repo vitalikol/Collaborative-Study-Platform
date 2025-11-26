@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,7 @@ public class ResourcesController {
         return ResponseEntity.ok(shortDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#taskId)")
     @GetMapping("")
     public Page<ResourceDetailedDTO> readAll(@RequestParam(name = "taskId", required = false) Integer taskId,
                                             @RequestParam(defaultValue = "0") int page,
@@ -50,12 +52,14 @@ public class ResourcesController {
         return resourcesService.findAll(taskId, page, size);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     @GetMapping("/{id}")
     public ResourceDetailedDTO readOne(@PathVariable("id") int id){
         return resourcesService.findById(id);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
                                              @RequestBody  @Valid ResourceUpdateDTO dto,
                                              BindingResult bindingResult){
@@ -70,18 +74,18 @@ public class ResourcesController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         resourcesService.remove(id);
 
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     @PostMapping(value ="/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(
             @PathVariable("id") int id,
-            @RequestParam("file") MultipartFile file
-    ) {
+            @RequestParam("file") MultipartFile file) {
         try {
             resourcesService.uploadFile(file, id);
             return ResponseEntity.ok().build();
@@ -92,6 +96,7 @@ public class ResourcesController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     @GetMapping("/{id}/file")
     public ResponseEntity<?> downloadFile(@PathVariable("id") int id) {
         try {
@@ -101,6 +106,7 @@ public class ResourcesController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByResourceId(#id)")
     @DeleteMapping("/{id}/file")
     public ResponseEntity<?> deleteFile(@PathVariable("id") int id) {
         try {

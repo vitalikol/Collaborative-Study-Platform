@@ -1,6 +1,7 @@
 package com.vitalioleksenko.csp.repositories;
 
 import com.vitalioleksenko.csp.models.Group;
+import com.vitalioleksenko.csp.models.enums.GroupRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,9 @@ public interface GroupsRepository extends JpaRepository<Group, Integer> {
     Page<Group> findByNameContainingIgnoreCase(String search, Pageable pageable);
 
     Page<Group> findByMembersUserUserIdAndNameContainingIgnoreCase(int userId, String search, Pageable pageable);
+
+    boolean existsByGroupIdAndMembersUserUserId(int groupId, int userId);
+
 }
+
+

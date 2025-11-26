@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class TasksController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.id  or @accessService.isMemberOfGroup(#groupId)")
     @GetMapping("")
     public Page<TaskPartialDTO> readAll(
             @RequestParam(required = false) Integer groupId,
@@ -49,6 +51,7 @@ public class TasksController {
         return tasksService.getTasks(groupId, userId, status, page, size);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.id  or @accessService.isMemberOfGroup(#groupId)")
     @GetMapping("/active")
     public Page<TaskPartialDTO> getActiveTasks(
             @RequestParam(required = false) Integer groupId,
@@ -58,11 +61,13 @@ public class TasksController {
         return tasksService.getActiveTasks(groupId, userId, page, size);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
     @GetMapping("/{id}")
     public TaskDetailedDTO readOne(@PathVariable("id") int id){
         return tasksService.getById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
                                              @RequestBody  @Valid TaskUpdateDTO dto,
@@ -77,6 +82,7 @@ public class TasksController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         tasksService.remove(id);

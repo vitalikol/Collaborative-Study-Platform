@@ -1,6 +1,8 @@
 package com.vitalioleksenko.csp.repositories;
 
 import com.vitalioleksenko.csp.models.Membership;
+import com.vitalioleksenko.csp.models.enums.GroupRole;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,5 +16,7 @@ public interface MembershipsRepository extends JpaRepository<Membership, Integer
         WHERE m.group.groupId = :groupId
     """)
     List<Integer> findUserIdsByGroupId(@Param("groupId") int groupId);
+
+    boolean existsByGroupGroupIdAndUserUserIdAndRole(int groupId, int userId, GroupRole role);
 }
 

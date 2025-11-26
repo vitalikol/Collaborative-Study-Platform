@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class GroupsController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.id")
     @GetMapping("")
     public Page<GroupPartialDTO> readAll(@RequestParam(name = "search", required = false) String search,
                                          @RequestParam(name = "userId", required = false) Integer userId,
@@ -46,12 +48,14 @@ public class GroupsController {
         return groupsService.getGroups(search, userId, page, size);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or #id == @accessService.isMemberOfGroup(#id)")
     @GetMapping("/{id}")
     public GroupDetailedDTO readOne(@PathVariable("id") int id){
         return groupsService.getById(id);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isTeamLead(#id)")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
                                              @RequestBody  @Valid GroupUpdateDTO dto,
                                              BindingResult bindingResult){
@@ -66,6 +70,7 @@ public class GroupsController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == @accessService.isTeamLead(#id)")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         groupsService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);
