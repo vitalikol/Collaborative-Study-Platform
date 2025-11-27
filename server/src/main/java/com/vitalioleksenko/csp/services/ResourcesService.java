@@ -34,7 +34,7 @@ public class ResourcesService {
     private final ResourcesRepository resourcesRepository;
     private final AppMapper mapper;
     private final ActivitiesLogsService activitiesLogsService;
-    private final Path root = Paths.get("../db/files");
+    private final Path root = Paths.get("/app/files");
 
     @Autowired
     public ResourcesService(ResourcesRepository resourcesRepository, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
