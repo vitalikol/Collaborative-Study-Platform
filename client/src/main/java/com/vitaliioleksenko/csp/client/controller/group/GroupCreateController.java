@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage; // Імпорт Stage
+import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;

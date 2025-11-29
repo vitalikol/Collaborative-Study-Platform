@@ -1,11 +1,7 @@
 package com.vitaliioleksenko.csp.client.controller.logs;
 
-import com.vitaliioleksenko.csp.client.controller.group.GroupCardController;
-import com.vitaliioleksenko.csp.client.controller.group.GroupViewController;
 import com.vitaliioleksenko.csp.client.model.PageResponse;
 import com.vitaliioleksenko.csp.client.model.activity.ActivityLogDetailed;
-import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
-import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.LogService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
@@ -14,11 +10,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import lombok.Setter;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 public class LogViewController {
     @FXML private ListView<ActivityLogDetailed> logListView;

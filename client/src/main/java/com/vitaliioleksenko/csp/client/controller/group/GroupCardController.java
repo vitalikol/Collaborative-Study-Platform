@@ -1,6 +1,5 @@
 package com.vitaliioleksenko.csp.client.controller.group;
 
-import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

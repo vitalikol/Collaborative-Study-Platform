@@ -2,10 +2,7 @@ package com.vitaliioleksenko.csp.client.controller.group;
 
 import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.group.GroupUpdate;
-import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
-import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.service.GroupService;
-import com.vitaliioleksenko.csp.client.service.UserService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;

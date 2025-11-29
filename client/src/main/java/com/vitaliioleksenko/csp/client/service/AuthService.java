@@ -1,11 +1,13 @@
 package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.ErrorResponse;
+import com.vitaliioleksenko.csp.client.model.JwtResponse;
 import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
 import com.vitaliioleksenko.csp.client.model.user.RegisterRequest;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.ErrorMessageParser;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import okhttp3.*;
 import tools.jackson.databind.ObjectMapper;
 
@@ -42,6 +44,10 @@ public class AuthService {
             } else if (!response.isSuccessful()) {
                 throw new IOException("Server error: " + response.code());
             }
+            JwtResponse jwtResponse = objectMapper.readValue(response.body().string(), JwtResponse.class);
+            UserSession session = UserSession.getInstance();
+            session.setToken(jwtResponse.getToken());
+            session.setCurrentUser(me());
         }
     }
 

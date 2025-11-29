@@ -9,7 +9,6 @@ import com.vitaliioleksenko.csp.client.service.UserService;
 import com.vitaliioleksenko.csp.client.util.enums.GroupRole;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,7 +17,6 @@ import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 

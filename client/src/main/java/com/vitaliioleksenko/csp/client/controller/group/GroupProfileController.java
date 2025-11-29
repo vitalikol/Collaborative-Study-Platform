@@ -1,26 +1,20 @@
 package com.vitaliioleksenko.csp.client.controller.group;
 
-import com.vitaliioleksenko.csp.client.controller.DashboardController;
-import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
 import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
-import com.vitaliioleksenko.csp.client.model.membership.MembershipCreate;
 import com.vitaliioleksenko.csp.client.model.membership.MembershipShort;
 import com.vitaliioleksenko.csp.client.model.membership.MembershipUpdate;
-import com.vitaliioleksenko.csp.client.model.user.UserPartial;
+import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.MembershipService;
 import com.vitaliioleksenko.csp.client.util.UserSession;
-import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.util.enums.GroupRole;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Modality;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.Setter;
 

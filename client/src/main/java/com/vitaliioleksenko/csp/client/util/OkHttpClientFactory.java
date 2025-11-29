@@ -12,7 +12,7 @@ public class OkHttpClientFactory {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             client = new OkHttpClient.Builder()
-                    .cookieJar(new MyCookieJar())
+                    .addInterceptor(new JwtInterceptor(UserSession.getInstance()))
                     .addInterceptor(loggingInterceptor)
                     .build();
         }

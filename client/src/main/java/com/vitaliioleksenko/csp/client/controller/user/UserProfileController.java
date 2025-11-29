@@ -2,22 +2,18 @@ package com.vitaliioleksenko.csp.client.controller.user;
 
 import com.vitaliioleksenko.csp.client.model.UserStats;
 import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
-import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.service.UserService;
-import com.vitaliioleksenko.csp.client.util.WindowRenderer;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;

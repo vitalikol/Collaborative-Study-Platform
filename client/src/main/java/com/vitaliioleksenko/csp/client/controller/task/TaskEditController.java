@@ -1,11 +1,8 @@
 package com.vitaliioleksenko.csp.client.controller.task;
 
-import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
-import com.vitaliioleksenko.csp.client.model.group.GroupUpdate;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskUpdate;
-import com.vitaliioleksenko.csp.client.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.TaskService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

@@ -1,5 +1,3 @@
-# **README.md**
-
 # 🚀 CI/CD Pipeline with Jenkins, Docker, and Docker-in-Docker (DIND)
 
 This project uses **Jenkins running inside Docker**, along with a separate **Docker-in-Docker (DIND)** service to build and deploy a Spring Boot backend container.

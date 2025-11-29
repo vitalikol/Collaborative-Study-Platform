@@ -1,8 +1,6 @@
 package com.vitaliioleksenko.csp.client.controller.auth;
 
-import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
-import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import javafx.fxml.FXML;
@@ -53,8 +51,6 @@ public class LoginController {
         AuthenticationRequest credentials = new AuthenticationRequest(username, password);
         try {
             authService.login(credentials);
-            UserDetailed user = authService.me();
-            UserSession.getInstance().login(user);
             return true;
         } catch (IOException e){
             showError(e.getMessage());

@@ -1,6 +1,5 @@
 package com.vitaliioleksenko.csp.client.model.resource;
 
-import com.vitaliioleksenko.csp.client.model.group.GroupShort;
 import com.vitaliioleksenko.csp.client.model.task.TaskShort;
 import com.vitaliioleksenko.csp.client.model.user.UserShort;
 import com.vitaliioleksenko.csp.client.util.enums.ResourceFormat;

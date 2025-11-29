@@ -2,7 +2,6 @@ package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.membership.MembershipCreate;
 import com.vitaliioleksenko.csp.client.model.membership.MembershipUpdate;
-import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.ObjectMapper;

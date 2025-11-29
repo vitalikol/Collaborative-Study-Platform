@@ -1,26 +1,19 @@
 package com.vitaliioleksenko.csp.client.controller.group;
 
 import com.vitaliioleksenko.csp.client.model.PageResponse;
-import com.vitaliioleksenko.csp.client.model.group.GroupCreate;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
-import com.vitaliioleksenko.csp.client.util.UserSession;
-
-// import com.example.csp.service.GroupService;
 import com.vitaliioleksenko.csp.client.service.GroupService;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class GroupViewController {

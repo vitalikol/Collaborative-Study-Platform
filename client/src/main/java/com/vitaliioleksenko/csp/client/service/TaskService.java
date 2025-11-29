@@ -1,13 +1,10 @@
 package com.vitaliioleksenko.csp.client.service;
 
 import com.vitaliioleksenko.csp.client.model.PageResponse;
-
-import com.vitaliioleksenko.csp.client.model.group.GroupCreate;
 import com.vitaliioleksenko.csp.client.model.task.TaskCreate;
 import com.vitaliioleksenko.csp.client.model.task.TaskDetailed;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskUpdate;
-import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import com.vitaliioleksenko.csp.client.util.enums.TaskStatus;
 import okhttp3.*;

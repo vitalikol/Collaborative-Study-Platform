@@ -5,7 +5,6 @@ import com.vitaliioleksenko.csp.client.model.group.GroupCreate;
 import com.vitaliioleksenko.csp.client.model.group.GroupDetailed;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import com.vitaliioleksenko.csp.client.model.group.GroupUpdate;
-import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import okhttp3.*;
 import tools.jackson.databind.JavaType;

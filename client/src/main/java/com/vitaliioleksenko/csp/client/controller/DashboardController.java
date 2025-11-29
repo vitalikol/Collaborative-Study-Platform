@@ -12,33 +12,23 @@ import com.vitaliioleksenko.csp.client.controller.user.UserEditController;
 import com.vitaliioleksenko.csp.client.controller.user.UserEditPasswordController;
 import com.vitaliioleksenko.csp.client.controller.user.UserProfileController;
 import com.vitaliioleksenko.csp.client.controller.user.UserViewController;
-import com.vitaliioleksenko.csp.client.model.NotificationMessage;
 import com.vitaliioleksenko.csp.client.model.group.GroupPartial;
 import com.vitaliioleksenko.csp.client.model.task.TaskPartial;
+import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.OkHttpClientFactory;
 import com.vitaliioleksenko.csp.client.util.ToastManager;
 import com.vitaliioleksenko.csp.client.util.UserSession;
-import com.vitaliioleksenko.csp.client.service.AuthService;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
 import com.vitaliioleksenko.csp.client.websocket.NotificationWebSocket;
-import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import tools.jackson.databind.ObjectMapper;
-
 
 import java.io.IOException;
 

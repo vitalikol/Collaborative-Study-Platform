@@ -1,9 +1,7 @@
 package com.vitaliioleksenko.csp.client.controller.user;
 
-import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.model.user.UserUpdate;
 import com.vitaliioleksenko.csp.client.service.UserService;
-import com.vitaliioleksenko.csp.client.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;

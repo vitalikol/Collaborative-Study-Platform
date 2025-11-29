@@ -4,29 +4,35 @@ import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.util.enums.Role;
 
 public class UserSession {
+
     private static UserSession instance;
+
+    private String jwtToken;
     private UserDetailed currentUser;
 
-    private UserSession() {
-    }
+    private UserSession() {}
 
-    public static UserSession getInstance() {
+    public static synchronized UserSession getInstance() {
         if (instance == null) {
             instance = new UserSession();
         }
         return instance;
     }
 
-    public void login(UserDetailed user) {
+    public void setToken(String token) {
+        this.jwtToken = token;
+    }
+
+    public String getToken() {
+        return jwtToken;
+    }
+
+    public boolean hasToken() {
+        return jwtToken != null && !jwtToken.isEmpty();
+    }
+
+    public void setCurrentUser(UserDetailed user) {
         this.currentUser = user;
-    }
-
-    public void logout() {
-        this.currentUser = null;
-    }
-
-    public boolean isLoggedIn() {
-        return currentUser != null;
     }
 
     public UserDetailed getCurrentUser() {
@@ -39,5 +45,15 @@ public class UserSession {
 
     public Role getCurrentUserRole() {
         return (currentUser != null) ? currentUser.getRole() : null;
+    }
+
+    // ------- SESSION CONTROL -------
+    public boolean isLoggedIn() {
+        return hasToken();
+    }
+
+    public void logout() {
+        this.jwtToken = null;
+        this.currentUser = null;
     }
 }
