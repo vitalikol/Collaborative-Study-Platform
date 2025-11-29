@@ -1,5 +1,6 @@
 package com.vitalioleksenko.csp.controllers;
 
+import com.vitalioleksenko.csp.models.dto.JwtResponse;
 import com.vitalioleksenko.csp.models.dto.user.AuthenticationRequest;
 import com.vitalioleksenko.csp.models.dto.user.RegisterRequest;
 import com.vitalioleksenko.csp.models.dto.user.UserDetailedDTO;
@@ -8,6 +9,8 @@ import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.CustomUserDetails;
 import com.vitalioleksenko.csp.security.Role;
 import com.vitalioleksenko.csp.services.ActivitiesLogsService;
+import com.vitalioleksenko.csp.services.AuthService;
+import com.vitalioleksenko.csp.services.JwtService;
 import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.exceptions.BadRequestException;
@@ -29,98 +32,45 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.remote.JMXAuthenticator;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
     private final UsersService usersService;
-    private final UsersRepository usersRepository;
-    private final AppMapper mapper;
-    private final ActivitiesLogsService activitiesLogsService;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UsersService usersService, UsersRepository usersRepository, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(UsersService usersService, AuthService authService) {
         this.usersService = usersService;
-        this.usersRepository = usersRepository;
-        this.mapper = mapper;
-        this.activitiesLogsService = activitiesLogsService;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus>  login(@RequestBody AuthenticationRequest authenticationRequest,
-                                             HttpServletRequest request) {
-
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        HttpSession session = request.getSession(true);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
-        activitiesLogsService.log(
-                "USER_LOGGED_IN",
-                "Logged in"
-        );
-
-        return ResponseEntity.ok(HttpStatus.OK);
+    public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest) {
+        return ResponseEntity.ok(authService.login(authenticationRequest));
     }
 
     @PostMapping("/register")
-        public ResponseEntity<HttpStatus> register(@RequestBody @Valid RegisterRequest registerRequest,
+    public ResponseEntity<HttpStatus> register(@RequestBody @Valid RegisterRequest registerRequest,
                                                BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
+        if(bindingResult.hasErrors()) {
             throw new BadRequestException(
                     ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
-        User user = User.builder()
-                .name(registerRequest.getName())
-                .email(registerRequest.getEmail())
-                .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(Role.ROLE_USER)
-                .build();
-
-        usersRepository.save(user);
-        activitiesLogsService.log(
-                "USER_REGISTERED",
-                "Registered user with ID: " + user.getUserId()
-        );
-
+        authService.register(registerRequest);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<HttpStatus> logout(HttpServletRequest request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof CustomUserDetails) {
-            activitiesLogsService.log(
-                    "USER_LOGGED_OUT",
-                    "Logged out"
-            );
-        }
-
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-
-        SecurityContextHolder.clearContext();
-
+        //TODO
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDetailedDTO> me(@AuthenticationPrincipal CustomUserDetails user) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        UserDetailedDTO dto = usersService.findById(user.getId());
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(usersService.findById(user.getId()));
     }
 }
