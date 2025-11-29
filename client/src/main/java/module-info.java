@@ -11,6 +11,8 @@ module com.vitaliioleksenko.csp.client {
     requires lombok;
     requires annotations;
     requires java.net.http;
+    requires jdk.httpserver;
+    requires java.desktop;
 
 
     opens com.vitaliioleksenko.csp.client.model.user to tools.jackson.databind;

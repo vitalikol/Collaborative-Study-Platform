@@ -2,6 +2,7 @@ package com.vitalioleksenko.csp.controllers;
 
 import com.vitalioleksenko.csp.models.dto.JwtResponse;
 import com.vitalioleksenko.csp.models.dto.user.AuthenticationRequest;
+import com.vitalioleksenko.csp.models.dto.user.CustomOAuthUser;
 import com.vitalioleksenko.csp.models.dto.user.RegisterRequest;
 import com.vitalioleksenko.csp.models.dto.user.UserDetailedDTO;
 import com.vitalioleksenko.csp.models.User;

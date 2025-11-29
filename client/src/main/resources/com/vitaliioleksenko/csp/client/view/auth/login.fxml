@@ -37,6 +37,7 @@
         <Button fx:id="registerButton" cancelButton="true" onAction="#handleRegister" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" text="Register" />
         <Button fx:id="loginButton" defaultButton="true" onAction="#handleLogin" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Login" />
     </HBox>
+    <Button fx:id="googleButton" defaultButton="true" onAction="#handleGoogleLogin" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Continue with google" />
 
     <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;" visible="false" />
 </VBox>
