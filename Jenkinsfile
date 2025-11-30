@@ -17,8 +17,7 @@ pipeline {
                 sh 'ls -R'
             }
         }
-
-    stages {
+        
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vitalikol/Collaborative-Study-Platform.git',
