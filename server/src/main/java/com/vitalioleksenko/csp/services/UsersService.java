@@ -68,17 +68,26 @@ public class UsersService {
     }
 
     @Transactional
-    public void edit(UserUpdateDTO updatedUser, int id){
-        String passwordHash = passwordEncoder.encode(updatedUser.getPassword());
-        User user = usersRepository.findById(id).orElseThrow(NotFoundException::new);
+    public void edit(UserUpdateDTO updatedUser, int id) {
+
+        User user = usersRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+
         mapper.updateUserFromDto(updatedUser, user);
-        user.setPasswordHash(passwordHash);
+
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+            String passwordHash = passwordEncoder.encode(updatedUser.getPassword());
+            user.setPasswordHash(passwordHash);
+        }
+
         usersRepository.save(user);
+
         activitiesLogsService.log(
                 "USER_EDITED",
                 "Edited user with ID: " + user.getUserId()
         );
     }
+
 
     @Transactional
     public boolean remove(int id){

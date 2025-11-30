@@ -48,7 +48,7 @@ public class GroupsController {
         return groupsService.getGroups(search, userId, page, size);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == @accessService.isMemberOfGroup(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroup(#id)")
     @GetMapping("/{id}")
     public GroupDetailedDTO readOne(@PathVariable("id") int id){
         return groupsService.getById(id);
@@ -70,7 +70,7 @@ public class GroupsController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == @accessService.isTeamLead(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @accessService.isTeamLead(#id)")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         groupsService.remove(id);
         return ResponseEntity.ok(HttpStatus.OK);

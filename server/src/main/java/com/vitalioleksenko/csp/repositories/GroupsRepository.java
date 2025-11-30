@@ -13,9 +13,6 @@ public interface GroupsRepository extends JpaRepository<Group, Integer> {
     Page<Group> findByNameContainingIgnoreCase(String search, Pageable pageable);
 
     Page<Group> findByMembersUserUserIdAndNameContainingIgnoreCase(int userId, String search, Pageable pageable);
-
-    boolean existsByGroupIdAndMembersUserUserId(int groupId, int userId);
-
 }
 
 

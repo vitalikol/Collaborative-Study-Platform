@@ -17,6 +17,8 @@ public interface MembershipsRepository extends JpaRepository<Membership, Integer
     """)
     List<Integer> findUserIdsByGroupId(@Param("groupId") int groupId);
 
-    boolean existsByGroupGroupIdAndUserUserIdAndRole(int groupId, int userId, GroupRole role);
+    boolean existsByGroup_GroupIdAndUser_UserId(int groupId, int userId);
+
+    boolean existsByGroup_GroupIdAndUser_UserIdAndRole(int groupId, int userId, GroupRole role);
 }
 

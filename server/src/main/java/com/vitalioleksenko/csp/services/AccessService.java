@@ -14,16 +14,28 @@ import org.springframework.stereotype.Service;
 
 @Service("accessService")
 public class AccessService {
-    private final GroupsRepository groupsRepository;
     private final TasksRepository tasksRepository;
     private final ResourcesRepository resourcesRepository;
     private final MembershipsRepository membershipsRepository;
 
-    public AccessService(GroupsRepository groupRepository, TasksRepository tasksRepository, ResourcesRepository resourcesRepository, MembershipsRepository membershipsRepository) {
-        this.groupsRepository = groupRepository;
+    public AccessService(TasksRepository tasksRepository, ResourcesRepository resourcesRepository, MembershipsRepository membershipsRepository) {
         this.tasksRepository = tasksRepository;
         this.resourcesRepository = resourcesRepository;
         this.membershipsRepository = membershipsRepository;
+    }
+
+    public boolean isMemberOfGroup(Integer groupId) {
+        if (groupId == null) {
+            return false;
+        }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails user))
+            return false;
+
+        int userId = user.getId();
+
+        return membershipsRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId);
     }
 
     public boolean hasGroupRole(Integer groupId, GroupRole role){
@@ -34,23 +46,11 @@ public class AccessService {
 
         int userId = user.getId();
 
-        return membershipsRepository.existsByGroupGroupIdAndUserUserIdAndRole(groupId, userId, role);
+        return membershipsRepository.existsByGroup_GroupIdAndUser_UserIdAndRole(groupId, userId, role);
     }
 
     public boolean isTeamLead(Integer groupId){
         return hasGroupRole(groupId, GroupRole.TEAM_LEAD);
-    }
-
-    public boolean isMemberOfGroup(Integer groupId) {
-        if (groupId == null)
-            return true;
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
-
-        int userId = user.getId();
-
-        return groupsRepository.existsByGroupIdAndMembersUserUserId(groupId, userId);
     }
 
     public boolean isMemberOfGroupByTaskId(Integer taskId) {
