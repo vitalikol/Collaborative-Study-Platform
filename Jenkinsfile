@@ -12,8 +12,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/vitalikol/Collaborative-Study-Platform.git',
+                git url: 'https://github.com/vitalikol/Collaborative-Study-Platform.git',
+                    branch: 'main',
                     credentialsId: 'github-token'
             }
         }
