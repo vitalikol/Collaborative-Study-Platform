@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.models.dto.user;
+package com.vitalioleksenko.csp.models.dto.security;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

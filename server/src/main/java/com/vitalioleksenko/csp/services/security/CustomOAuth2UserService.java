@@ -1,7 +1,7 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.security;
 
 import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.models.dto.user.CustomOAuthUser;
+import com.vitalioleksenko.csp.models.dto.security.CustomOAuthUser;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.Role;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

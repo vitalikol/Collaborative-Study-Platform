@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,15 +25,16 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
+    public String generateToken(int userId, String username) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
 
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -41,6 +42,19 @@ public class JwtService {
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Integer getUserId(String token) {
+        return extractClaim(token, c -> c.get("userId", Integer.class));
+    }
+
+    public boolean validate(String token) {
+        try {
+            extractAllClaims(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
@@ -69,5 +83,6 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 }
+
 
 

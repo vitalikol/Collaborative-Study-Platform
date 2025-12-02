@@ -2,7 +2,7 @@ package com.vitalioleksenko.csp.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vitalioleksenko.csp.models.dto.NotificationMessage;
-import com.vitalioleksenko.csp.services.PendingNotificationService;
+import com.vitalioleksenko.csp.services.notification.PendingNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -34,6 +34,11 @@ public class MessageHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         Integer userId = (Integer) session.getAttributes().get("userId");
 
+        if (userId == null) {
+            try { session.close(); } catch (Exception ignored) {}
+            return;
+        }
+
         sessions.computeIfAbsent(userId, k -> new ArrayList<>()).add(session);
 
         pendingNotificationService.flushPendingForUser(userId, msg -> {
@@ -44,6 +49,7 @@ public class MessageHandler extends TextWebSocketHandler {
             }
         });
     }
+
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {

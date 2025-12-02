@@ -1,12 +1,13 @@
 package com.vitalioleksenko.csp.config;
 
-import com.vitalioleksenko.csp.services.CustomOAuth2UserService;
-import com.vitalioleksenko.csp.services.CustomUserDetailsService;
+import com.vitalioleksenko.csp.security.JwtFilter;
+import com.vitalioleksenko.csp.security.OAuth2SuccessHandler;
+import com.vitalioleksenko.csp.services.security.CustomOAuth2UserService;
+import com.vitalioleksenko.csp.services.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

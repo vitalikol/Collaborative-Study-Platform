@@ -7,6 +7,7 @@ import com.vitalioleksenko.csp.models.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.models.dto.task.TaskUpdateDTO;
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.TasksRepository;
+import com.vitalioleksenko.csp.services.notification.NotificationService;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.TaskSpecification;
 import com.vitalioleksenko.csp.models.enums.TaskStatus;
@@ -97,6 +98,11 @@ public class TasksService {
         Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);
         mapper.updateTaskFromDto(dto, task);
         tasksRepository.save(task);
+        if (task.getStatus() == TaskStatus.DONE){
+            notificationService.notifyTaskCompleted(task);
+        } else {
+            notificationService.notifyTaskUpdated(task);
+        }
         activitiesLogsService.log(
                 "TASK_EDITED",
                 "Edited task with ID: " + task.getTaskId()

@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.models.dto;
+package com.vitalioleksenko.csp.models.dto.security;
 
 import lombok.*;
 

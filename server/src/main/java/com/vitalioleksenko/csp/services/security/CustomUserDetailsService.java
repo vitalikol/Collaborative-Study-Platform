@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.security;
 
 import com.vitalioleksenko.csp.models.User;
 import com.vitalioleksenko.csp.repositories.UsersRepository;

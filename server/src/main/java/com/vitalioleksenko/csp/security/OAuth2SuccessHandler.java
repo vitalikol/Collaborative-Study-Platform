@@ -1,7 +1,7 @@
-package com.vitalioleksenko.csp.config;
+package com.vitalioleksenko.csp.security;
 
-import com.vitalioleksenko.csp.models.dto.user.CustomOAuthUser;
-import com.vitalioleksenko.csp.services.JwtService;
+import com.vitalioleksenko.csp.models.dto.security.CustomOAuthUser;
+import com.vitalioleksenko.csp.services.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         CustomOAuthUser user = (CustomOAuthUser) authentication.getPrincipal();
 
-        String jwt = jwtService.generateToken(user.getEmail());
+        String jwt = jwtService.generateToken(user.getUserId(), user.getEmail());
 
         response.sendRedirect("http://localhost:8085/oauth2/callback?token=" + jwt);
     }

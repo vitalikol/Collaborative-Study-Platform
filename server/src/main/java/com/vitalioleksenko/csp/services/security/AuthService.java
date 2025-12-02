@@ -1,19 +1,19 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.security;
 
 import com.vitalioleksenko.csp.models.User;
-import com.vitalioleksenko.csp.models.dto.JwtResponse;
-import com.vitalioleksenko.csp.models.dto.user.AuthenticationRequest;
-import com.vitalioleksenko.csp.models.dto.user.RegisterRequest;
+import com.vitalioleksenko.csp.models.dto.security.JwtResponse;
+import com.vitalioleksenko.csp.models.dto.security.AuthenticationRequest;
+import com.vitalioleksenko.csp.models.dto.security.RegisterRequest;
 import com.vitalioleksenko.csp.repositories.UsersRepository;
 import com.vitalioleksenko.csp.security.Role;
+import com.vitalioleksenko.csp.services.ActivitiesLogsService;
+import com.vitalioleksenko.csp.services.UsersService;
 import com.vitalioleksenko.csp.util.AppMapper;
+import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +47,9 @@ public class AuthService {
                         authenticationRequest.getPassword()
                 )
         );
+        User user = usersRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(NotFoundException::new);
 
-        String token = jwtService.generateToken(authenticationRequest.getUsername());
+        String token = jwtService.generateToken(user.getUserId(), user.getEmail());
         activitiesLogsService.log(
                 "USER_LOGGED_IN",
                 "Logged in"

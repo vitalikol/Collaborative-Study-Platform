@@ -2,6 +2,7 @@ package com.vitaliioleksenko.csp.client.websocket;
 
 
 import com.vitaliioleksenko.csp.client.model.NotificationMessage;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import lombok.Setter;
 import okhttp3.*;
 import tools.jackson.databind.ObjectMapper;
@@ -16,13 +17,22 @@ public class NotificationWebSocket {
 
     @Setter private Consumer<NotificationMessage> messageHandler;
 
+    @Setter private String jwtToken;
+
     public NotificationWebSocket(OkHttpClient client) {
+        this.jwtToken = UserSession.getInstance().getToken();
         this.client = client;
     }
 
     public void connect() {
+        if (jwtToken == null) {
+            throw new IllegalStateException("JWT token must be set before connecting WebSocket");
+        }
+
+        String wsUrl = "ws://localhost:8080/ws/notifications?token=" + jwtToken;
+
         Request request = new Request.Builder()
-                .url("ws://localhost:8080/ws/notifications")
+                .url(wsUrl)
                 .build();
 
         socket = client.newWebSocket(request, new WebSocketListener() {

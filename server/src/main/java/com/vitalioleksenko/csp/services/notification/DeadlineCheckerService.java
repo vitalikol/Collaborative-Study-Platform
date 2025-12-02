@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.notification;
 
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.TasksRepository;

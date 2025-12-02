@@ -1,5 +1,6 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.notification;
 
+import com.vitalioleksenko.csp.models.Group;
 import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.models.dto.NotificationMessage;
 import com.vitalioleksenko.csp.models.enums.NotificationType;
@@ -59,6 +60,62 @@ public class NotificationService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void notifyTaskUpdated(Task task) {
+        List<Integer> userIds = membershipRepository.findUserIdsByGroupId(task.getGroup().getGroupId());
+
+        NotificationMessage msgTemplate = new NotificationMessage(
+                NotificationType.TASK_UPDATED,
+                "Task updated",
+                "Task '" + task.getTitle() + "' was updated",
+                (long) task.getTaskId(),
+                (long) task.getGroup().getGroupId()
+        );
+
+        for (int userId : userIds) {
+            try {
+                messageHandler.sendToUser(userId, msgTemplate);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void notifyTaskCompleted(Task task) {
+        List<Integer> userIds = membershipRepository.findUserIdsByGroupId(task.getGroup().getGroupId());
+
+        NotificationMessage msgTemplate = new NotificationMessage(
+                NotificationType.TASK_COMPLETED,
+                "Task completed",
+                "Task '" + task.getTitle() + "' was marked as completed",
+                (long) task.getTaskId(),
+                (long) task.getGroup().getGroupId()
+        );
+
+        for (int userId : userIds) {
+            try {
+                messageHandler.sendToUser(userId, msgTemplate);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void notifyGroupInvitation(Group group, int invitedUserId) {
+        NotificationMessage msgTemplate = new NotificationMessage(
+                NotificationType.GROUP_INVITATION,
+                "Group invitation",
+                "You were invited to group '" + group.getName() + "'",
+                null,
+                (long) group.getGroupId()
+        );
+
+        try {
+            messageHandler.sendToUser(invitedUserId, msgTemplate);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

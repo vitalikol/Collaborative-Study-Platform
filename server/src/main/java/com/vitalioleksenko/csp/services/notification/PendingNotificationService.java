@@ -1,4 +1,4 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.notification;
 
 import com.vitalioleksenko.csp.models.dto.NotificationMessage;
 import org.springframework.stereotype.Service;

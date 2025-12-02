@@ -28,7 +28,7 @@ public class ResourceService {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
         if (taskId != null) {
-            urlBuilder.addQueryParameter("search", taskId.toString());
+            urlBuilder.addQueryParameter("taskId", taskId.toString());
         }
         if (page != null) {
             urlBuilder.addQueryParameter("page", page.toString());

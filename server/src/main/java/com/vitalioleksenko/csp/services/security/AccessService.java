@@ -1,8 +1,6 @@
-package com.vitalioleksenko.csp.services;
+package com.vitalioleksenko.csp.services.security;
 
-import com.vitalioleksenko.csp.models.dto.membership.MembershipUpdateDTO;
 import com.vitalioleksenko.csp.models.enums.GroupRole;
-import com.vitalioleksenko.csp.repositories.GroupsRepository;
 import com.vitalioleksenko.csp.repositories.MembershipsRepository;
 import com.vitalioleksenko.csp.repositories.ResourcesRepository;
 import com.vitalioleksenko.csp.repositories.TasksRepository;

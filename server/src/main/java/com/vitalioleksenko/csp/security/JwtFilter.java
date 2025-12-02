@@ -1,7 +1,7 @@
-package com.vitalioleksenko.csp.config;
+package com.vitalioleksenko.csp.security;
 
-import com.vitalioleksenko.csp.services.CustomUserDetailsService;
-import com.vitalioleksenko.csp.services.JwtService;
+import com.vitalioleksenko.csp.services.security.CustomUserDetailsService;
+import com.vitalioleksenko.csp.services.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
