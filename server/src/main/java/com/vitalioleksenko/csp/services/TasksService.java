@@ -94,23 +94,12 @@ public class TasksService {
     }
 
     @Transactional
-    public void edit(TaskUpdateDTO dto, int id){
+    public TaskDetailedDTO edit(TaskUpdateDTO dto, int id){
         Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        if (dto.getTitle() != null) {
-            task.setTitle(dto.getTitle());
-        }
-        if (dto.getDescription() != null) {
-            task.setDescription(dto.getDescription());
-        }
-        if (dto.getDeadline() != null) {
-            task.setDeadline(dto.getDeadline());
-        }
-        if (dto.getStatus() != null) {
-            task.setStatus(dto.getStatus());
-        }
-
+        mapper.updateTaskFromDto(dto, task);
         tasksRepository.save(task);
+
         if (task.getStatus() == TaskStatus.DONE){
             notificationService.notifyTaskCompleted(task);
         } else {
@@ -120,6 +109,8 @@ public class TasksService {
                 "TASK_EDITED",
                 "Edited task with ID: " + task.getTaskId()
         );
+
+        return mapper.toTaskDetailed(task);
     }
 
     @Transactional
