@@ -46,6 +46,8 @@
             <Button fx:id="registerButton" defaultButton="true" onAction="#handleRegister" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Register" />
          </children>
       </HBox>
+      <Button fx:id="googleButton" defaultButton="true" onAction="#handleGoogleLogin" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Continue with google" />
+
       <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;" visible="false" />
    </children>
 </VBox>

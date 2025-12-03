@@ -360,7 +360,6 @@ public class TaskProfileController {
         Label urlLabel = new Label("URL:");
         TextField urlField = new TextField();
 
-        // File chooser UI elements
         Label fileLabel = new Label("File:");
         Button fileButton = new Button("Choose file...");
         Label chosenFileLabel = new Label();
@@ -400,7 +399,7 @@ public class TaskProfileController {
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         formatBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (!submissionMode && newVal == ResourceFormat.FILE) {
+            if (newVal == ResourceFormat.FILE) {
                 // FILE → show file input, hide URL
                 urlLabel.setVisible(false);
                 urlField.setVisible(false);
@@ -466,6 +465,9 @@ public class TaskProfileController {
         Label type = new Label("Type: " + resource.getType());
         Label format = new Label("Format: " + resource.getFormat());
 
+        Label url = new Label("URL: " + resource.getPathOrUrl());
+        url.setVisible(resource.getFormat() == ResourceFormat.URL);
+
         Button downloadBtn = new Button("Download");
         downloadBtn.setVisible(resource.getFormat() == ResourceFormat.FILE);
 
@@ -483,7 +485,7 @@ public class TaskProfileController {
             }
         });
 
-        VBox box = new VBox(10, title, type, format, downloadBtn);
+        VBox box = new VBox(10, title, type, format, url, downloadBtn);
         dialog.getDialogPane().setContent(box);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 

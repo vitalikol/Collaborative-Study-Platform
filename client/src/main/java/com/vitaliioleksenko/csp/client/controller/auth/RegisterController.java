@@ -2,15 +2,21 @@ package com.vitaliioleksenko.csp.client.controller.auth;
 
 import com.vitaliioleksenko.csp.client.model.user.AuthenticationRequest;
 import com.vitaliioleksenko.csp.client.model.user.RegisterRequest;
+import com.vitaliioleksenko.csp.client.model.user.UserDetailed;
 import com.vitaliioleksenko.csp.client.service.AuthService;
+import com.vitaliioleksenko.csp.client.util.OAuthCallbackServer;
+import com.vitaliioleksenko.csp.client.util.UserSession;
 import com.vitaliioleksenko.csp.client.util.WindowRenderer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 
 public class RegisterController {
     @FXML private TextField nameField;
@@ -28,6 +34,40 @@ public class RegisterController {
 
     @FXML public void initialize(){
         errorLabel.setVisible(false);
+    }
+
+    @FXML
+    private void handleGoogleLogin() {
+        OAuthCallbackServer callbackServer = new OAuthCallbackServer();
+
+        callbackServer.start(() -> {
+            String token = callbackServer.getToken();
+
+            UserSession.getInstance().setToken(token);
+
+            UserDetailed user = null;
+            try {
+                user = authService.me();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            UserSession.getInstance().setCurrentUser(user);
+
+            Platform.runLater(() -> {
+                WindowRenderer.switchScene(
+                        (Stage) loginButton.getScene().getWindow(),
+                        "/com/vitaliioleksenko/csp/client/view/dashboard.fxml"
+                );
+            });
+
+            callbackServer.stop();
+        });
+
+        try {
+            Desktop.getDesktop().browse(new URI("http://localhost:8080/oauth2/authorization/google"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML public void handleRegister() throws IOException {

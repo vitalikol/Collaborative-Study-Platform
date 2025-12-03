@@ -13,7 +13,7 @@ public class HelloApplication extends Application {
         Parent root = loader.load();
 
         primaryStage.setTitle("CSP");
-        primaryStage.setScene(new Scene(root, 400, 300));
+        primaryStage.setScene(new Scene(root, 400, 400));
         primaryStage.show();
     }
 

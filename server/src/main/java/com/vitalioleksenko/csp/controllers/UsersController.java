@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +29,6 @@ public class UsersController {
         this.tasksService = tasksService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<HttpStatus> create(@RequestBody  @Valid UserCreateDTO dto,
                                              BindingResult bindingResult){
@@ -43,7 +41,6 @@ public class UsersController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
     @GetMapping("")
     public Page<UserPartialDTO> readAll(
             @RequestParam(defaultValue = "0") int page,
@@ -51,7 +48,6 @@ public class UsersController {
             @RequestParam(required = false) String search) {
         return usersService.getUsers(page, size, search);
     }
-
 
     @GetMapping("/{id}")
     public UserDetailedDTO readOne(@PathVariable("id") int id){
@@ -63,7 +59,6 @@ public class UsersController {
         return tasksService.getStatsForUser(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
                                              @RequestBody  @Valid UserUpdateDTO dto,
@@ -77,7 +72,6 @@ public class UsersController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         usersService.remove(id);
