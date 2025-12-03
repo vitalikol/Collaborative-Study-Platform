@@ -1,16 +1,16 @@
 package com.vitalioleksenko.csp.services;
 
-import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.models.dto.UserStats;
 import com.vitalioleksenko.csp.models.dto.task.TaskCreateDTO;
 import com.vitalioleksenko.csp.models.dto.task.TaskDetailedDTO;
 import com.vitalioleksenko.csp.models.dto.task.TaskPartialDTO;
 import com.vitalioleksenko.csp.models.dto.task.TaskUpdateDTO;
-import com.vitalioleksenko.csp.models.enums.TaskStatus;
+import com.vitalioleksenko.csp.models.Task;
 import com.vitalioleksenko.csp.repositories.TasksRepository;
 import com.vitalioleksenko.csp.services.notification.NotificationService;
 import com.vitalioleksenko.csp.util.AppMapper;
 import com.vitalioleksenko.csp.util.TaskSpecification;
+import com.vitalioleksenko.csp.models.enums.TaskStatus;
 import com.vitalioleksenko.csp.util.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,17 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class TasksService {
-
     private final TasksRepository tasksRepository;
     private final NotificationService notificationService;
     private final AppMapper mapper;
     private final ActivitiesLogsService activitiesLogsService;
 
     @Autowired
-    public TasksService(TasksRepository tasksRepository,
-                        NotificationService notificationService,
-                        @Qualifier("appMapperImpl") AppMapper mapper,
-                        ActivitiesLogsService activitiesLogsService) {
+    public TasksService(TasksRepository tasksRepository, NotificationService notificationService, @Qualifier("appMapperImpl") AppMapper mapper, ActivitiesLogsService activitiesLogsService) {
         this.tasksRepository = tasksRepository;
         this.notificationService = notificationService;
         this.mapper = mapper;
@@ -42,22 +38,17 @@ public class TasksService {
     }
 
     @Transactional
-    public TaskDetailedDTO save(TaskCreateDTO dto) {
+    public void save(TaskCreateDTO dto){
         Task task = mapper.toTask(dto);
         tasksRepository.save(task);
-
         notificationService.notifyTaskCreated(task);
         activitiesLogsService.log(
                 "TASK_CREATED",
                 "Created task with ID: " + task.getTaskId()
         );
-
-        return mapper.toTaskDetailed(task);
     }
 
-    public Page<TaskPartialDTO> getTasks(Integer groupId, Integer userId,
-                                         TaskStatus status, int page, int size) {
-
+    public Page<TaskPartialDTO> getTasks(Integer groupId, Integer userId, TaskStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Task> result = tasksRepository.findAll(
@@ -72,9 +63,7 @@ public class TasksService {
         return result.map(mapper::toTaskPartial);
     }
 
-    public Page<TaskPartialDTO> getActiveTasks(Integer groupId, Integer userId,
-                                               int page, int size) {
-
+    public Page<TaskPartialDTO> getActiveTasks(Integer groupId, Integer userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Task> result = tasksRepository.findAll(
@@ -89,53 +78,59 @@ public class TasksService {
         return result.map(mapper::toTaskPartial);
     }
 
-    public TaskDetailedDTO getById(int id) {
-        Task task = tasksRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-
+    public TaskDetailedDTO getById(int id){
+        Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);
         return mapper.toTaskDetailed(task);
     }
 
-    public UserStats getStatsForUser(int userId) {
-        return UserStats.builder()
+    public UserStats getStatsForUser(int userId){
+        UserStats stats = UserStats.builder()
                 .doneTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.DONE))
                 .inReviewTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.IN_REVIEW))
                 .inProgressTasks(tasksRepository.countTasksByStatus(userId, TaskStatus.IN_PROGRESS))
                 .build();
+
+        return stats;
     }
 
     @Transactional
-    public TaskDetailedDTO edit(TaskUpdateDTO dto, int id) {
-        Task task = tasksRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+    public void edit(TaskUpdateDTO dto, int id){
+        Task task = tasksRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        mapper.updateTaskFromDto(dto, task);
+        if (dto.getTitle() != null) {
+            task.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            task.setDescription(dto.getDescription());
+        }
+        if (dto.getDeadline() != null) {
+            task.setDeadline(dto.getDeadline());
+        }
+        if (dto.getStatus() != null) {
+            task.setStatus(dto.getStatus());
+        }
+
         tasksRepository.save(task);
-
-        if (task.getStatus() == TaskStatus.DONE) {
+        if (task.getStatus() == TaskStatus.DONE){
             notificationService.notifyTaskCompleted(task);
         } else {
             notificationService.notifyTaskUpdated(task);
         }
-
         activitiesLogsService.log(
                 "TASK_EDITED",
                 "Edited task with ID: " + task.getTaskId()
         );
-
-        return mapper.toTaskDetailed(task);
     }
 
     @Transactional
-    public void remove(int id) {
-        Task task = tasksRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-
-        tasksRepository.delete(task);
-
-        activitiesLogsService.log(
-                "TASK_DELETED",
-                "Deleted task with id " + id
-        );
+    public boolean remove(int id){
+        return tasksRepository.findById(id).map(task -> {
+            tasksRepository.delete(task);
+            activitiesLogsService.log(
+                    "TASK_DELETED",
+                    "Deleted task with id " + id
+            );
+            return true;
+        }).orElse(false);
     }
 }
