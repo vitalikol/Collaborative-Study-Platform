@@ -66,13 +66,13 @@ public class GroupsController {
         }
 
         groupsService.edit(dto, id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @accessService.isTeamLead(#id)")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") int id){
         groupsService.remove(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }
