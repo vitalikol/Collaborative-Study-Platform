@@ -101,9 +101,6 @@ flowchart TB
 ## 3. Databázový model (ER diagram)
 ![ER diagram](docs/db-diagram.png)
 
-Звісно!
-Ось **повна словацька версія** твоєї стислої API-документації.
-
 ---
 
 # 4. Dokumentácia REST API a WebSocket endpointov
