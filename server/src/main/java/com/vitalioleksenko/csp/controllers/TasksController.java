@@ -64,22 +64,23 @@ public class TasksController {
     @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
     @GetMapping("/{id}")
     public TaskDetailedDTO readOne(@PathVariable("id") int id){
+        // тут ОБОВʼЯЗКОВО метод сервісу має повертати TaskDetailedDTO
         return tasksService.getById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
-                                             @RequestBody  @Valid TaskUpdateDTO dto,
-                                             BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public TaskDetailedDTO update(@PathVariable("id") int id,
+                                  @RequestBody @Valid TaskUpdateDTO dto,
+                                  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             throw new BadRequestException(
                     ErrorBuilder.fromBindingErrors(bindingResult)
             );
         }
 
-        tasksService.edit(dto, id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        // зроби, щоб edit повертав TaskDetailedDTO
+        return tasksService.edit(dto, id);
     }
 
     @PreAuthorize("hasRole('ADMIN') or @accessService.isMemberOfGroupByTaskId(#id)")
