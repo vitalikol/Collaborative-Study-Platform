@@ -13,7 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 public class LogService {
-    private static final String BASE_URL = "http://localhost:8080/api/log";
+    private static final String BASE_URL = "http://138.199.153.164:8080/api/log";
     private final OkHttpClient client;
     private final ObjectMapper objectMapper;
 

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ResourceService {
-    private static final String BASE_URL = "http://localhost:8080/api/resource";
+    private static final String BASE_URL = "http://138.199.153.164:8080/api/resource";
     private final OkHttpClient client;
     private final ObjectMapper objectMapper;
 

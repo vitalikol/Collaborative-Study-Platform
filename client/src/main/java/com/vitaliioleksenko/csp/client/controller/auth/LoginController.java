@@ -92,7 +92,7 @@ public class LoginController {
         });
 
         try {
-            Desktop.getDesktop().browse(new URI("http://localhost:8080/oauth2/authorization/google"));
+            Desktop.getDesktop().browse(new URI("http://csp-app.xyz:8080/oauth2/authorization/google"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

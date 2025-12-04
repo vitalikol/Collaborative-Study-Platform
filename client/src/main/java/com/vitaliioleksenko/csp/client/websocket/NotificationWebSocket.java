@@ -29,7 +29,7 @@ public class NotificationWebSocket {
             throw new IllegalStateException("JWT token must be set before connecting WebSocket");
         }
 
-        String wsUrl = "ws://localhost:8080/ws/notifications?token=" + jwtToken;
+        String wsUrl = "ws://csp-app.xyz:8080/ws/notifications?token=" + jwtToken;
 
         Request request = new Request.Builder()
                 .url(wsUrl)

@@ -14,7 +14,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 public class TaskService {
-    private static final String BASE_URL = "http://localhost:8080/api/task";
+    private static final String BASE_URL = "http://138.199.153.164:8080/api/task";
     private final OkHttpClient client;
     private final ObjectMapper objectMapper;
 
